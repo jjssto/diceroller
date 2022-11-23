@@ -1,0 +1,25 @@
+<html>
+    <script type="text/javascript">
+    $(document).ready(function(){
+        $("button").click(function(){
+           $.post("/",
+           {
+            id: $(this).val()
+           },
+           function(data, status){}
+           ) 
+        })
+    })
+    </script>
+    <h1>{{ .title }}</h1>
+    <button value="CoC">New CoC room</button>
+    <button value="RezTech">New CoC room</button>
+    <!--<form method="post" action="/">
+        <input id="id" type="hidden" value="CoC">
+        <input type="submit" value = "New CoC room">
+    </form>
+    <form method="post" action="/">
+        <input id="id" type="hidden" value="RezTech">
+        <input type="submit" value = "New RezTech room">
+    </form>-->
+</html>
