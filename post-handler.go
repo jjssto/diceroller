@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/html"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -43,14 +44,9 @@ func addPlayer(c *gin.Context) {
 func addRoomHandler(c *gin.Context) {
 	game, ok := c.GetPostForm("id")
 	if !ok {
-
+		c.Status(401)
+		return
 	}
-	//var json map[string]string
-	//err := c.BindJSON(&json)
-	//if err != nil {
-	//	panic(err)
-	//}
-	//game, _ := json["game"]
 	var g Game
 	switch game {
 	case "CoC":
@@ -59,11 +55,12 @@ func addRoomHandler(c *gin.Context) {
 		g = RezTech
 	default:
 		c.Status(401)
+		return
 	}
 	id, err := addRoom(g)
 	if err != nil {
-
+		c.Status(401)
+		return
 	}
-	c.Status(id)
-	//c.Redirect(fmt.Sprintf("/%d", id))
+	c.AsciiJSON(html.StatusOK, id)
 }
