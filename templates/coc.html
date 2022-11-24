@@ -1,26 +1,33 @@
 <html>
 <head>
-    <script src="js/coc.js" type="module"></script>
+    <script src="/js/coc.js" type="module"></script>
 </head>
-<form id="f_roll">
-    <label for="name">Char</label>
-    <input type="text" id="name">
-    <label for="action">Action</label>
-    <input type="text" id="action">
-    <label for="mod-2">-2</label>
-    <input type="radio" id="mod-2" value="-2">
-    <label for="mod-1">-1</label>
-    <input type="radio" name="mod" id="mod-2" value="-1">
-    <label for="mod+0">0</label>
-    <input type="radio" name="mod" id="mod+0" value="0">
-    <label for="mod+1">1</label>
-    <input type="radio" name="mod" id="mod+1" value="1">
-    <label for="mod+2">2</label>
-    <input type="radio" name="mod" id="mod" value="2">
-    <input type="submit" value="Roll">
-</form>
 <body>
     <h1>{{ .title }}</h1>
+    <form id="f_roll">
+        <p>
+            <label for="name">Char</label>
+            <input type="text" id="f)name">
+            <label for="action">Action</label>
+            <input type="text" id="f_action">
+        </p>
+        <p>
+            <label for="mod-2">-2</label>
+            <input type="radio" id="mod-2" value="-2">
+            <label for="mod-1">-1</label>
+            <input type="radio" name="mod" id="mod-2" value="-1">
+            <label for="mod+0">0</label>
+            <input type="radio" name="mod" id="mod+0" value="0">
+            <label for="mod+1">1</label>
+            <input type="radio" name="mod" id="mod+1" value="1">
+            <label for="mod+2">2</label>
+            <input type="radio" name="mod" id="mod" value="2">
+        </p>
+        <p>
+            <input type="submit" value="Roll">
+        </p>
+    </form>
+
     <table>
         <thead>
            <tr>

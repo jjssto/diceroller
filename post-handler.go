@@ -1,28 +1,36 @@
 package main
 
 import (
-	"net/html"
+	"net/http"
 	"strconv"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
 func rollDice(c *gin.Context) {
+	idStr := c.Param("id")
 	var json map[string]string
 	err := c.BindJSON(&json)
 	if err != nil {
-		panic(err)
+		c.Status(http.StatusBadRequest)
+		return
 	}
-	id, _ := strconv.ParseInt(json["id"], 10, 32)
-	player, _ := strconv.ParseInt(json["player"], 10, 32)
+	id, _ := strconv.ParseInt(idStr, 10, 32)
+	session := sessions.Default(c)
+	player := session.Get("player_id").(int)
+	col := json["color"]
+	char := json["char"]
 	mod, _ := strconv.ParseInt(json["mod"], 10, 32)
-	action, _ := json["action"]
-	dice, _ := json["dice"]
+	action := json["action"]
+	dice := json["dice"]
 	diceArr := make([]int8, 0)
 	if dice != "" {
 	}
 	r := rooms[int(id)]
+	r.addPlayer(player, char, col)
 	r.roll(diceArr, int(mod), int(player), action)
+	rooms[int(id)] = r
 	c.Status(200)
 }
 
@@ -30,7 +38,8 @@ func addPlayer(c *gin.Context) {
 	var json map[string]string
 	err := c.BindJSON(&json)
 	if err != nil {
-		panic(err)
+		c.Status(http.StatusBadRequest)
+		return
 	}
 	room, _ := strconv.ParseInt(json["room"], 10, 32)
 	id, _ := strconv.ParseInt(json["id"], 10, 32)
@@ -38,13 +47,13 @@ func addPlayer(c *gin.Context) {
 	color, _ := json["color"]
 	r := rooms[int(room)]
 	r.addPlayer(int(id), name, color)
-	c.Status(200)
+	c.Status(http.StatusOK)
 }
 
 func addRoomHandler(c *gin.Context) {
 	game, ok := c.GetPostForm("id")
 	if !ok {
-		c.Status(401)
+		c.Status(http.StatusBadRequest)
 		return
 	}
 	var g Game
@@ -54,13 +63,13 @@ func addRoomHandler(c *gin.Context) {
 	case "RezTech":
 		g = RezTech
 	default:
-		c.Status(401)
+		c.Status(http.StatusBadRequest)
 		return
 	}
 	id, err := addRoom(g)
 	if err != nil {
-		c.Status(401)
+		c.Status(http.StatusBadRequest)
 		return
 	}
-	c.AsciiJSON(html.StatusOK, id)
+	c.AsciiJSON(http.StatusOK, id)
 }

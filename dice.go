@@ -195,7 +195,7 @@ func (r *Room) addPlayer(id int, name string, col string) error {
 }
 
 func addRoom(game Game) (int, error) {
-	id := rand.Int()
+	id := rand.Intn(9998) + 1
 	r := Room{Id: id, Game: game}
 	rooms[id] = r
 	return id, nil
