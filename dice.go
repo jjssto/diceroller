@@ -48,9 +48,10 @@ func (d *Die) json() string {
 	return fmt.Sprintf("{\"E\":\"%d\", \"R\":\"%d\"}", d.Eyes, d.Result)
 }
 
-func (d *DiceRoll) json() string {
-	info := fmt.Sprintf("\"P\":\"%d\", \"A\":%s, \"T\":\"%d\", \"R\":\"%d\"",
-		d.Player, d.Action, d.Time.UnixMilli(), d.Result)
+func (d *DiceRoll) json(room int) string {
+	player := rooms[room].Players.Detail[d.Player]
+	info := fmt.Sprintf("\"P\":\"%s\", \"C\":\"%s\",\"A\":%s, \"T\":\"%d\", \"R\":\"%d\"",
+		player.Name, player.Color, d.Action, d.Time.UnixMilli(), d.Result)
 	dice := ""
 	for _, val := range d.Dice {
 		dice += fmt.Sprintf("%s,", val.json())
