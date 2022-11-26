@@ -1,7 +1,7 @@
 package main
 
 import (
-	"math/rand"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -15,33 +15,64 @@ func viewHome(c *gin.Context) {
 	})
 }
 
-func viewCoC(c *gin.Context, id int64) {
+func viewCoC(c *gin.Context, id int) {
 	session := sessions.Default(c)
 	c.HTML(http.StatusOK, "coc.html", gin.H{
-		"title":     "Call of Cathulu, Room #" + strconv.FormatInt(id, 10),
+		"title":     "Call of Cathulu, Room #" + strconv.FormatInt(int64(id), 10),
+		"player_id": session.Get("player_id"),
+	})
+}
+
+func viewRezTech(c *gin.Context, id int) {
+	session := sessions.Default(c)
+	c.HTML(http.StatusOK, "reztech.html", gin.H{
+		"title":     "RezTech, Room #" + strconv.FormatInt(int64(id), 10),
 		"player_id": session.Get("player_id"),
 	})
 }
 
 func viewGame(c *gin.Context) {
-	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
-	r, ok := rooms[int(id)]
+	roomId64, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		displayError(c, err)
+	}
+	roomId := int(roomId64)
+	r, ok := rooms[roomId]
+	if !ok {
+		displayError(c, nil)
+		return
+	}
 	session := sessions.Default(c)
-	x := session.Get("player_id")
-	if x == nil {
-		player := rand.Intn(99999998) + 1
-		session.Set("player_id", player)
-		session.Save()
+	playerId := session.Get("player_id")
+	if playerId == nil {
+		ok = false
+	} else {
+		_, ok = playerIds[playerId.(int)]
 	}
 	if !ok {
-		c.Redirect(http.StatusTemporaryRedirect, "/")
+		playerId, ok := genPlayerId(roomId)
+		if !ok {
+			displayError(c, errors.New("error generationg player id"))
+		}
+		session.Set("player_id", playerId)
+		session.Save()
 	}
 	switch r.Game {
 	case CoC:
-		viewCoC(c, id)
+		viewCoC(c, roomId)
 	case RezTech:
-		c.Redirect(http.StatusTemporaryRedirect, "/")
+		viewRezTech(c, roomId)
 	default:
-		c.Redirect(http.StatusTemporaryRedirect, "/")
+		displayError(c, err)
 	}
+}
+
+func displayError(c *gin.Context, err interface{}) {
+	c.HTML(http.StatusInternalServerError, "error.html", gin.H{
+		"title": "An error has occured",
+	})
+}
+
+func viewError(c *gin.Context) {
+	displayError(c, nil)
 }

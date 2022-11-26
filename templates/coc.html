@@ -1,44 +1,70 @@
 <html>
 <head>
     <script src="/js/coc.js" type="module"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <title>{{ .title }}</title>
 </head>
 <body>
     <h1>{{ .title }}</h1>
     <form id="f_roll">
         <p>
             <label for="name">Char</label>
-            <input type="text" id="f)name">
+            <input type="text" id="f_name">
             <label for="action">Action</label>
             <input type="text" id="f_action">
         </p>
         <p>
-            <label for="mod-2">-2</label>
-            <input type="radio" id="mod-2" value="-2">
-            <label for="mod-1">-1</label>
-            <input type="radio" name="mod" id="mod-2" value="-1">
-            <label for="mod+0">0</label>
-            <input type="radio" name="mod" id="mod+0" value="0">
-            <label for="mod+1">1</label>
-            <input type="radio" name="mod" id="mod+1" value="1">
-            <label for="mod+2">2</label>
-            <input type="radio" name="mod" id="mod" value="2">
+            <table class="t_selection">
+            <thead>
+            <tr>
+                <th>Standard</th>
+                <th>Advantage</th>
+                <th>Disadvantage</th>
+            </tr>     
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <label for="mod+0">0</label>
+                    <input type="radio" name="mod" id="mod+0" value="0">
+
+               </td>
+                <td>
+                    <label for="mod+1">1</label>
+                    <input type="radio" name="mod" id="mod+1" value="1">
+                    <label for="mod+2">2</label>
+                    <input type="radio" name="mod" id="mod" value="2">
+                </td>
+                 <td>
+                    <label for="mod-1">-1</label>
+                    <input type="radio" name="mod" id="mod-2" value="-1">
+                     <label for="mod-2">-2</label>
+                    <input type="radio" name="mod" id="mod-2" value="-2">
+
+                </td>
+            </tr>
+            </tbody>
+            </table>
         </p>
         <p>
             <input type="submit" value="Roll">
         </p>
     </form>
 
-    <table>
+    <div class="result_table">
+    <table class="t_result">
         <thead>
            <tr>
-            <td>#</td>
-            <td>Time</td>
-            <td>Char</td>
-            <td>Roll</td>
-            <td>Result</td>
+            <th>#</th>
+            <th>Time</th>
+            <th>Char</th>
+            <th>Action</th>
+            <th>Roll</th>
+            <th>Result</th>
            </tr> 
         </thead>
         <tbody id="tbody_rolls"></tbody>
     </table>
+    </div>
 </body>
 </html>

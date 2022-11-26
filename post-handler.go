@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
 
@@ -10,8 +11,8 @@ import (
 
 func rollDice(c *gin.Context) {
 	idStr := c.Param("id")
-	var json map[string]string
-	err := c.BindJSON(&json)
+	var data map[string]string
+	err := c.BindJSON(&data)
 	if err != nil {
 		c.Status(http.StatusBadRequest)
 		return
@@ -19,19 +20,24 @@ func rollDice(c *gin.Context) {
 	id, _ := strconv.ParseInt(idStr, 10, 32)
 	session := sessions.Default(c)
 	player := session.Get("player_id").(int)
-	col := json["color"]
-	char := json["char"]
-	mod, _ := strconv.ParseInt(json["mod"], 10, 32)
-	action := json["action"]
-	dice := json["dice"]
+	col := data["color"]
+	char := data["char"]
+	mod, _ := strconv.ParseInt(data["mod"], 10, 32)
+	action := data["action"]
+	dice := data["dice"]
 	diceArr := make([]int8, 0)
 	if dice != "" {
+		json.Unmarshal([]byte(dice), &diceArr)
 	}
 	r := rooms[int(id)]
 	r.addPlayer(player, char, col)
-	r.roll(diceArr, int(mod), int(player), action)
-	rooms[int(id)] = r
-	c.Status(200)
+	_, err = r.roll(diceArr, int(mod), player, action)
+	if err != nil {
+		c.Status(http.StatusForbidden)
+	} else {
+		rooms[int(id)] = r
+		c.Status(http.StatusOK)
+	}
 }
 
 func addPlayer(c *gin.Context) {
@@ -43,7 +49,7 @@ func addPlayer(c *gin.Context) {
 	}
 	room, _ := strconv.ParseInt(json["room"], 10, 32)
 	id, _ := strconv.ParseInt(json["id"], 10, 32)
-	name, _ := json["name"]
+	name, _ := json["char"]
 	color, _ := json["color"]
 	r := rooms[int(room)]
 	r.addPlayer(int(id), name, color)

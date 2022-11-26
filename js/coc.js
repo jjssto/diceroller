@@ -1,43 +1,55 @@
 import "./jquery-3.6.1.js"
 
 function addCol(row, text) {
-    col = document.createElement("td")
-    col.innerHtml = text 
-    row.appendChild(col)
+    const col = row.insertCell()
+    col.appendChild(document.createTextNode(text))
 }
 
-function createRow(drow) {
+function createRow(drow, id) {
     var row = document.createElement("tr")
-    addCol(row, drow[0])
-    const dat = drow[1]
+    const dat = drow[0]
+    const isOwnRoll = drow[1]
+    if (isOwnRoll == "1") {
+        row.className = "my_roll"
+    }
+    addCol(row, id)
     addCol(row, dat.T)
-    addCol(row, dat.P)
-    addCol(row, dat.D)
+    const colP = row.insertCell()
+    colP.appendChild(document.createTextNode(dat.P))
+    colP.className = "my_name"
+    addCol(row, dat.A)
+    const colD = row.insertCell()
+    var text = ""
+    for(let i in dat.D) {
+        text += dat.D[i].R 
+        text += ", "
+    }
+    colD.appendChild(document.createTextNode(text))
     addCol(row, dat.R)
     return row
 }
 
-function insertRolls(data) {
+function insertRolls(data_raw) {
+    const data = JSON.parse(data_raw)
     const tbody = document.getElementById("tbody_rolls")
     const first_row = tbody.firstChild
     var roll_id
     if (first_row) {
-        roll_id = first_row.getElementById("roll_id").val()
+        roll_id = first_row.firstChild.firstChild.textContent
     } else {
-        roll_id = 0
+        roll_id = -1
     }
-
-    for (i=0; i<length(data); i++) {
-        var drow = data[i]
-        if (roll_id >= drow[0]) {
-            continue
-        }
-        localStorage.setItem("last_roll", drow[0])
-        const row = createRow(drow)
-        if (roll_id > 0) { 
-            first_row.insertBefore(row)
-        } else {
-            tbody.appendChild(row)
+    for (let i in data) {
+        const drow = data[i]
+        localStorage.setItem("last_roll", i)
+        const row = createRow(drow, i)
+        if (i > roll_id) { 
+            //if (roll_id >= 0) {
+            //    tbody.insertBefore(row, first_row)
+            //} else {
+                tbody.appendChild(row)
+                row.scrollIntoView(true)
+            //}
         }
     }
 }
@@ -46,12 +58,11 @@ function getRolls() {
     var target = location.href.replace("room", "rolls")
     const last_roll = localStorage.getItem("last_roll")
     if (last_roll != "") {
-        target += last_roll
+        target += "/" + last_roll
     }
    $.ajax({
         url: target,
         method: "GET",
-        dataType: "app/json",
         success: insertRolls  
    }) 
 }
@@ -67,18 +78,15 @@ $(document).ready(function(){
         const player_id = "0"
         const mod = $("input[name='mod']:checked").val()
         var data = "{"
-        data += '"player": "' + player_id + '",'
         data += '"mod": "' + mod + '",'
         data += '"char": "' + $("#f_name").val() + '",'
         data += '"action": "' + $("#f_action").val() + '"'
         data += "}"
         $.ajax({
             url: loc,
-            method: "GET",
+            method: "POST",
             data: data,
             contentType: "app/json",
-            dataType: "app/json",
-            success: insertRolls
         })
     })
 })
