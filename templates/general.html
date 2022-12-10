@@ -1,0 +1,133 @@
+<html>
+
+<head>
+  <script src="/js/general.js" type="module"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <title>{{ .title }}</title>
+</head>
+
+<body>
+  <div class="container">
+    <c_header>
+      <h1>{{ .title }}</h1>
+    </c_header>
+    <c_roll_form>
+      <form id="f_roll">
+        <p>
+          <label for="name">Char</label>
+          <input type="text" id="f_name">
+          <label for="action">Action</label>
+          <input type="text" id="f_action">
+        </p>
+        <p>
+          <label for="s_d20">d20</label>
+          <select name="s_d20" , id="s_d20">
+            <option value="0" class="o1">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+          </select>
+          <label for="s_d12">d12</label>
+          <select name="s_d12" , id="s_d12">
+            <option value="0" class="o1">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+          </select>
+          <label for="s_d10">d10</label>
+          <select name="s_d10" , id="s_d10">
+            <option value="0" class="o1">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+          </select>
+          <label for="s_d8">d8</label>
+          <select name="s_d8" , id="s_d8">
+            <option value="0" class="o1">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+          </select>
+          <label for="s_d6">d6</label>
+          <select name="s_d6" , id="s_d6">
+            <option value="0" class="o1">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+          </select>
+          <label for="s_d4">d4</label>
+          <select name="s_d4" , id="s_d4">
+            <option value="0" class="o1">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+          </select>
+        </p>
+        <p>
+          <input type="submit" value="Roll">
+          <input type="button" value="Reset" id="b_reset">
+        </p>
+      </form>
+    </c_roll_form>
+    <c_roll_result>
+      <div class="result_table">
+        <table class="t_result">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Time</th>
+              <th>Char</th>
+              <th>Action</th>
+              <th>D20</th>
+              <th>D12</th>
+              <th>D10</th>
+              <th>D8</th>
+              <th>D6</th>
+              <th>D4</th>
+              <th>Result</th>
+            </tr>
+          </thead>
+          <tbody id="tbody_rolls"></tbody>
+        </table>
+      </div>
+    </c_roll_result>
+  </div>
+</body>
+
+</html>
