@@ -1,8 +1,63 @@
 <html>
-    <head>
-        <script src="js/home.js" type="module"></script>
-    </head>
-    <h1>{{ .title }}</h1>
-    <button value="CoC">New CoC room</button>
-    <button value="RezTech">New RezTech room</button>
-  </html>
+
+<head>
+  <script src="js/home.js" type="module"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <title>Rooms to Roll Dice in</title>
+</head>
+<div class="container">
+  <c_header>
+    <h1>Rooms to Roll Dice in</h1>
+  </c_header>
+  <c_main>
+    <div class="d_room-selection-buttons">
+      <h2>Create a Room</h2>
+      <p>
+        In order to get a room in which you can roll dice together with your roll
+        playing game, just click on one of the buttons.
+        You will then be rdirected to your newly created room.
+        Just share the URL of that room with your group.
+      </p>
+      <p>
+        Rooms are automatically deleted if there is no activity for four hours.
+      </p>
+
+      <p>
+        <button class="b_room-selection" value="CoC">New CoC room</button>
+        <button class="b_room-selection" value="RezTech">New RezTech room</button>
+        <button class="b_room-selection" value="General">New general room</button>
+      </p>
+    </div>
+    </c_main>
+    <c_stats>
+    <div class="d_statistics">
+      <h2>Statistics</h2>
+      <p>
+        The below table contains information about the number of rooms, players
+        and dice rolls that currently exist on this site.
+      </p>
+      <table class="t_statistics">
+        <thead>
+          <tr>
+            <th>CoC rooms</th>
+            <th>RezTech rooms</th>
+            <th>general rooms</th>
+            <th>players</th>
+            <th>dice rolls</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ .nbrCoC }}</td>
+            <td>{{ .nbrRezTech }}</td>
+            <td>{{ .nbrGeneral }}</td>
+            <td>{{ .nbrPlayers }}</td>
+            <td>{{ .nbrDiceRolls }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+</c_stats>
+</div>
+
+</html>

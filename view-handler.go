@@ -11,14 +11,22 @@ import (
 
 func viewHome(c *gin.Context) {
 	c.HTML(http.StatusOK, "home.html", gin.H{
-		"title": "Dice roller",
+		"nbrCoC":       stats.nbrCoC,
+		"nbrRezTech":   stats.nbrRezTech,
+		"nbrGeneral":   stats.nbrGeneral,
+		"nbrDiceRolls": stats.nbrDiceRolls,
+		"nbrPlayers":   stats.nbrPlayer,
 	})
+}
+
+func faviconHandler(c *gin.Context) {
+	http.ServeFile(c.Writer, c.Request, "favicon.png")
 }
 
 func viewCoC(c *gin.Context, id int) {
 	session := sessions.Default(c)
 	c.HTML(http.StatusOK, "coc.html", gin.H{
-		"title":     "Call of Cathulu, Room #" + strconv.FormatInt(int64(id), 10),
+		"title":     "Call of Cthulhu, Room #" + strconv.FormatInt(int64(id), 10),
 		"player_id": session.Get("player_id"),
 	})
 }
@@ -27,6 +35,14 @@ func viewRezTech(c *gin.Context, id int) {
 	session := sessions.Default(c)
 	c.HTML(http.StatusOK, "reztech.html", gin.H{
 		"title":     "RezTech, Room #" + strconv.FormatInt(int64(id), 10),
+		"player_id": session.Get("player_id"),
+	})
+}
+
+func viewGeneral(c *gin.Context, id int) {
+	session := sessions.Default(c)
+	c.HTML(http.StatusOK, "general.html", gin.H{
+		"title":     "Room #" + strconv.FormatInt(int64(id), 10),
 		"player_id": session.Get("player_id"),
 	})
 }
@@ -62,6 +78,8 @@ func viewGame(c *gin.Context) {
 		viewCoC(c, roomId)
 	case RezTech:
 		viewRezTech(c, roomId)
+	case General:
+		viewGeneral(c, roomId)
 	default:
 		displayError(c, err)
 	}

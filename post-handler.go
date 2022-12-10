@@ -9,6 +9,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func checkDiceArr(diceArr []int8) ([]int8, bool) {
+	if len(diceArr) > 200 {
+		ret := make([]int8, 200)
+		for i := 0; i < MAX_DICE; i++ {
+			ret[i] = diceArr[i]
+		}
+		return ret, false
+	} else {
+		return diceArr, true
+	}
+}
+
 func rollDice(c *gin.Context) {
 	idStr := c.Param("id")
 	var data map[string]string
@@ -29,6 +41,7 @@ func rollDice(c *gin.Context) {
 	if dice != "" {
 		json.Unmarshal([]byte(dice), &diceArr)
 	}
+	diceArr, _ = checkDiceArr(diceArr)
 	r := rooms[int(id)]
 	r.addPlayer(player, char, col)
 	_, err = r.roll(diceArr, int(mod), player, action)
@@ -69,8 +82,7 @@ func addRoomHandler(c *gin.Context) {
 	case "RezTech":
 		g = RezTech
 	default:
-		c.Status(http.StatusBadRequest)
-		return
+		g = General
 	}
 	id, err := addRoom(g)
 	if err != nil {

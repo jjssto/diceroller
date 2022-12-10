@@ -1,70 +1,81 @@
 <html>
+
 <head>
-    <script src="/js/coc.js" type="module"></script>
-    <link rel="stylesheet" href="/css/style.css">
-    <title>{{ .title }}</title>
+  <script src="/js/coc.js" type="module"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <title>{{ .title }}</title>
 </head>
+
 <body>
-    <h1>{{ .title }}</h1>
-    <form id="f_roll">
+  <div class="container">
+    <c_header>
+      <h1>{{ .title }}</h1>
+    </c_header>
+    <c_roll_form>
+      <form id="f_roll">
         <p>
-            <label for="name">Char</label>
-            <input type="text" id="f_name">
-            <label for="action">Action</label>
-            <input type="text" id="f_action">
+          <label for="name">Char</label>
+          <input type="text" id="f_name">
+          <label for="action">Action</label>
+          <input type="text" id="f_action">
         </p>
         <p>
-            <table class="t_selection">
-            <thead>
+        <table class="t_selection">
+          <thead>
             <tr>
-                <th>Standard</th>
-                <th>Advantage</th>
-                <th>Disadvantage</th>
-            </tr>     
-            </thead>
-            <tbody>
-            <tr>
-                <td>
-                    <label for="mod+0">0</label>
-                    <input type="radio" name="mod" id="mod+0" value="0">
-
-               </td>
-                <td>
-                    <label for="mod+1">1</label>
-                    <input type="radio" name="mod" id="mod+1" value="1">
-                    <label for="mod+2">2</label>
-                    <input type="radio" name="mod" id="mod" value="2">
-                </td>
-                 <td>
-                    <label for="mod-1">-1</label>
-                    <input type="radio" name="mod" id="mod-2" value="-1">
-                     <label for="mod-2">-2</label>
-                    <input type="radio" name="mod" id="mod-2" value="-2">
-
-                </td>
+              <th>Standard</th>
+              <th>Advantage</th>
+              <th>Disadvantage</th>
             </tr>
-            </tbody>
-            </table>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <label for="mod+0">0</label>
+                <input type="radio" name="mod" id="mod+0" value="0">
+
+              </td>
+              <td>
+                <label for="mod+1">1</label>
+                <input type="radio" name="mod" id="mod+1" value="1">
+                <label for="mod+2">2</label>
+                <input type="radio" name="mod" id="mod" value="2">
+              </td>
+              <td>
+                <label for="mod-1">-1</label>
+                <input type="radio" name="mod" id="mod-2" value="-1">
+                <label for="mod-2">-2</label>
+                <input type="radio" name="mod" id="mod-2" value="-2">
+
+              </td>
+            </tr>
+          </tbody>
+        </table>
         </p>
         <p>
-            <input type="submit" value="Roll">
+          <input type="submit" value="Roll">
         </p>
-    </form>
+      </form>
+    </c_roll_form>
 
-    <div class="result_table">
-    <table class="t_result">
-        <thead>
-           <tr>
-            <th>#</th>
-            <th>Time</th>
-            <th>Char</th>
-            <th>Action</th>
-            <th>Roll</th>
-            <th>Result</th>
-           </tr> 
-        </thead>
-        <tbody id="tbody_rolls"></tbody>
-    </table>
-    </div>
+    <c_roll_result>
+      <div class="result_table">
+        <table class="t_result">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Time</th>
+              <th>Char</th>
+              <th>Action</th>
+              <th>Roll</th>
+              <th>Result</th>
+            </tr>
+          </thead>
+          <tbody id="tbody_rolls"></tbody>
+        </table>
+      </div>
+    </c_roll_result>
+  </div>
 </body>
+
 </html>
