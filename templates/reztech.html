@@ -1,0 +1,80 @@
+<html>
+
+<head>
+  <script src="/js/reztech.js" type="module"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <title>{{ .title }}</title>
+</head>
+
+<body>
+  <div class="container">
+    <c_header>
+      <h1>{{ .title }}</h1>
+    </c_header>
+    <c_roll_form>
+      <form id="f_roll">
+        <p>
+          <label for="name">Char</label>
+          <input type="text" id="f_name">
+          <label for="action">Action</label>
+          <input type="text" id="f_action">
+        </p>
+        <p>
+          <label for="s_attribute">Atribute</label>
+          <select name="s_attribute" , id="s_attribute">
+            <option value="0" class="o1">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+          </select>
+          <label for="s_skill">Skill</label>
+          <select name="s_skill" , id="s_skill">
+            <option value="0" class="o1">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+          </select>
+          <label for="i_attribute_only">Attribute only:</label>
+          <input type="checkbox" id="i_attribute_only" value="1">
+        </p>
+        <p>
+          <input type="submit" value="Roll">
+          <input type="button" value="Reset" id="b_reset">
+        </p>
+      </form>
+    </c_roll_form>
+    <c_roll_result>
+      <div class="result_table">
+        <table class="t_result">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Time</th>
+              <th>Char</th>
+              <th>Action</th>
+              <th>D12</th>
+              <th>D8</th>
+              <th>D6</th>
+              <th>Result</th>
+            </tr>
+          </thead>
+          <tbody id="tbody_rolls"></tbody>
+        </table>
+      </div>
+    </c_roll_result>
+  </div>
+</body>
+
+</html>
