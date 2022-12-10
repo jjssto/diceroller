@@ -70,7 +70,7 @@ function insertRolls(data_raw) {
 }
 
 function getRolls() {
-    var target = location.href.replace("room", "rolls")
+    var target = location.href.replace("room/", "rolls/")
     const last_roll = localStorage.getItem("last_roll")
     if (last_roll != "") {
         target += "/" + last_roll
