@@ -1,4 +1,8 @@
 import "./jquery-3.6.1.js"
+import {detectFocus, hasFocus} from "./fun.js";
+
+detectFocus()
+
 
 function addCol(row, text) {
     const col = row.insertCell()
@@ -84,6 +88,9 @@ function insertRolls(data_raw) {
 }
 
 function getRolls() {
+    if (!hasFocus) {
+        return
+    }
     var target = location.href.replace("room/", "rolls/")
     const last_roll = localStorage.getItem("last_roll")
     if (last_roll != "") {

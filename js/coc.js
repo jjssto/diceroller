@@ -1,4 +1,7 @@
 import "./jquery-3.6.1.js"
+import {detectFocus, hasFocus} from "./fun.js";
+
+detectFocus()
 
 function addCol(row, text) {
     const col = row.insertCell()
@@ -41,7 +44,7 @@ function insertRolls(data_raw) {
     }
     for (let i in data) {
         const drow = data[i]
-        localStorage.setItem("last_roll", i)
+        sessionStorage.setItem("last_roll", i)
         const row = createRow(drow, i)
         if (i > roll_id) { 
             //if (roll_id >= 0) {
@@ -55,8 +58,11 @@ function insertRolls(data_raw) {
 }
 
 function getRolls() {
+    if (!hasFocus) {
+        return
+    }
     var target = location.href.replace("room/", "rolls/")
-    const last_roll = localStorage.getItem("last_roll")
+    const last_roll = sessionStorage.getItem("last_roll")
     if (last_roll != "") {
         target += "/" + last_roll
     }
@@ -68,7 +74,7 @@ function getRolls() {
 }
 
 $(document).ready(function(){
-    localStorage.setItem("last_roll", "")
+    sessionStorage.setItem("last_roll", "")
     getRolls()
 
 

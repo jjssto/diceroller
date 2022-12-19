@@ -1,4 +1,7 @@
 import "./jquery-3.6.1.js"
+import {detectFocus, hasFocus} from "./fun.js";
+
+detectFocus()
 
 function addCol(row, text) {
     const col = row.insertCell()
@@ -70,6 +73,9 @@ function insertRolls(data_raw) {
 }
 
 function getRolls() {
+    if (!hasFocus) {
+        return
+    }
     var target = location.href.replace("room/", "rolls/")
     const last_roll = localStorage.getItem("last_roll")
     if (last_roll != "") {
@@ -99,6 +105,15 @@ function setDice() {
                 text += ", "
             }
             text += "8"
+        }
+    } else if (skill == 0) {
+        for (let i = 0; i < attr; i++) {
+            if (first) {
+                first = false
+            } else {
+                text += ", "
+            }
+            text += "6"
         }
     } else if (attr >= skill) {
         for (let i = 0; i < skill; i++) {
