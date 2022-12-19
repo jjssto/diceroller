@@ -1,0 +1,40 @@
+<html>
+
+<head>
+  <script src="js/home.js" type="module"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <title>Stats</title>
+</head>
+<div class="container">
+<c_header><h1>Stats</h1></c_header>
+<c_main>
+    <div class="d_statistics">
+      <p>
+        The below table contains information about the number of rooms, players
+        and dice rolls that currently exist on this site.
+      </p>
+      <table class="t_statistics">
+        <thead>
+          <tr>
+            <th>CoC rooms</th>
+            <th>RezTech rooms</th>
+            <th>general rooms</th>
+            <th>players</th>
+            <th>dice rolls</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ .nbrCoC }}</td>
+            <td>{{ .nbrRezTech }}</td>
+            <td>{{ .nbrGeneral }}</td>
+            <td>{{ .nbrPlayers }}</td>
+            <td>{{ .nbrDiceRolls }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+</c_main>
+</div>
+
+</html>
