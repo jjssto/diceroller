@@ -45,6 +45,7 @@ func main() {
 	router.StaticFile("/favicon.png", "./favicon.png")
 	router.GET("/favicon.ico", faviconHandler)
 	router.GET("/", viewHome)
+	router.GET("/stats", viewStats)
 	router.GET("/error", viewError)
 	router.GET("/room/:id", viewGame)
 	router.GET("/rolls/:id", getAllRolls)

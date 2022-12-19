@@ -10,13 +10,7 @@ import (
 )
 
 func viewHome(c *gin.Context) {
-	c.HTML(http.StatusOK, "home.html", gin.H{
-		"nbrCoC":       stats.nbrCoC,
-		"nbrRezTech":   stats.nbrRezTech,
-		"nbrGeneral":   stats.nbrGeneral,
-		"nbrDiceRolls": stats.nbrDiceRolls,
-		"nbrPlayers":   stats.nbrPlayer,
-	})
+	c.HTML(http.StatusOK, "home.html", gin.H{})
 }
 
 func faviconHandler(c *gin.Context) {
@@ -93,4 +87,14 @@ func displayError(c *gin.Context, err interface{}) {
 
 func viewError(c *gin.Context) {
 	displayError(c, nil)
+}
+
+func viewStats(c *gin.Context) {
+	c.HTML(http.StatusOK, "stats.html", gin.H{
+		"nbrCoC":       stats.nbrCoC,
+		"nbrRezTech":   stats.nbrRezTech,
+		"nbrGeneral":   stats.nbrGeneral,
+		"nbrDiceRolls": stats.nbrDiceRolls,
+		"nbrPlayers":   stats.nbrPlayer,
+	})
 }
