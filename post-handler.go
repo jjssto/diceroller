@@ -62,19 +62,21 @@ func addPlayer(c *gin.Context) {
 	}
 	room, _ := strconv.ParseInt(json["room"], 10, 32)
 	id, _ := strconv.ParseInt(json["id"], 10, 32)
-	name, _ := json["char"]
-	color, _ := json["color"]
+	name := json["char"]
+	color := json["color"]
 	r := rooms[int(room)]
 	r.addPlayer(int(id), name, color)
 	c.Status(http.StatusOK)
 }
 
 func addRoomHandler(c *gin.Context) {
-	game, ok := c.GetPostForm("id")
-	if !ok {
+	var json map[string]string
+	err := c.BindJSON(&json)
+	if err != nil {
 		c.Status(http.StatusBadRequest)
 		return
 	}
+	game := json["id"]
 	var g Game
 	switch game {
 	case "CoC":
@@ -90,4 +92,35 @@ func addRoomHandler(c *gin.Context) {
 		return
 	}
 	c.AsciiJSON(http.StatusOK, id)
+}
+
+func changeRoomSettings(c *gin.Context) {
+	var json map[string]string
+	err := c.BindJSON(&json)
+	session := sessions.Default(c)
+	if err != nil {
+		c.Status(http.StatusBadRequest)
+		return
+	}
+	playerId := session.Get("player_id").(int)
+	roomId, _ := strconv.ParseInt(json["room_id"], 10, 32)
+	roomName := json["room_name"]
+	color := json["color"]
+	room := rooms[int(roomId)]
+	if int(playerId) != room.OwnerId {
+		c.Status(http.StatusForbidden)
+		return
+	}
+	if color == "-" {
+		room.Color = ""
+	} else if len(color) > 0 {
+		room.Color = color
+	}
+	if roomName == "-" {
+		room.Name = ""
+	} else if len(roomName) > 0 {
+		room.Name = roomName
+	}
+	rooms[int(roomId)] = room
+	c.Status(http.StatusOK)
 }

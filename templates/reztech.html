@@ -1,6 +1,14 @@
 <html>
 
 <head>
+  <script>
+    var roomId = "{{ .room_id }}"
+    var isOwner = "{{ .is_owner }}"
+    var color = "{{ .color }}"
+    sessionStorage.setItem("room_id", roomId)
+    sessionStorage.setItem("is_owner", isOwner)
+    sessionStorage.setItem("color", color)
+  </script>
   <script src="/js/reztech.js" type="module"></script>
   <link rel="stylesheet" href="/css/style.css">
   <title>{{ .title }}</title>
@@ -8,8 +16,8 @@
 
 <body>
   <div class="container">
-    <c_header>
-      <h1>{{ .title }}</h1>
+    <c_header id = "title_line">
+      <h1 id="title_tag">{{ .title }}</h1>
     </c_header>
     <c_roll_form>
       <form id="f_roll">
@@ -58,7 +66,7 @@
     <c_roll_result>
       <div class="result_table">
         <table class="t_result">
-          <thead>
+          <thead id="table_head">
             <tr>
               <th>#</th>
               <th>Time</th>
@@ -74,6 +82,18 @@
         </table>
       </div>
     </c_roll_result>
+    <c_footer>
+      <form id = "f_setting">
+        <p>
+        <label for="f_setting_name">Name:</label> 
+        <input id="f_setting_name" type="text">
+        <label for="f_setting_color">Color:</label> 
+        <input id="f_setting_color" type="text">
+        <input type="submit">
+        </p>
+
+      </form>
+    </c_footer>
   </div>
 </body>
 

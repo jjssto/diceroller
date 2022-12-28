@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -9,8 +10,39 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func getTitle(room Room) string {
+	var ret string
+	if len(room.Name) > 0 {
+		ret = room.Name
+	} else {
+		ret = fmt.Sprintf("Room #%d", room.Id)
+	}
+	switch room.Game {
+	case CoC:
+		ret += " [Call of Cthulhu]"
+	case RezTech:
+		ret += " [RezTech]"
+	case General:
+		ret += " [general dice roller]"
+	}
+	return ret
+}
+
+func checkOwnership(c *gin.Context, room Room) bool {
+	playerId := getPlayerId(c, room.Id)
+	if playerId == room.OwnerId {
+		return true
+	} else {
+		return false
+	}
+}
+
 func viewHome(c *gin.Context) {
-	c.HTML(http.StatusOK, "home.html", gin.H{})
+	c.HTML(200, "home.html", gin.H{
+		"title": "Rooms to roll dice in",
+	})
+	x := 3
+	x += 1
 }
 
 func faviconHandler(c *gin.Context) {
@@ -19,25 +51,32 @@ func faviconHandler(c *gin.Context) {
 
 func viewCoC(c *gin.Context, id int) {
 	session := sessions.Default(c)
+	room := rooms[id]
 	c.HTML(http.StatusOK, "coc.html", gin.H{
-		"title":     "Call of Cthulhu, Room #" + strconv.FormatInt(int64(id), 10),
+		"title":     getTitle(room),
+		"color":     room.Color,
 		"player_id": session.Get("player_id"),
+		"owner_id":  fmt.Sprint(room.OwnerId),
 	})
 }
 
 func viewRezTech(c *gin.Context, id int) {
-	session := sessions.Default(c)
+	room := rooms[id]
 	c.HTML(http.StatusOK, "reztech.html", gin.H{
-		"title":     "RezTech, Room #" + strconv.FormatInt(int64(id), 10),
-		"player_id": session.Get("player_id"),
+		"title":    getTitle(room),
+		"color":    room.Color,
+		"room_id":  fmt.Sprintf("%d", room.Id),
+		"is_owner": fmt.Sprint(checkOwnership(c, room)),
 	})
 }
 
 func viewGeneral(c *gin.Context, id int) {
-	session := sessions.Default(c)
+	room := rooms[id]
 	c.HTML(http.StatusOK, "general.html", gin.H{
-		"title":     "Room #" + strconv.FormatInt(int64(id), 10),
-		"player_id": session.Get("player_id"),
+		"title":    getTitle(room),
+		"color":    room.Color,
+		"room_id":  fmt.Sprintf("%d", room.Id),
+		"owner_id": fmt.Sprintf("%d", room.OwnerId),
 	})
 }
 
@@ -52,20 +91,9 @@ func viewGame(c *gin.Context) {
 		displayError(c, nil)
 		return
 	}
-	session := sessions.Default(c)
-	playerId := session.Get("player_id")
-	if playerId == nil {
-		ok = false
-	} else {
-		_, ok = playerIds[playerId.(int)]
-	}
-	if !ok {
-		playerId, ok := genPlayerId(roomId)
-		if !ok {
-			displayError(c, errors.New("error generationg player id"))
-		}
-		session.Set("player_id", playerId)
-		session.Save()
+	playerId := getPlayerId(c, roomId)
+	if r.setOwnerId(playerId) {
+		rooms[roomId] = r
 	}
 	switch r.Game {
 	case CoC:
@@ -77,6 +105,37 @@ func viewGame(c *gin.Context) {
 	default:
 		displayError(c, err)
 	}
+}
+
+func (room *Room) setOwnerId(playerId int) bool {
+	if room.OwnerId == 0 {
+		room.OwnerId = playerId
+		return true
+	} else {
+		return false
+	}
+}
+
+func getPlayerId(c *gin.Context, roomId int) int {
+	session := sessions.Default(c)
+	playerIdRaw := session.Get("player_id")
+	var playerId int
+	var ok bool
+	if playerIdRaw == nil {
+		ok = false
+	} else {
+		playerId = playerIdRaw.(int)
+		_, ok = playerIds[playerId]
+	}
+	if !ok {
+		playerId, ok = genPlayerId(roomId)
+		if !ok {
+			displayError(c, errors.New("error generationg player id"))
+		}
+		session.Set("player_id", playerId)
+		session.Save()
+	}
+	return playerId
 }
 
 func displayError(c *gin.Context, err interface{}) {

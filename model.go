@@ -42,8 +42,11 @@ type Room struct {
 	Id        int
 	Game      Game
 	Players   PlayerList
+	Color     string
+	OwnerId   int
+	Name      string
 	DiceRolls []DiceRoll
-	created   time.Time
+	Created   time.Time
 }
 
 func (d *Die) json() string {
@@ -62,7 +65,7 @@ func (d *DiceRoll) json(room int) string {
 		} else {
 			dice += ","
 		}
-		dice += fmt.Sprintf("%s", val.json())
+		dice += val.json()
 	}
 	return fmt.Sprintf("{%s, \"D\":[%s]}", info, dice)
 }
@@ -109,7 +112,7 @@ func (r *DiceRoll) rollCoC(dice []int8, mod int) error {
 	case -2:
 		dice = []int8{0, 0, 0, 10}
 	default:
-		return errors.New("Invalid modifier")
+		return errors.New("invalid modifier")
 	}
 	err := r.roll(dice)
 	if err != nil {
@@ -224,7 +227,7 @@ func roll(eyes int8) (Die, error) {
 	} else if eyes > 0 {
 		max = int(eyes)
 	} else {
-		return Die{}, errors.New("Invalid number of eyes")
+		return Die{}, errors.New("invalid number of eyes")
 	}
 	return Die{Eyes: eyes, Result: int8(rand.Intn(max) + 1)}, nil
 }
@@ -255,7 +258,7 @@ func addRoom(game Game) (int, error) {
 	if !ok {
 		return 0, errors.New("error while generating room id")
 	}
-	r := Room{Id: id, Game: game, created: time.Now()}
+	r := Room{Id: id, Game: game, Created: time.Now(), OwnerId: 0}
 	rooms[id] = r
 	return id, nil
 }
@@ -300,7 +303,7 @@ func deleteOldGames(rooms map[int]Room, playerIds map[int][]int) {
 	for i, v := range rooms {
 		deleteRoom := false
 		if len(v.DiceRolls) == 0 {
-			if v.created.Before(comp) {
+			if v.Created.Before(comp) {
 				deleteRoom = true
 			}
 		} else if v.DiceRolls[len(v.DiceRolls)-1].Time.Before(comp) {

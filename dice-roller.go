@@ -35,10 +35,11 @@ func main() {
 	go runStatistics()
 	initRand()
 	rooms = make(map[int]Room)
-	router := gin.Default()
+	router := gin.New()
 	store := cookie.NewStore([]byte("secret"))
 	router.Use(sessions.Sessions("mysession", store))
 	router.LoadHTMLGlob("templates/*")
+	//router.LoadHTMLFiles(files...)
 	router.Static("/js", "./js")
 	router.Static("/css", "./css")
 	router.Static("/rec", "./rec")
@@ -51,7 +52,7 @@ func main() {
 	router.GET("/rolls/:id", getAllRolls)
 	router.GET("/rolls/:id/:roll_nbr", getRolls)
 	router.POST("/room/:id", rollDice)
+	router.POST("/roomSettings", changeRoomSettings)
 	router.POST("/", addRoomHandler)
 	router.Run("localhost:9000")
-
 }

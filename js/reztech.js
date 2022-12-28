@@ -1,7 +1,10 @@
 import "./jquery-3.6.1.js"
-import {detectFocus, hasFocus} from "./fun.js";
+import {detectFocus, hasFocus, settingVisibility, roomSettingForm, setColor} from "./fun.js";
 
+setColor()
 detectFocus()
+settingVisibility()
+roomSettingForm()
 
 function addCol(row, text) {
     const col = row.insertCell()
@@ -59,7 +62,7 @@ function insertRolls(data_raw) {
     }
     for (let i in data) {
         const drow = data[i]
-        localStorage.setItem("last_roll", i)
+        sessionStorage.setItem("last_roll", i)
         const row = createRow(drow, i)
         if (i > roll_id) { 
             //if (roll_id >= 0) {
@@ -77,7 +80,7 @@ function getRolls() {
         return
     }
     var target = location.href.replace("room/", "rolls/")
-    const last_roll = localStorage.getItem("last_roll")
+    const last_roll = sessionStorage.getItem("last_roll")
     if (last_roll != "") {
         target += "/" + last_roll
     }
@@ -162,7 +165,7 @@ function reset() {
 
 
 $(document).ready(function(){
-    localStorage.setItem("last_roll", "")
+    sessionStorage.setItem("last_roll", "")
     getRolls()
 
 
