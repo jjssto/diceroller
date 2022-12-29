@@ -76,15 +76,20 @@ function getRolls() {
     }
     var target = location.href.replace("room/", "rolls/");
     const last_roll = sessionStorage.getItem("last_roll");
-    const date = new Date();
-    const offset = -1 * date.getTimezoneOffset() * 60; 
+    var offsetStr = sessionStorage.getItem("ts_offset");
+    if (offsetStr == null || offsetStr.length == 0) {
+        const date = new Date();
+        const offset = -1 * date.getTimezoneOffset() * 60; 
+        offsetStr = offset.toString();
+        sessionStorage.setItem("ts_offset", offsetStr)
+    }
     if (last_roll != "") {
         target += "/" + last_roll
     }
     fetch(target, {
         method: "GET",
         headers: {
-            "ts_offset": offset
+            "ts_offset": offsetStr
         },
     })
     .then(response => {
