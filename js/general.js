@@ -1,13 +1,12 @@
-import "./jquery-3.6.1.js"
-import {detectFocus, hasFocus} from "./fun.js";
+import {    
+    hasFocus,
+    addCol,
+    init,
+    initReset
+} from "./fun.js";
 
-detectFocus()
-
-
-function addCol(row, text) {
-    const col = row.insertCell()
-    col.appendChild(document.createTextNode(text))
-}
+init(createRow)
+initReset(reset)
 
 function createRow(drow, id) {
     var row = document.createElement("tr")
@@ -66,50 +65,19 @@ function createRow(drow, id) {
     return row
 }
 
-function insertRolls(data_raw) {
-    const data = JSON.parse(data_raw)
-    const tbody = document.getElementById("tbody_rolls")
-    const first_row = tbody.firstChild
-    var roll_id
-    if (first_row) {
-        roll_id = first_row.firstChild.firstChild.textContent
-    } else {
-        roll_id = -1
-    }
-    for (let i in data) {
-        const drow = data[i]
-        localStorage.setItem("last_roll", i)
-        const row = createRow(drow, i)
-        if (i > roll_id) { 
-            tbody.appendChild(row)
-           row.scrollIntoView(true)
-        }
-    }
-}
-
-function getRolls() {
-    if (!hasFocus) {
-        return
-    }
-    var target = location.href.replace("room/", "rolls/")
-    const last_roll = localStorage.getItem("last_roll")
-    if (last_roll != "") {
-        target += "/" + last_roll
-    }
-   $.ajax({
-        url: target,
-        method: "GET",
-        success: insertRolls  
-   }) 
-}
-
 function setDice() {
-    const d20 = $("#s_d20").find(":selected").val()
-    const d12 = $("#s_d12").find(":selected").val()
-    const d10 = $("#s_d10").find(":selected").val()
-    const d8 = $("#s_d8").find(":selected").val()
-    const d6 = $("#s_d6").find(":selected").val()
-    const d4 = $("#s_d4").find(":selected").val()
+    var sel = document.querySelector("#s_d20");
+    const d20 = sel.options[sel.selectedIndex].value; 
+    sel = document.querySelector("#s_d12");  
+    const d12 = sel.options[sel.selectedIndex].value; 
+    sel = document.querySelector("#s_d10");  
+    const d10 = sel.options[sel.selectedIndex].value; 
+    sel = document.querySelector("#s_d8");
+    const d8 = sel.options[sel.selectedIndex].value; 
+    sel = document.querySelector("#s_d6");
+    const d6 = sel.options[sel.selectedIndex].value; 
+    sel = document.querySelector("#s_d4");
+    const d4 = sel.options[sel.selectedIndex].value; 
     
     var first = true
     var isEmpty = false
@@ -173,40 +141,31 @@ function setDice() {
 }
 
 function reset() {
-    $("#s_d20").find("option.o1").prop("selected", true) 
-    $("#s_d12").find("option.o1").prop("selected", true) 
-    $("#s_d10").find("option.o1").prop("selected", true) 
-    $("#s_d8").find("option.o1").prop("selected", true) 
-    $("#s_d6").find("option.o1").prop("selected", true) 
-    $("#s_d4").find("option.o1").prop("selected", true) 
-}
+    document.querySelector("#s_d20").value = 0;
+    document.querySelector("#s_d12").value = 0;
+    document.querySelector("#s_d10").value = 0;
+    document.querySelector("#s_d8").value = 0;
+    document.querySelector("#s_d6").value = 0;
+    document.querySelector("#s_d4").value = 0;
+ }
 
-$(document).ready(function(){
-    localStorage.setItem("last_roll", "")
-    getRolls()
+document.getElementById("f_roll").addEventListener("submit", event => {
+    event.preventDefault()
+    const loc = location.href
+    const player_id = "0"
+    const dice = setDice(); 
+    const chr = document.getElementById("f_name").value;
+    const action = document.getElementById("f_action").value;
 
-
-    $("#f_roll").submit((event) => {
-        event.preventDefault()
-        const loc = location.href
-        const player_id = "0"
-        const dice = setDice() 
-        var data = "{"
-        data += '"dice": "' + dice + '",'
-        data += '"char": "' + $("#f_name").val() + '",'
-        data += '"action": "' + $("#f_action").val() + '"'
-        data += "}"
-        $.ajax({
-            url: loc,
-            method: "POST",
-            data: data,
-            contentType: "app/json",
+    fetch(loc, {
+        method: "POST",
+        headers: {
+            "contentType": "application/json"
+        },
+        body: JSON.stringify({
+            "dice": dice,
+            "char": chr,
+            "action": action
         })
     })
-    
-    $("#b_reset").click((event) => {
-        reset()
-    })
 })
-
-window.setInterval(getRolls, 1000)

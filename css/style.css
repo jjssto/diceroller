@@ -8,7 +8,7 @@
 
 .grid-container {
     display: grid;
-    grid-template-rows: 100px 50px auto auto 50px;
+    grid-template-rows: 75px 75px auto auto 50px;
     grid-template-columns:  300px auto;
 }
 
@@ -31,6 +31,9 @@
     font-size: small;
 }
 
+.header_2 a {
+    color: var(--ornament_fg_col);
+}
 
 .main {
     grid-area: 3/1/ span 2 / span 2;

@@ -50,13 +50,12 @@ func faviconHandler(c *gin.Context) {
 }
 
 func viewCoC(c *gin.Context, id int) {
-	session := sessions.Default(c)
 	room := rooms[id]
 	c.HTML(http.StatusOK, "coc.html", gin.H{
-		"title":     getTitle(room),
-		"color":     room.Color,
-		"player_id": session.Get("player_id"),
-		"owner_id":  fmt.Sprint(room.OwnerId),
+		"title":    getTitle(room),
+		"color":    room.Color,
+		"room_id":  fmt.Sprintf("%d", room.Id),
+		"is_owner": fmt.Sprint(checkOwnership(c, room)),
 	})
 }
 
@@ -76,7 +75,7 @@ func viewGeneral(c *gin.Context, id int) {
 		"title":    getTitle(room),
 		"color":    room.Color,
 		"room_id":  fmt.Sprintf("%d", room.Id),
-		"owner_id": fmt.Sprintf("%d", room.OwnerId),
+		"is_owner": fmt.Sprint(checkOwnership(c, room)),
 	})
 }
 

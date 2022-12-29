@@ -1,12 +1,10 @@
-import "./jquery-3.6.1.js"
-import {detectFocus, hasFocus} from "./fun.js";
+import {    
+    hasFocus,
+    addCol,
+    init
+} from "./fun.js";
 
-detectFocus()
-
-function addCol(row, text) {
-    const col = row.insertCell()
-    col.appendChild(document.createTextNode(text))
-}
+init(createRow);
 
 function createRow(drow, id) {
     var row = document.createElement("tr")
@@ -32,69 +30,29 @@ function createRow(drow, id) {
     return row
 }
 
-function insertRolls(data_raw) {
-    const data = JSON.parse(data_raw)
-    const tbody = document.getElementById("tbody_rolls")
-    const first_row = tbody.firstChild
-    var roll_id
-    if (first_row) {
-        roll_id = first_row.firstChild.firstChild.textContent
+
+document.getElementById("f_roll").addEventListener("submit", event => {
+    event.preventDefault()
+    const loc = location.href
+    const player_id = "0"
+    const checked = document.querySelector('input[name="mod"]:checked');
+    var mod = "";
+    if (checked != null) {
+        mod = checked.value;
     } else {
-        roll_id = -1
+        mod = "0";
     }
-    for (let i in data) {
-        const drow = data[i]
-        sessionStorage.setItem("last_roll", i)
-        const row = createRow(drow, i)
-        if (i > roll_id) { 
-            //if (roll_id >= 0) {
-            //    tbody.insertBefore(row, first_row)
-            //} else {
-                tbody.appendChild(row)
-                row.scrollIntoView(true)
-            //}
-        }
-    }
-}
-
-function getRolls() {
-    if (!hasFocus) {
-        return
-    }
-    var target = location.href.replace("room/", "rolls/")
-    const last_roll = sessionStorage.getItem("last_roll")
-    if (last_roll != "") {
-        target += "/" + last_roll
-    }
-   $.ajax({
-        url: target,
-        method: "GET",
-        success: insertRolls  
-   }) 
-}
-
-$(document).ready(function(){
-    sessionStorage.setItem("last_roll", "")
-    getRolls()
-
-
-    $("#f_roll").submit((event) => {
-        event.preventDefault()
-        const loc = location.href
-        const player_id = "0"
-        const mod = $("input[name='mod']:checked").val()
-        var data = "{"
-        data += '"mod": "' + mod + '",'
-        data += '"char": "' + $("#f_name").val() + '",'
-        data += '"action": "' + $("#f_action").val() + '"'
-        data += "}"
-        $.ajax({
-            url: loc,
-            method: "POST",
-            data: data,
-            contentType: "app/json",
+    const chr = document.getElementById("f_name").value;
+    const action = document.getElementById("f_action").value;
+    fetch(loc, {
+        method: "POST",
+        headers: {
+            "contentType": "application/json"
+        },
+        body: JSON.stringify({
+            "mod": mod,
+            "char": chr,
+            "action": action 
         })
     })
 })
-
-window.setInterval(getRolls, 1000)

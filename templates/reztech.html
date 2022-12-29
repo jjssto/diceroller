@@ -21,10 +21,13 @@
       <h1 id="title_tag">{{ .title }}</h1>
     </div>
     <div class="header_2" id="c_header_2">
-      <form id="f_setting">
-        <label for="f_setting_name">Name:</label>
+      <p><form id="f_setting">
+      Change the name or color of this room: &nbsp;&nbsp;
+      
+        <label for="f_setting_name"><small><i>New name:</i></small></label>
         <input id="f_setting_name" type="text">
-        <label for="f_setting_color">Color:</label>
+        &nbsp;
+        <label for="f_setting_color"><small><i>New color:</i></small></label>
         <select name="f_setting_color" id="f_setting_color">
           <option value="-">-</option>
           <option value="#E10600">red</option>
@@ -33,10 +36,12 @@
           <option value="#006E33">green</option>
           <option value="#06038D">blue</option>
         </select>
-        <input type="submit" value="Change title / color">
+        &nbsp;
+        <input type="submit" value="OK">
       </form>
+      </p>
+      <p>Share this link with your group: <a href="" id="a_link"></a></p>
     </div>
-
   </div>
   <div class="roll_form" id="c_roll_form">
     <form id="f_roll">

@@ -1,14 +1,12 @@
-import {detectFocus, hasFocus, settingVisibility, roomSettingForm, setColor} from "./fun.js";
+import {    
+    hasFocus,
+    addCol,
+    init,
+    initReset
+} from "./fun.js";
 
-setColor()
-detectFocus()
-settingVisibility()
-roomSettingForm()
-
-function addCol(row, text) {
-    const col = row.insertCell()
-    col.appendChild(document.createTextNode(text))
-}
+init(createRow);
+initReset(reset);
 
 function createRow(drow, id) {
     var row = document.createElement("tr")
@@ -47,56 +45,6 @@ function createRow(drow, id) {
     addCol(row, d6)
     addCol(row, dat.R)
     return row
-}
-
-function insertRolls(data_raw) {
-    const data = JSON.parse(data_raw)
-    const tbody = document.getElementById("tbody_rolls")
-    const first_row = tbody.firstChild
-    var roll_id
-    if (first_row) {
-        roll_id = first_row.firstChild.firstChild.textContent
-    } else {
-        roll_id = -1
-    }
-    for (let i in data) {
-        const drow = data[i]
-        sessionStorage.setItem("last_roll", i)
-        const row = createRow(drow, i)
-        if (i > roll_id) { 
-            tbody.appendChild(row)
-           row.scrollIntoView(true)
-        }
-    }
-}
-
-function getRolls() {
-    if (!hasFocus) {
-        return
-    }
-    var target = location.href.replace("room/", "rolls/");
-    const last_roll = sessionStorage.getItem("last_roll");
-    var offsetStr = sessionStorage.getItem("ts_offset");
-    if (offsetStr == null || offsetStr.length == 0) {
-        const date = new Date();
-        const offset = -1 * date.getTimezoneOffset() * 60; 
-        offsetStr = offset.toString();
-        sessionStorage.setItem("ts_offset", offsetStr)
-    }
-    if (last_roll != "") {
-        target += "/" + last_roll
-    }
-    fetch(target, {
-        method: "GET",
-        headers: {
-            "ts_offset": offsetStr
-        },
-    })
-    .then(response => {
-        response.text().then(data => {
-                insertRolls(data);
-        })
-    });
 }
 
 function setDice() {
@@ -173,10 +121,6 @@ function reset() {
     document.getElementById("i_attribute_only").checked = false;
   }
 
-window.addEventListener("load", () => {
-    sessionStorage.setItem("last_roll", "");
-    getRolls();
-})
 
 document.getElementById("f_roll").addEventListener("submit", event => {
     event.preventDefault()
@@ -199,8 +143,3 @@ document.getElementById("f_roll").addEventListener("submit", event => {
     })
 });
 
-document.getElementById("b_reset").addEventListener("click", () => {
-    reset();
-});
-
-window.setInterval(getRolls, 1000);

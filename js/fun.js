@@ -1,4 +1,9 @@
-export { detectFocus, hasFocus, settingVisibility, roomSettingForm, setColor };
+export { 
+    hasFocus, 
+    addCol,
+    init,
+    initReset
+};
 
 var hasFocus;
 
@@ -70,4 +75,91 @@ function setColor() {
         }
     })
 
+}
+
+function setLink() {
+    var link = document.getElementById("a_link");
+    const loc = window.location.href;
+    link.href = loc
+    link.textContent = loc
+}
+
+function addCol(row, text) {
+    const col = row.insertCell()
+    col.appendChild(document.createTextNode(text))
+}
+
+
+
+function insertRolls(createRow, data_raw) {
+    const data = JSON.parse(data_raw)
+    const tbody = document.getElementById("tbody_rolls")
+    const first_row = tbody.firstChild
+    var roll_id
+    if (first_row) {
+        roll_id = first_row.firstChild.firstChild.textContent
+    } else {
+        roll_id = -1
+    }
+    for (let i in data) {
+        const drow = data[i]
+        sessionStorage.setItem("last_roll", i)
+        const row = createRow(drow, i)
+        if (i > roll_id) { 
+            tbody.appendChild(row)
+           row.scrollIntoView(true)
+        }
+    }
+}
+
+function getRolls(createRow) {
+    if (!hasFocus) {
+        return
+    }
+    var target = location.href.replace("room/", "rolls/");
+    const last_roll = sessionStorage.getItem("last_roll");
+    var offsetStr = sessionStorage.getItem("ts_offset");
+    if (offsetStr == null || offsetStr.length == 0) {
+        const date = new Date();
+        const offset = -1 * date.getTimezoneOffset() * 60; 
+        offsetStr = offset.toString();
+        sessionStorage.setItem("ts_offset", offsetStr)
+    }
+    if (last_roll != "") {
+        target += "/" + last_roll
+    }
+    fetch(target, {
+        method: "GET",
+        headers: {
+            "ts_offset": offsetStr
+        },
+    })
+    .then(response => {
+        response.text().then(data => {
+                insertRolls(createRow, data);
+        })
+    });
+}
+
+
+function init(createRow) {
+        
+    setColor()
+    detectFocus()
+    settingVisibility()
+    roomSettingForm()
+    setLink()
+
+    window.addEventListener("load", () => {
+        sessionStorage.setItem("last_roll", "");
+        getRolls(createRow);
+    });
+
+    window.setInterval(() => {getRolls(createRow)}, 1000);
+}
+
+function initReset(reset) {
+    document.getElementById("b_reset").addEventListener("click", () => {
+        reset();
+    });
 }

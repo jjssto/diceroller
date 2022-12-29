@@ -1,17 +1,53 @@
 <html>
 
 <head>
+  <script>
+    var roomId = "{{ .room_id }}"
+    var isOwner = "{{ .is_owner }}"
+    var color = "{{ .color }}"
+    sessionStorage.setItem("room_id", roomId)
+    sessionStorage.setItem("is_owner", isOwner)
+    sessionStorage.setItem("color", color)
+  </script>
+
   <script src="/js/general.js" type="module"></script>
   <link rel="stylesheet" href="/css/style.css">
   <title>{{ .title }}</title>
 </head>
 
 <body>
-  <div class="container">
-    <c_header>
+  <div class="grid-container">
+    <div class="header"></div>
+    <div class="header_1">
       <h1>{{ .title }}</h1>
-    </c_header>
-    <c_roll_form>
+    </div>
+   <div class="header_1" id="c_header_1">
+      <h1 id="title_tag">{{ .title }}</h1>
+    </div>
+    <div class="header_2" id="c_header_2">
+      <p><form id="f_setting">
+      Change the name or color of this room: &nbsp;&nbsp;
+      
+        <label for="f_setting_name"><small><i>New name:</i></small></label>
+        <input id="f_setting_name" type="text">
+        &nbsp;
+        <label for="f_setting_color"><small><i>New color:</i></small></label>
+        <select name="f_setting_color" id="f_setting_color">
+          <option value="-">-</option>
+          <option value="#E10600">red</option>
+          <option value="#4A0000">oxblood</option>
+          <option value="#BB29BB">purple</option>
+          <option value="#006E33">green</option>
+          <option value="#06038D">blue</option>
+        </select>
+        &nbsp;
+        <input type="submit" value="OK">
+      </form>
+      </p>
+      <p>Share this link with your group: <a href="" id="a_link"></a></p>
+    </div>
+  </div>
+    <div class="roll_form">
       <form id="f_roll">
         <p>
           <label for="name">Char</label>
@@ -104,8 +140,8 @@
           <input type="button" value="Reset" id="b_reset">
         </p>
       </form>
-    </c_roll_form>
-    <c_roll_result>
+    </div>
+    <div class="roll_result">
       <div class="result_table">
         <table class="t_result">
           <thead>
@@ -126,7 +162,8 @@
           <tbody id="tbody_rolls"></tbody>
         </table>
       </div>
-    </c_roll_result>
+    </div>
+    <div class="footer"></div>
   </div>
 </body>
 
