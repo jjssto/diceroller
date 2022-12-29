@@ -74,13 +74,18 @@ function getRolls() {
     if (!hasFocus) {
         return
     }
-    var target = location.href.replace("room/", "rolls/")
-    const last_roll = sessionStorage.getItem("last_roll")
+    var target = location.href.replace("room/", "rolls/");
+    const last_roll = sessionStorage.getItem("last_roll");
+    const date = new Date();
+    const offset = -1 * date.getTimezoneOffset() * 60; 
     if (last_roll != "") {
         target += "/" + last_roll
     }
     fetch(target, {
-        method: "GET"
+        method: "GET",
+        headers: {
+            "ts_offset": offset
+        },
     })
     .then(response => {
         response.text().then(data => {
