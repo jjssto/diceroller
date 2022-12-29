@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -36,6 +37,7 @@ func getRollsHelper(c *gin.Context, all bool) {
 	playerId := session.Get("player_id").(int)
 	data := "{"
 	first := true
+	loc := getTimeZone(c)
 	for rollNbr < len(rooms[roomId].DiceRolls) {
 		val := rooms[roomId].DiceRolls[rollNbr]
 		if first {
@@ -47,12 +49,24 @@ func getRollsHelper(c *gin.Context, all bool) {
 		if playerId == val.Player {
 			isOwnRoll = 1
 		}
-		data += fmt.Sprintf("\"%d\": [%s, %d]", rollNbr, val.json(roomId), isOwnRoll)
+		data += fmt.Sprintf("\"%d\": [%s, %d]", rollNbr, val.json(roomId, loc), isOwnRoll)
 		rollNbr++
 	}
 	data += "}"
 	c.String(http.StatusOK, data)
 
+}
+
+func getTimeZone(c *gin.Context) *time.Location {
+	offsetStr := c.Request.Header.Values("ts_offset")
+	offset := 0
+	if len(offsetStr) > 0 {
+		offsetInt64, err := strconv.ParseInt(offsetStr[0], 10, 32)
+		if err == nil {
+			offset = int(offsetInt64)
+		}
+	}
+	return time.FixedZone("", offset)
 }
 
 func getAllRolls(c *gin.Context) {

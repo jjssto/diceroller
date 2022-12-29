@@ -53,10 +53,11 @@ func (d *Die) json() string {
 	return fmt.Sprintf("{\"E\":\"%d\", \"R\":\"%d\"}", d.Eyes, d.Result)
 }
 
-func (d *DiceRoll) json(room int) string {
+func (d *DiceRoll) json(room int, loc *time.Location) string {
 	player := rooms[room].Players.Detail[d.Player]
+	timeStamp := d.Time.Local().In(loc).Format("2006-01-02 15:04:05")
 	info := fmt.Sprintf("\"P\":\"%s\", \"C\":\"%s\",\"A\":\"%s\", \"T\":\"%s\", \"R\":\"%d\"",
-		player.Name, player.Color, d.Action, d.Time.Local().Format("2006-01-02 15:04:05"), d.Result)
+		player.Name, player.Color, d.Action, timeStamp, d.Result)
 	dice := ""
 	first := true
 	for _, val := range d.Dice {
