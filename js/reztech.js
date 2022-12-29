@@ -1,4 +1,3 @@
-import "./jquery-3.6.1.js"
 import {detectFocus, hasFocus, settingVisibility, roomSettingForm, setColor} from "./fun.js";
 
 setColor()
@@ -65,12 +64,8 @@ function insertRolls(data_raw) {
         sessionStorage.setItem("last_roll", i)
         const row = createRow(drow, i)
         if (i > roll_id) { 
-            //if (roll_id >= 0) {
-            //    tbody.insertBefore(row, first_row)
-            //} else {
-                tbody.appendChild(row)
-                row.scrollIntoView(true)
-            //}
+            tbody.appendChild(row)
+           row.scrollIntoView(true)
         }
     }
 }
@@ -84,18 +79,23 @@ function getRolls() {
     if (last_roll != "") {
         target += "/" + last_roll
     }
-   $.ajax({
-        url: target,
-        method: "GET",
-        success: insertRolls  
-   }) 
+    fetch(target, {
+        method: "GET"
+    })
+    .then(response => {
+        response.text().then(data => {
+                insertRolls(data);
+        })
+    });
 }
 
 function setDice() {
-    const attr = $("#s_attribute").find(":selected").val()
-    const skill = $("#s_skill").find(":selected").val()
-    const onlyAttr = $("#i_attribute_only").prop("checked")
-    
+    var sel = document.querySelector("#s_attribute");
+    const attr = sel.options[sel.selectedIndex].value;
+    sel = document.querySelector("#s_skill");
+    const skill = sel.options[sel.selectedIndex].value;
+    const onlyAttr = document.querySelector("#i_attribute_only").checked;
+   
     var first = true
     var text= "["
     if (attr <= 0 && skill <= 0) {
@@ -158,38 +158,39 @@ function setDice() {
 }
 
 function reset() {
-    $("#s_attribute").find("option.o1").prop("selected", true) 
-    $("#s_skill").find("option.o1").prop("selected", true) 
-    $("#i_attribute_only").prop("checked", false)
-}
+    document.getElementById("s_attribute").value = 0;
+    document.getElementById("s_skill").value = 0;
+    document.getElementById("i_attribute_only").checked = false;
+  }
 
-
-$(document).ready(function(){
-    sessionStorage.setItem("last_roll", "")
-    getRolls()
-
-
-    $("#f_roll").submit((event) => {
-        event.preventDefault()
-        const loc = location.href
-        const player_id = "0"
-        const dice = setDice() 
-        var data = "{"
-        data += '"dice": "' + dice + '",'
-        data += '"char": "' + $("#f_name").val() + '",'
-        data += '"action": "' + $("#f_action").val() + '"'
-        data += "}"
-        $.ajax({
-            url: loc,
-            method: "POST",
-            data: data,
-            contentType: "app/json",
-        })
-    })
-    
-    $("#b_reset").click(() => {
-        reset()
-    })
+window.addEventListener("load", () => {
+    sessionStorage.setItem("last_roll", "");
+    getRolls();
 })
 
-window.setInterval(getRolls, 1000)
+document.getElementById("f_roll").addEventListener("submit", event => {
+    event.preventDefault()
+    const loc = location.href
+    const player_id = "0"
+    const dice = setDice() 
+    const name = document.getElementById("f_name").value;
+    const action = document.getElementById("f_action").value;
+   
+    fetch(loc, {
+        method: "POST",
+        headers: {
+            "contentType": "application/json"
+        },
+        body: JSON.stringify({
+            "dice": dice,
+            "char": name,
+            "action": action
+        })
+    })
+});
+
+document.getElementById("b_reset").addEventListener("click", () => {
+    reset();
+});
+
+window.setInterval(getRolls, 1000);

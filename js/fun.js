@@ -26,7 +26,8 @@ function roomSettingForm() {
     settingsForm.addEventListener("submit", function (event) {
         event.preventDefault();
         var roomName = document.getElementById("f_setting_name").value;
-        var color = document.getElementById("f_setting_color").value;
+        var colorSelect = document.getElementById("f_setting_color");
+        var color = colorSelect.options[colorSelect.selectedIndex].value;
         var roomId = sessionStorage.getItem("room_id");
         fetch("/roomSettings", {
             method: "POST",
@@ -47,9 +48,12 @@ function roomSettingForm() {
 }
 
 function changeColor(color) {
-    //document.getElementById("title_line").style.background = color;
-    document.getElementById("title_tag").style.background = color;
-    document.getElementById("table_head").style.background = color;
+    document.querySelector(".header").style.backgroundColor = color;
+    document.querySelector(".footer").style.backgroundColor = color;
+    document.querySelectorAll("thead").forEach(element => {
+       element.style.backgroundColor = color; 
+    });
+    document.getElementById("f_setting_color").value = color;
 }
 
 function setColor() {

@@ -15,85 +15,94 @@
 </head>
 
 <body>
-  <div class="container">
-    <c_header id = "title_line">
+  <div class="grid-container">
+    <div class="header"></div>
+    <div class="header_1" id="c_header_1">
       <h1 id="title_tag">{{ .title }}</h1>
-    </c_header>
-    <c_roll_form>
-      <form id="f_roll">
-        <p>
-          <label for="name">Char</label>
-          <input type="text" id="f_name">
-          <label for="action">Action</label>
-          <input type="text" id="f_action">
-        </p>
-        <p>
-          <label for="s_attribute">Atribute</label>
-          <select name="s_attribute" , id="s_attribute">
-            <option value="0" class="o1">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-          </select>
-          <label for="s_skill">Skill</label>
-          <select name="s_skill" , id="s_skill">
-            <option value="0" class="o1">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-          </select>
-          <label for="i_attribute_only">Attribute only:</label>
-          <input type="checkbox" id="i_attribute_only" value="1">
-        </p>
-        <p>
-          <input type="submit" value="Roll">
-          <input type="button" value="Reset" id="b_reset">
-        </p>
-      </form>
-    </c_roll_form>
-    <c_roll_result>
-      <div class="result_table">
-        <table class="t_result">
-          <thead id="table_head">
-            <tr>
-              <th>#</th>
-              <th>Time</th>
-              <th>Char</th>
-              <th>Action</th>
-              <th>D12</th>
-              <th>D8</th>
-              <th>D6</th>
-              <th>Result</th>
-            </tr>
-          </thead>
-          <tbody id="tbody_rolls"></tbody>
-        </table>
-      </div>
-    </c_roll_result>
-    <c_footer>
-      <form id = "f_setting">
-        <p>
-        <label for="f_setting_name">Name:</label> 
+    </div>
+    <div class="header_2" id="c_header_2">
+      <form id="f_setting">
+        <label for="f_setting_name">Name:</label>
         <input id="f_setting_name" type="text">
-        <label for="f_setting_color">Color:</label> 
-        <input id="f_setting_color" type="text">
-        <input type="submit">
-        </p>
-
+        <label for="f_setting_color">Color:</label>
+        <select name="f_setting_color" id="f_setting_color">
+          <option value="-">-</option>
+          <option value="#E10600">red</option>
+          <option value="#4A0000">oxblood</option>
+          <option value="#BB29BB">purple</option>
+          <option value="#006E33">green</option>
+          <option value="#06038D">blue</option>
+        </select>
+        <input type="submit" value="Change title / color">
       </form>
-    </c_footer>
+    </div>
+
+  </div>
+  <div class="roll_form" id="c_roll_form">
+    <form id="f_roll">
+      <p>
+        <label for="name">Char</label>
+        <input type="text" id="f_name">
+        <label for="action">Action</label>
+        <input type="text" id="f_action">
+      </p>
+      <p>
+        <label for="s_attribute">Atribute</label>
+        <select name="s_attribute" , id="s_attribute">
+          <option value="0" class="o1">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+        </select>
+        <label for="s_skill">Skill</label>
+        <select name="s_skill" , id="s_skill">
+          <option value="0" class="o1">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+        </select>
+        <label for="i_attribute_only">Attribute only:</label>
+        <input type="checkbox" id="i_attribute_only" value="1">
+      </p>
+      <p>
+        <input type="submit" value="Roll">
+        <input type="button" value="Reset" id="b_reset">
+      </p>
+    </form>
+  </div>
+  <div class="roll_result" id="c_roll_result">
+    <div class="result_table">
+      <table class="t_result">
+        <thead id="table_head">
+          <tr>
+            <th>#</th>
+            <th>Time</th>
+            <th>Char</th>
+            <th>Action</th>
+            <th>D12</th>
+            <th>D8</th>
+            <th>D6</th>
+            <th>Result</th>
+          </tr>
+        </thead>
+        <tbody id="tbody_rolls"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="footer" id="c_footer">
+  </div>
   </div>
 </body>
 
