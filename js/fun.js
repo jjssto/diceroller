@@ -26,7 +26,43 @@ function settingVisibility() {
     }
 }
 
+function insertOption(sel, text, value) {
+    var element = document.createElement("option");
+    element.value = value
+    element.textContent = text
+    sel.appendChild(element);
+}
+
+
+function insertColorOptions() {
+    
+    // get setting form, if not present => exit
+    var sel = document.getElementById("f_setting_color");
+    if (sel == null) return
+
+    // create default option
+    insertOption(sel, "-", "-")
+    
+    // get and set the additional color options
+    fetch("/colorOptions", {
+        method: "GET"
+    })
+    .then( resp => {
+        resp.json().then(
+            data => {
+               for (var i in data) {
+
+                    insertOption(sel, data[i].text, data[i].code)
+               }
+            }
+        )
+    })
+}
+
+
+
 function roomSettingForm() {
+    insertColorOptions()
     var settingsForm = document.getElementById("f_setting");
     settingsForm.addEventListener("submit", function (event) {
         event.preventDefault();
@@ -58,6 +94,10 @@ function changeColor(color) {
     document.querySelectorAll("thead").forEach(element => {
        element.style.backgroundColor = color; 
     });
+    document.querySelectorAll("th").forEach(element => {
+       element.style.backgroundColor = color; 
+    });
+
     document.getElementById("f_setting_color").value = color;
 }
 
@@ -101,14 +141,19 @@ function insertRolls(createRow, data_raw) {
     } else {
         roll_id = -1
     }
+    var counter = 0
+    var lastRow
     for (let i in data) {
         const drow = data[i]
         sessionStorage.setItem("last_roll", i)
-        const row = createRow(drow, i)
         if (i > roll_id) { 
-            tbody.appendChild(row)
-           row.scrollIntoView(true)
+           const row = createRow(drow, i)
+           lastRow = tbody.appendChild(row)
         }
+        counter++
+    }
+    if (lastRow) {
+        lastRow.scrollIntoView(true)
     }
 }
 
@@ -140,7 +185,6 @@ function getRolls(createRow) {
         })
     });
 }
-
 
 function init(createRow) {
         

@@ -1,4 +1,5 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
   <script>
@@ -21,32 +22,22 @@
     <div class="header_1">
       <h1>{{ .title }}</h1>
     </div>
-   <div class="header_1" id="c_header_1">
-      <h1 id="title_tag">{{ .title }}</h1>
-    </div>
     <div class="header_2" id="c_header_2">
-      <p><form id="f_setting">
-      Change the name or color of this room: &nbsp;&nbsp;
-      
+      <p>
+      <form id="f_setting">
+        Change the name or color of this room: &nbsp;&nbsp;
+
         <label for="f_setting_name"><small><i>New name:</i></small></label>
         <input id="f_setting_name" type="text">
         &nbsp;
         <label for="f_setting_color"><small><i>New color:</i></small></label>
-        <select name="f_setting_color" id="f_setting_color">
-          <option value="-">-</option>
-          <option value="#E10600">red</option>
-          <option value="#4A0000">oxblood</option>
-          <option value="#BB29BB">purple</option>
-          <option value="#006E33">green</option>
-          <option value="#06038D">blue</option>
-        </select>
+        <select name="f_setting_color" id="f_setting_color"></select>
         &nbsp;
         <input type="submit" value="OK">
       </form>
       </p>
       <p>Share this link with your group: <a href="" id="a_link"></a></p>
     </div>
-  </div>
     <div class="roll_form">
       <form id="f_roll">
         <p>
@@ -164,6 +155,7 @@
       </div>
     </div>
     <div class="footer"></div>
+  </div>
   </div>
 </body>
 

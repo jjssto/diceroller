@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"net/http"
+	"os"
+	"regexp"
 	"strconv"
 	"time"
 
@@ -75,4 +78,42 @@ func getAllRolls(c *gin.Context) {
 
 func getRolls(c *gin.Context) {
 	getRollsHelper(c, false)
+}
+
+type Color struct {
+	Text string
+	Code string
+}
+
+func getColorsHelper() []Color {
+	ret := make([]Color, 0)
+	file, err := os.Open("templates/colors.csv")
+	if err != nil {
+		return nil
+	}
+	defer file.Close()
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		re := regexp.MustCompile(`[\w#]+( +\w+)*`)
+		entry := re.FindAllString(scanner.Text(), 2)
+		if len(entry) >= 2 {
+			ret = append(ret, Color{entry[0], entry[1]})
+		}
+	}
+	return ret
+}
+
+func getColors(c *gin.Context) {
+	ret := ""
+	colors := getColorsHelper()
+	for i := range colors {
+		if len(ret) > 0 {
+			ret += ", "
+		}
+		ret += fmt.Sprintf(
+			"{\"text\": \"%s\", \"code\": \"%s\"}",
+			colors[i].Text, colors[i].Code)
+	}
+	ret = "[" + ret + "]"
+	c.String(http.StatusOK, ret)
 }
