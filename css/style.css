@@ -7,7 +7,7 @@
 
 .grid-container {
     display: inline-grid;
-    grid-template-rows: 85px 70px auto auto 75px;
+    grid-template-rows: 80px 75px auto auto 75px;
     /*grid-template-rows: 8vh 8vh 16vh 50vh 8vh;*/
     grid-template-columns: 300px auto;
     height: 100vh;
@@ -43,6 +43,7 @@
 }
 
 .main {
+    padding: 2.5%;
     grid-area: 3/1/ span 2 / span 2;
 }
 
