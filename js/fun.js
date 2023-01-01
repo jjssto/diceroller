@@ -1,11 +1,13 @@
 export { 
     hasFocus, 
+    highlightOwnRolls,
     addCol,
     init,
     initReset
 };
 
 var hasFocus;
+var highlightOwnRolls;
 
 function detectFocus() {
     hasFocus = true
@@ -44,7 +46,7 @@ function insertColorOptions() {
     insertOption(sel, "-", "-")
     
     // get and set the additional color options
-    fetch("/colorOptions", {
+    fetch("/res/colors.json", {
         method: "GET"
     })
     .then( resp => {
@@ -62,7 +64,7 @@ function insertColorOptions() {
 
 
 function roomSettingForm() {
-    insertColorOptions()
+    //insertColorOptions()
     var settingsForm = document.getElementById("f_setting");
     settingsForm.addEventListener("submit", function (event) {
         event.preventDefault();
@@ -186,8 +188,21 @@ function getRolls(createRow) {
     });
 }
 
+function setHighlightOwnRolls() {
+    const element = document.getElementById("i_highlight_own_rolls")
+    if (element == null) {
+        return
+    }
+    if (element.checked) {
+        highlightOwnRolls = true;
+    } else {
+        highlightOwnRolls = false;
+    }
+}
+
 function init(createRow) {
         
+    setHighlightOwnRolls()
     setColor()
     detectFocus()
     settingVisibility()

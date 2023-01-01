@@ -3,12 +3,23 @@ package main
 import (
 	"errors"
 	"fmt"
+	"html/template"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
+
+func getColorOptions() template.HTML {
+	str := "<option value=\"-\">-</option>\n"
+	for key := range configuration.Colors {
+		str += fmt.Sprintf(
+			"<option value=\"%s\">%s</option>\n",
+			configuration.Colors[key], key)
+	}
+	return template.HTML(str)
+}
 
 func getTitle(room Room) string {
 	var ret string
@@ -23,7 +34,7 @@ func getTitle(room Room) string {
 	case RezTech:
 		ret += " [RezTech]"
 	case General:
-		ret += " [general dice roller]"
+		ret += ""
 	}
 	return ret
 }
@@ -39,43 +50,44 @@ func checkOwnership(c *gin.Context, room Room) bool {
 
 func viewHome(c *gin.Context) {
 	c.HTML(200, "home.html", gin.H{
-		"title": "Rooms to roll dice in",
+		"title":  configuration.Title,
+		"footer": configuration.Footer,
 	})
-	x := 3
-	x += 1
-}
-
-func faviconHandler(c *gin.Context) {
-	http.ServeFile(c.Writer, c.Request, "favicon.png")
 }
 
 func viewCoC(c *gin.Context, id int) {
 	room := rooms[id]
 	c.HTML(http.StatusOK, "coc.html", gin.H{
-		"title":    getTitle(room),
-		"color":    room.Color,
-		"room_id":  fmt.Sprintf("%d", room.Id),
-		"is_owner": fmt.Sprint(checkOwnership(c, room)),
+		"title":         getTitle(room),
+		"color":         room.Color,
+		"room_id":       fmt.Sprintf("%d", room.Id),
+		"is_owner":      fmt.Sprint(checkOwnership(c, room)),
+		"footer":        configuration.Footer,
+		"color_options": getColorOptions(),
 	})
 }
 
 func viewRezTech(c *gin.Context, id int) {
 	room := rooms[id]
 	c.HTML(http.StatusOK, "reztech.html", gin.H{
-		"title":    getTitle(room),
-		"color":    room.Color,
-		"room_id":  fmt.Sprintf("%d", room.Id),
-		"is_owner": fmt.Sprint(checkOwnership(c, room)),
+		"title":         getTitle(room),
+		"color":         room.Color,
+		"room_id":       fmt.Sprintf("%d", room.Id),
+		"is_owner":      fmt.Sprint(checkOwnership(c, room)),
+		"footer":        configuration.Footer,
+		"color_options": getColorOptions(),
 	})
 }
 
 func viewGeneral(c *gin.Context, id int) {
 	room := rooms[id]
 	c.HTML(http.StatusOK, "general.html", gin.H{
-		"title":    getTitle(room),
-		"color":    room.Color,
-		"room_id":  fmt.Sprintf("%d", room.Id),
-		"is_owner": fmt.Sprint(checkOwnership(c, room)),
+		"title":         getTitle(room),
+		"color":         room.Color,
+		"room_id":       fmt.Sprintf("%d", room.Id),
+		"is_owner":      fmt.Sprint(checkOwnership(c, room)),
+		"footer":        configuration.Footer,
+		"color_options": getColorOptions(),
 	})
 }
 

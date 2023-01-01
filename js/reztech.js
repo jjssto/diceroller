@@ -1,5 +1,6 @@
 import {    
     hasFocus,
+    highlightOwnRolls,
     addCol,
     init,
     initReset
@@ -12,7 +13,7 @@ function createRow(drow, id) {
     var row = document.createElement("tr")
     const dat = drow[0]
     const isOwnRoll = drow[1]
-    if (isOwnRoll == "1") {
+    if (isOwnRoll == "1" && highlightOwnRolls) {
         row.className = "my_roll"
     }
     addCol(row, id)

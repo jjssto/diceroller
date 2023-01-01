@@ -298,9 +298,12 @@ func genRoomId() (int, bool) {
 	return roomId, true
 }
 
-func deleteOldGames(rooms map[int]Room, playerIds map[int][]int) {
-	dur, _ := time.ParseDuration(INACTIVE_DELETE_DELAY)
-	comp := time.Now().Add(-dur)
+func deleteOldGames(
+	rooms map[int]Room,
+	playerIds map[int][]int,
+	inactiveDeleteDelay time.Duration) {
+
+	comp := time.Now().Add(-1 * inactiveDeleteDelay)
 	for i, v := range rooms {
 		deleteRoom := false
 		if len(v.DiceRolls) == 0 {

@@ -22,27 +22,34 @@
       <h1 id="title_tag">{{ .title }}</h1>
     </div>
     <div class="header_2" id="c_header_2">
-      <p><form id="f_setting">
+      <form id="f_setting">
       Change the name or color of this room: &nbsp;&nbsp;
       
         <label for="f_setting_name"><small><i>New name:</i></small></label>
         <input id="f_setting_name" type="text">
         &nbsp;
         <label for="f_setting_color"><small><i>New color:</i></small></label>
-        <select name="f_setting_color" id="f_setting_color"></select>
+        <select name="f_setting_color" id="f_setting_color">
+          {{ .color_options }}
+        </select>
         &nbsp;
         <input type="submit" value="OK">
       </form>
-      </p>
       <p>Share this link with your group: <a href="" id="a_link"></a></p>
     </div>
   <div class="roll_form" id="c_roll_form">
     <form id="f_roll">
       <p>
-        <label for="name">Char</label>
-        <input type="text" id="f_name">
-        <label for="action">Action</label>
-        <input type="text" id="f_action">
+        <div>
+          <label for="name">Char</label>
+          <input type="text" id="f_name">
+          <label for="action">Action</label>
+          <input type="text" id="f_action">
+         </div>
+         <div style="text-align: right">
+          <label for="i_highlight_own_rolls">Highlight own rolls:</label>
+          <input type="checkbox" id="i_highlight_own_rolls" value="1" checked="true">
+        </div>
       </p>
       <p>
         <label for="s_attribute">Atribute</label>
@@ -99,7 +106,9 @@
       </table>
     </div>
   </div>
-  <div class="footer" id="c_footer"></div>
+  <div class="footer" id="c_footer">
+    {{ .footer }} 
+  </div>
   </div>
   </div>
 </body>
