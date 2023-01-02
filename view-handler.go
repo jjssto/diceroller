@@ -11,16 +11,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func getColorOptions() string {
-	str := "<option value=\"-\">-</option>\n"
-	for key := range globConfig.Colors {
-		str += fmt.Sprintf(
-			"<option value=\"%s\">%s</option>\n",
-			globConfig.Colors[key], key)
-	}
-	return str
-}
-
 func getTitle(room Room) string {
 	var ret string
 	if len(room.Name) > 0 {
@@ -50,8 +40,7 @@ func checkOwnership(c *gin.Context, room Room) bool {
 
 func viewHome(c *gin.Context) {
 	c.HTML(200, "home.html", gin.H{
-		"title":  globConfig.Title,
-		"footer": globConfig.Footer,
+		"title": globConfig.Title,
 	})
 }
 

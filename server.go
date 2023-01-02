@@ -3,8 +3,6 @@ package main
 import (
 	"bufio"
 	"errors"
-	"html/template"
-	"io/ioutil"
 	"os"
 	"regexp"
 	"strings"
@@ -28,8 +26,6 @@ type ServerConfig struct {
 	CleaningInterval    time.Duration
 	StatisticInterval   time.Duration
 	InactiveDeleteDelay time.Duration
-	Colors              map[string]string
-	Footer              template.HTML
 }
 
 func initServer(router *gin.Engine, config ServerConfig) {
@@ -88,7 +84,6 @@ func (config *ServerConfig) loadConfig(file string) {
 			}
 		}
 	}
-	config.setFooter()
 }
 
 func (config *ServerConfig) setDefaultValues() {
@@ -146,8 +141,7 @@ func (config *ServerConfig) setValue(key string, value string) bool {
 		config.CleaningInterval = getCleaningInterval(values[0], trimChar)
 	case "statisticInterval":
 		config.StatisticInterval = getStatisticInterval(values[0], trimChar)
-	case "color":
-		config.addColors(values, trimChar)
+
 	default:
 		return false
 	}
@@ -223,26 +217,6 @@ func getRessources(value string, trimChar string) string {
 		return strings.TrimRight(ret, "\\/")
 	} else {
 		return "./res"
-	}
-}
-
-func (config *ServerConfig) addColors(values []string, trimChar string) {
-	if config.Colors == nil {
-		config.Colors = make(map[string]string)
-	}
-	if len(values) >= 2 {
-		key := strings.Trim(values[0], trimChar)
-		val := strings.Trim(values[1], trimChar)
-		config.Colors[key] = val
-	} else {
-		config.Colors["-"] = "-"
-	}
-}
-
-func (config *ServerConfig) setFooter() {
-	footer, err := ioutil.ReadFile(config.Ressources + "/footer.html")
-	if err == nil {
-		config.Footer = template.HTML(footer)
 	}
 }
 
