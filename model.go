@@ -55,7 +55,7 @@ func (d *Die) json() string {
 
 func (d *DiceRoll) json(room int, loc *time.Location) string {
 	player := globRooms[room].Players.Detail[d.Player]
-	timeStamp := d.Time.Local().In(loc).Format("2006-01-02 15:04:05")
+	timeStamp := d.Time.Local().In(loc).Format("15:04:05")
 	info := fmt.Sprintf("\"P\":\"%s\", \"C\":\"%s\",\"A\":\"%s\", \"T\":\"%s\", \"R\":\"%d\"",
 		player.Name, player.Color, d.Action, timeStamp, d.Result)
 	dice := ""
