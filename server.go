@@ -262,13 +262,13 @@ func getStatisticInterval(value string, trimChar string) time.Duration {
 func cleanup(config ServerConfig) {
 	for {
 		time.Sleep(config.CleaningInterval)
-		deleteOldGames(globRooms, globPlayerIds, config.InactiveDeleteDelay)
+		deleteOldGames(globRooms, globUserIds, config.InactiveDeleteDelay)
 	}
 }
 
 func runStatistics(config ServerConfig) {
 	for {
 		time.Sleep(config.StatisticInterval)
-		globStats, _ = updateStatistics(globRooms, globPlayerIds)
+		globStats, _ = updateStatistics(globRooms, globUserIds)
 	}
 }
