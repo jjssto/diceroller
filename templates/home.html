@@ -14,25 +14,28 @@
     <div class="d_room-selection-buttons">
       <h2>Create a Room</h2>
       <p>
-        In order to get a room in which you can roll dice together with your roll
-        playing group, just click on one of the buttons.
-        You will then be rdirected to your newly created room.
-        Just share the URL of that room with your group.
+        If you click one of the buttons below, you will be rdirected to 
+        your newly created room.
+        If you want to share that room with other people you can simply
+        share the link of that room with them. 
       </p>
       <p>
         Rooms are automatically deleted if there is no activity for four hours.
       </p>
 
+      <h3>General dice roller for TTRPGs</h3>
       <p>
-        <button class="b_room-selection" value="General">General Dice Roller</button>
+        <button class="b_room-selection" value="General">Dice Roller</button>
+      </p>
+      <h3>System specific dice rollers:</h3>
         <button class="b_room-selection" value="CoC">Call of Cthulhu</button>
         <button class="b_room-selection" value="RezTech">RezTech</button>
       </p>
+      
+      <h2>About <em>Rooms to roll dice in</em></h2>
     </div>
   </div>
-  <div class="footer">
-    {{ .footer }} 
-  </div>
+  {{ template "0_footer.html" }}
 </div>
 
 </html>
