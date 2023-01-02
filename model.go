@@ -184,13 +184,13 @@ func (r *DiceRoll) evaluateRezTech() {
 	r.Result = result
 }
 
-func (r *DiceRoll) rollRezTech(dice []int8, mod int) bool {
+func (r *DiceRoll) rollRezTech(dice []int8, mod int) error {
 	if len(dice) > 0 {
 		r.roll(dice)
 		r.evaluateRezTech()
-		return true
+		return nil
 	} else {
-		return false
+		return errors.New("dice invalid")
 	}
 }
 
@@ -201,13 +201,13 @@ func (r *DiceRoll) evaluateGeneral() {
 	}
 	r.Result = result
 }
-func (r *DiceRoll) rollGeneral(dice []int8, mod int) bool {
+func (r *DiceRoll) rollGeneral(dice []int8, mod int) error {
 	if len(dice) > 0 {
 		r.roll(dice)
 		r.evaluateGeneral()
-		return true
+		return nil
 	} else {
-		return false
+		return errors.New("dice invalid")
 	}
 }
 func (r *DiceRoll) roll(dice []int8) error {
