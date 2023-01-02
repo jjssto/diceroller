@@ -28,40 +28,6 @@ function settingVisibility() {
     }
 }
 
-function insertOption(sel, text, value) {
-    var element = document.createElement("option");
-    element.value = value
-    element.textContent = text
-    sel.appendChild(element);
-}
-
-
-function insertColorOptions() {
-    
-    // get setting form, if not present => exit
-    var sel = document.getElementById("f_setting_color");
-    if (sel == null) return
-
-    // create default option
-    insertOption(sel, "-", "-")
-    
-    // get and set the additional color options
-    fetch("/res/colors.json", {
-        method: "GET"
-    })
-    .then( resp => {
-        resp.json().then(
-            data => {
-               for (var i in data) {
-
-                    insertOption(sel, data[i].text, data[i].code)
-               }
-            }
-        )
-    })
-}
-
-
 
 function roomSettingForm() {
     //insertColorOptions()
