@@ -11,14 +11,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func getColorOptions() template.HTML {
+func getColorOptions() string {
 	str := "<option value=\"-\">-</option>\n"
-	for key := range configuration.Colors {
+	for key := range globConfig.Colors {
 		str += fmt.Sprintf(
 			"<option value=\"%s\">%s</option>\n",
-			configuration.Colors[key], key)
+			globConfig.Colors[key], key)
 	}
-	return template.HTML(str)
+	return str
 }
 
 func getTitle(room Room) string {
@@ -50,44 +50,42 @@ func checkOwnership(c *gin.Context, room Room) bool {
 
 func viewHome(c *gin.Context) {
 	c.HTML(200, "home.html", gin.H{
-		"title":  configuration.Title,
-		"footer": configuration.Footer,
+		"title":  globConfig.Title,
+		"footer": globConfig.Footer,
 	})
 }
 
 func viewCoC(c *gin.Context, id int) {
-	room := rooms[id]
+	room := globRooms[id]
+	template.ParseFiles()
 	c.HTML(http.StatusOK, "coc.html", gin.H{
-		"title":         getTitle(room),
-		"color":         room.Color,
-		"room_id":       fmt.Sprintf("%d", room.Id),
-		"is_owner":      fmt.Sprint(checkOwnership(c, room)),
-		"footer":        configuration.Footer,
-		"color_options": getColorOptions(),
+		"title":       getTitle(room),
+		"color":       room.Color,
+		"room_id":     fmt.Sprintf("%d", room.Id),
+		"is_owner":    fmt.Sprint(checkOwnership(c, room)),
+		"result_cols": []string{"Roll"},
 	})
 }
 
 func viewRezTech(c *gin.Context, id int) {
-	room := rooms[id]
+	room := globRooms[id]
 	c.HTML(http.StatusOK, "reztech.html", gin.H{
-		"title":         getTitle(room),
-		"color":         room.Color,
-		"room_id":       fmt.Sprintf("%d", room.Id),
-		"is_owner":      fmt.Sprint(checkOwnership(c, room)),
-		"footer":        configuration.Footer,
-		"color_options": getColorOptions(),
+		"title":       getTitle(room),
+		"color":       room.Color,
+		"room_id":     fmt.Sprintf("%d", room.Id),
+		"is_owner":    fmt.Sprint(checkOwnership(c, room)),
+		"result_cols": []string{"D12", "D8", "D6"},
 	})
 }
 
 func viewGeneral(c *gin.Context, id int) {
-	room := rooms[id]
+	room := globRooms[id]
 	c.HTML(http.StatusOK, "general.html", gin.H{
-		"title":         getTitle(room),
-		"color":         room.Color,
-		"room_id":       fmt.Sprintf("%d", room.Id),
-		"is_owner":      fmt.Sprint(checkOwnership(c, room)),
-		"footer":        configuration.Footer,
-		"color_options": getColorOptions(),
+		"title":       getTitle(room),
+		"color":       room.Color,
+		"room_id":     fmt.Sprintf("%d", room.Id),
+		"is_owner":    fmt.Sprint(checkOwnership(c, room)),
+		"result_cols": []string{"D20", "D12", "D10", "D8", "D6", "D4"},
 	})
 }
 
@@ -97,14 +95,14 @@ func viewGame(c *gin.Context) {
 		displayError(c, err)
 	}
 	roomId := int(roomId64)
-	r, ok := rooms[roomId]
+	r, ok := globRooms[roomId]
 	if !ok {
 		displayError(c, nil)
 		return
 	}
 	playerId := getPlayerId(c, roomId)
 	if r.setOwnerId(playerId) {
-		rooms[roomId] = r
+		globRooms[roomId] = r
 	}
 	switch r.Game {
 	case CoC:
@@ -136,7 +134,7 @@ func getPlayerId(c *gin.Context, roomId int) int {
 		ok = false
 	} else {
 		playerId = playerIdRaw.(int)
-		_, ok = playerIds[playerId]
+		_, ok = globPlayerIds[playerId]
 	}
 	if !ok {
 		playerId, ok = genPlayerId(roomId)
@@ -161,10 +159,10 @@ func viewError(c *gin.Context) {
 
 func viewStats(c *gin.Context) {
 	c.HTML(http.StatusOK, "stats.html", gin.H{
-		"nbrCoC":       stats.nbrCoC,
-		"nbrRezTech":   stats.nbrRezTech,
-		"nbrGeneral":   stats.nbrGeneral,
-		"nbrDiceRolls": stats.nbrDiceRolls,
-		"nbrPlayers":   stats.nbrPlayer,
+		"nbrCoC":       globStats.nbrCoC,
+		"nbrRezTech":   globStats.nbrRezTech,
+		"nbrGeneral":   globStats.nbrGeneral,
+		"nbrDiceRolls": globStats.nbrDiceRolls,
+		"nbrPlayers":   globStats.nbrPlayer,
 	})
 }

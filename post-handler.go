@@ -42,13 +42,13 @@ func rollDice(c *gin.Context) {
 		json.Unmarshal([]byte(dice), &diceArr)
 	}
 	diceArr, _ = checkDiceArr(diceArr)
-	r := rooms[int(id)]
+	r := globRooms[int(id)]
 	r.addPlayer(player, char, col)
 	_, err = r.roll(diceArr, int(mod), player, action)
 	if err != nil {
 		c.Status(http.StatusForbidden)
 	} else {
-		rooms[int(id)] = r
+		globRooms[int(id)] = r
 		c.Status(http.StatusOK)
 	}
 }
@@ -64,7 +64,7 @@ func addPlayer(c *gin.Context) {
 	id, _ := strconv.ParseInt(json["id"], 10, 32)
 	name := json["char"]
 	color := json["color"]
-	r := rooms[int(room)]
+	r := globRooms[int(room)]
 	r.addPlayer(int(id), name, color)
 	c.Status(http.StatusOK)
 }
@@ -106,7 +106,7 @@ func changeRoomSettings(c *gin.Context) {
 	roomId, _ := strconv.ParseInt(json["room_id"], 10, 32)
 	roomName := json["room_name"]
 	color := json["color"]
-	room := rooms[int(roomId)]
+	room := globRooms[int(roomId)]
 	if int(playerId) != room.OwnerId {
 		c.Status(http.StatusForbidden)
 		return
@@ -121,6 +121,6 @@ func changeRoomSettings(c *gin.Context) {
 	} else if len(roomName) > 0 {
 		room.Name = roomName
 	}
-	rooms[int(roomId)] = room
+	globRooms[int(roomId)] = room
 	c.Status(http.StatusOK)
 }

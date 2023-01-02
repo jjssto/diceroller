@@ -1,0 +1,10 @@
+<title>{{ .title }}</title>
+<script>
+    const roomId = "{{ .room_id }}"
+    const isOwner = "{{ .is_owner }}"
+    const color = "{{ .color }}"
+    sessionStorage.setItem("room_id", roomId)
+    sessionStorage.setItem("is_owner", isOwner)
+    sessionStorage.setItem("color", color)
+  </script>
+  <link rel="stylesheet" href="/css/style.css">

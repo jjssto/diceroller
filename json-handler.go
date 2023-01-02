@@ -32,7 +32,7 @@ func getRollsHelper(c *gin.Context, all bool) {
 	} else {
 		rollNbr = 0
 	}
-	_, ok := rooms[roomId]
+	_, ok := globRooms[roomId]
 	if !ok {
 		c.JSON(0, "")
 	}
@@ -41,8 +41,8 @@ func getRollsHelper(c *gin.Context, all bool) {
 	data := "{"
 	first := true
 	loc := getTimeZone(c)
-	for rollNbr < len(rooms[roomId].DiceRolls) {
-		val := rooms[roomId].DiceRolls[rollNbr]
+	for rollNbr < len(globRooms[roomId].DiceRolls) {
+		val := globRooms[roomId].DiceRolls[rollNbr]
 		if first {
 			first = false
 		} else {

@@ -2,45 +2,14 @@
 <html lang="en">
 
 <head>
-  <script>
-    var roomId = "{{ .room_id }}"
-    var isOwner = "{{ .is_owner }}"
-    var color = "{{ .color }}"
-    sessionStorage.setItem("room_id", roomId)
-    sessionStorage.setItem("is_owner", isOwner)
-    sessionStorage.setItem("color", color)
-  </script>
-
+  {{ template "0_head_stuff.html" . }}
   <script src="/js/general.js" type="module"></script>
-  <link rel="stylesheet" href="/css/style.css">
-  <title>{{ .title }}</title>
 </head>
 
 <body>
   <div class="grid-container">
-    <div class="header"></div>
-    <div class="header_1">
-      <h1>{{ .title }}</h1>
-    </div>
-    <div class="header_2" id="c_header_2">
-      <p>
-      <form id="f_setting">
-        Change the name or color of this room: &nbsp;&nbsp;
-
-        <label for="f_setting_name"><small><i>New name:</i></small></label>
-        <input id="f_setting_name" type="text">
-        &nbsp;
-        <label for="f_setting_color"><small><i>New color:</i></small></label>
-        <select name="f_setting_color" id="f_setting_color">
-          {{ .color_options }}
-        </select>
-        &nbsp;
-        <input type="submit" value="OK">
-      </form>
-      </p>
-      <p>Share this link with your group: <a href="" id="a_link"></a></p>
-    </div>
-    <div class="roll_form">
+  {{ template "0_header.html" . }}
+   <div class="roll_form">
       <form id="f_roll">
         <p>
         <div>
@@ -48,91 +17,25 @@
           <input type="text" id="f_name">
           <label for="action">Action</label>
           <input type="text" id="f_action">
-         </div>
-         <div style="text-align: right">
+        </div>
+        <div style="text-align: right">
           <label for="i_highlight_own_rolls">Highlight own rolls:</label>
           <input type="checkbox" id="i_highlight_own_rolls" value="1" checked="true">
         </div>
         </p>
         <p>
           <label for="s_d20">d20</label>
-          <select name="s_d20" , id="s_d20">
-            <option value="0" class="o1">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-          </select>
+          {{ template "0_dd_number.html" "d20"}}
           <label for="s_d12">d12</label>
-          <select name="s_d12" , id="s_d12">
-            <option value="0" class="o1">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-          </select>
+          {{ template "0_dd_number.html" "d12"}}
           <label for="s_d10">d10</label>
-          <select name="s_d10" , id="s_d10">
-            <option value="0" class="o1">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-          </select>
+          {{ template "0_dd_number.html" "d10"}}
           <label for="s_d8">d8</label>
-          <select name="s_d8" , id="s_d8">
-            <option value="0" class="o1">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-          </select>
+          {{ template "0_dd_number.html" "d8"}}
           <label for="s_d6">d6</label>
-          <select name="s_d6" , id="s_d6">
-            <option value="0" class="o1">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-          </select>
-          <label for="s_d4">d4</label>
-          <select name="s_d4" , id="s_d4">
-            <option value="0" class="o1">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-          </select>
+          {{ template "0_dd_number.html" "d6"}}
+         <label for="s_d4">d4</label>
+          {{ template "0_dd_number.html" "d4"}}
         </p>
         <p>
           <input type="submit" value="Roll">
@@ -140,32 +43,8 @@
         </p>
       </form>
     </div>
-    <div class="roll_result">
-      <div class="result_table">
-        <table class="t_result">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Time</th>
-              <th>Char</th>
-              <th>Action</th>
-              <th>D20</th>
-              <th>D12</th>
-              <th>D10</th>
-              <th>D8</th>
-              <th>D6</th>
-              <th>D4</th>
-              <th>Result</th>
-            </tr>
-          </thead>
-          <tbody id="tbody_rolls"></tbody>
-        </table>
-      </div>
-    </div>
-    <div class="footer">
-      {{ .footer }}
-    </div>
-  </div>
+    {{ template "0_roll_results.html" .result_cols }}
+    {{ template "0_footer.html" }}
   </div>
 </body>
 

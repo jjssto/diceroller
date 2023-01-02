@@ -1,0 +1,19 @@
+<div class="roll_result">
+    <div class="result_table">
+        <table class="t_result">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Time</th>
+                    <th>Char</th>
+                    <th>Action</th>
+                    {{ range . }}
+                    <th>{{ . }}</th>
+                    {{ end }}
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody id="tbody_rolls"></tbody>
+        </table>
+    </div>
+</div>

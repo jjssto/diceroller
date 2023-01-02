@@ -54,7 +54,7 @@ func (d *Die) json() string {
 }
 
 func (d *DiceRoll) json(room int, loc *time.Location) string {
-	player := rooms[room].Players.Detail[d.Player]
+	player := globRooms[room].Players.Detail[d.Player]
 	timeStamp := d.Time.Local().In(loc).Format("2006-01-02 15:04:05")
 	info := fmt.Sprintf("\"P\":\"%s\", \"C\":\"%s\",\"A\":\"%s\", \"T\":\"%s\", \"R\":\"%d\"",
 		player.Name, player.Color, d.Action, timeStamp, d.Result)
@@ -260,7 +260,7 @@ func addRoom(game Game) (int, error) {
 		return 0, errors.New("error while generating room id")
 	}
 	r := Room{Id: id, Game: game, Created: time.Now(), OwnerId: 0}
-	rooms[id] = r
+	globRooms[id] = r
 	return id, nil
 }
 
@@ -268,18 +268,18 @@ func genPlayerId(roomId int) (int, bool) {
 	var playerId int
 	var cntr int = 0
 	var ok bool = true
-	if playerIds == nil {
-		playerIds = make(map[int][]int)
+	if globPlayerIds == nil {
+		globPlayerIds = make(map[int][]int)
 	}
 	for ok {
 		if cntr > MAX_TRIES_ID_GEN {
 			return 0, false
 		}
 		playerId = rand.Intn(899999) + 100000
-		_, ok = playerIds[playerId]
+		_, ok = globPlayerIds[playerId]
 		cntr++
 	}
-	playerIds[playerId] = append(playerIds[playerId], roomId)
+	globPlayerIds[playerId] = append(globPlayerIds[playerId], roomId)
 	return playerId, true
 }
 
@@ -292,7 +292,7 @@ func genRoomId() (int, bool) {
 			return 0, false
 		}
 		roomId = rand.Intn(899999) + 100000
-		_, ok = rooms[roomId]
+		_, ok = globRooms[roomId]
 		cntr++
 	}
 	return roomId, true

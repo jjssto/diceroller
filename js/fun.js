@@ -201,14 +201,16 @@ function setHighlightOwnRolls() {
 }
 
 function init(createRow) {
-        
-    setHighlightOwnRolls()
-    setColor()
-    detectFocus()
-    settingVisibility()
-    roomSettingForm()
-    setLink()
 
+    window.addEventListener("DOMContentLoaded", () => {
+        setHighlightOwnRolls()
+        setColor()
+        detectFocus()
+        settingVisibility()
+        roomSettingForm()
+        setLink()
+
+    })
     window.addEventListener("load", () => {
         sessionStorage.setItem("last_roll", "");
         getRolls(createRow);

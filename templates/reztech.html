@@ -2,114 +2,35 @@
 <html lang="en">
 
 <head>
-  <script>
-    const roomId = "{{ .room_id }}"
-    const isOwner = "{{ .is_owner }}"
-    const color = "{{ .color }}"
-    sessionStorage.setItem("room_id", roomId)
-    sessionStorage.setItem("is_owner", isOwner)
-    sessionStorage.setItem("color", color)
-  </script>
+  {{ template "0_head_stuff.html" . }}
   <script src="/js/reztech.js" type="module"></script>
-  <link rel="stylesheet" href="/css/style.css">
-  <title>{{ .title }}</title>
 </head>
 
 <body>
   <div class="grid-container">
-    <div class="header"></div>
-    <div class="header_1" id="c_header_1">
-      <h1 id="title_tag">{{ .title }}</h1>
-    </div>
-    <div class="header_2" id="c_header_2">
-      <form id="f_setting">
-      Change the name or color of this room: &nbsp;&nbsp;
-      
-        <label for="f_setting_name"><small><i>New name:</i></small></label>
-        <input id="f_setting_name" type="text">
-        &nbsp;
-        <label for="f_setting_color"><small><i>New color:</i></small></label>
-        <select name="f_setting_color" id="f_setting_color">
-          {{ .color_options }}
-        </select>
-        &nbsp;
-        <input type="submit" value="OK">
+
+    {{ template "0_header.html" . }}
+
+    <div class="roll_form" id="c_roll_form">
+      <form id="f_roll">
+        {{ template "0_char_and_action.html" }} 
+        <p>
+          <label for="s_attribute">Atribute</label>
+          {{ template "0_dd_number.html" "s_attribute"}}
+          <label for="s_skill">Skill</label>
+          {{ template "0_dd_number.html" "s_skill"}}
+          </select>
+          <label for="i_attribute_only">Attribute only:</label>
+          <input type="checkbox" id="i_attribute_only" value="1">
+        </p>
+        <p>
+          <input type="submit" value="Roll">
+          <input type="button" value="Reset" id="b_reset">
+        </p>
       </form>
-      <p>Share this link with your group: <a href="" id="a_link"></a></p>
     </div>
-  <div class="roll_form" id="c_roll_form">
-    <form id="f_roll">
-      <p>
-        <div>
-          <label for="name">Char</label>
-          <input type="text" id="f_name">
-          <label for="action">Action</label>
-          <input type="text" id="f_action">
-         </div>
-         <div style="text-align: right">
-          <label for="i_highlight_own_rolls">Highlight own rolls:</label>
-          <input type="checkbox" id="i_highlight_own_rolls" value="1" checked="true">
-        </div>
-      </p>
-      <p>
-        <label for="s_attribute">Atribute</label>
-        <select name="s_attribute" , id="s_attribute">
-          <option value="0" class="o1">0</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
-          <option value="9">9</option>
-        </select>
-        <label for="s_skill">Skill</label>
-        <select name="s_skill" , id="s_skill">
-          <option value="0" class="o1">0</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
-          <option value="9">9</option>
-        </select>
-        <label for="i_attribute_only">Attribute only:</label>
-        <input type="checkbox" id="i_attribute_only" value="1">
-      </p>
-      <p>
-        <input type="submit" value="Roll">
-        <input type="button" value="Reset" id="b_reset">
-      </p>
-    </form>
-  </div>
-  <div class="roll_result" id="c_roll_result">
-    <div class="result_table">
-      <table class="t_result">
-        <thead id="table_head">
-          <tr>
-            <th>#</th>
-            <th>Time</th>
-            <th>Char</th>
-            <th>Action</th>
-            <th>D12</th>
-            <th>D8</th>
-            <th>D6</th>
-            <th>Result</th>
-          </tr>
-        </thead>
-        <tbody id="tbody_rolls"></tbody>
-      </table>
-    </div>
-  </div>
-  <div class="footer" id="c_footer">
-    {{ .footer }} 
-  </div>
-  </div>
+    {{ template "0_roll_results.html" .result_cols }}
+    {{ template "0_footer.html" }}
   </div>
 </body>
 

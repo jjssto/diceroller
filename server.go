@@ -42,7 +42,6 @@ func initServer(router *gin.Engine, config ServerConfig) {
 func setStaticRoutes(router *gin.Engine, config ServerConfig) {
 	router.Static("/js", config.JavaScript)
 	router.Static("/css", config.CSS)
-	router.Static("/res", config.Ressources)
 	router.StaticFile("/favicon.ico", config.Ressources+"/favicon.png")
 }
 
@@ -194,7 +193,7 @@ func getMode(value string, trimChar string) string {
 func getJS(value string, trimChar string) string {
 	ret := strings.Trim(value, trimChar)
 	if ret != "" {
-		return ret
+		return strings.TrimRight(ret, "\\/")
 	} else {
 		return "./js"
 	}
@@ -203,7 +202,7 @@ func getJS(value string, trimChar string) string {
 func getCSS(value string, trimChar string) string {
 	ret := strings.Trim(value, trimChar)
 	if ret != "" {
-		return ret
+		return strings.TrimRight(ret, "\\/")
 	} else {
 		return "./css"
 	}
@@ -212,7 +211,7 @@ func getCSS(value string, trimChar string) string {
 func getTemplates(value string, trimChar string) string {
 	ret := strings.Trim(value, trimChar)
 	if ret != "" {
-		return ret
+		return strings.TrimRight(ret, "\\/")
 	} else {
 		return "./templates"
 	}
@@ -221,7 +220,7 @@ func getTemplates(value string, trimChar string) string {
 func getRessources(value string, trimChar string) string {
 	ret := strings.Trim(value, trimChar)
 	if ret != "" {
-		return ret
+		return strings.TrimRight(ret, "\\/")
 	} else {
 		return "./res"
 	}
@@ -241,8 +240,7 @@ func (config *ServerConfig) addColors(values []string, trimChar string) {
 }
 
 func (config *ServerConfig) setFooter() {
-	footer, err := ioutil.ReadFile(
-		strings.TrimRight(config.Ressources, "\\/") + "/footer.html")
+	footer, err := ioutil.ReadFile(config.Ressources + "/footer.html")
 	if err == nil {
 		config.Footer = template.HTML(footer)
 	}
@@ -290,13 +288,13 @@ func getStatisticInterval(value string, trimChar string) time.Duration {
 func cleanup(config ServerConfig) {
 	for {
 		time.Sleep(config.CleaningInterval)
-		deleteOldGames(rooms, playerIds, config.InactiveDeleteDelay)
+		deleteOldGames(globRooms, globPlayerIds, config.InactiveDeleteDelay)
 	}
 }
 
 func runStatistics(config ServerConfig) {
 	for {
 		time.Sleep(config.StatisticInterval)
-		stats, _ = updateStatistics(rooms, playerIds)
+		globStats, _ = updateStatistics(globRooms, globPlayerIds)
 	}
 }
