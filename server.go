@@ -26,6 +26,11 @@ type ServerConfig struct {
 	CleaningInterval    time.Duration
 	StatisticInterval   time.Duration
 	InactiveDeleteDelay time.Duration
+	DBUser              string
+	DBPassword          string
+	DBAddress           string
+	DBNet               string
+	DBName              string
 }
 
 func initServer(router *gin.Engine, config ServerConfig) {
@@ -76,7 +81,7 @@ func (config *ServerConfig) loadConfig(file string) {
 	if err == nil {
 		defer configFile.Close()
 		scanner := bufio.NewScanner(configFile)
-		re := regexp.MustCompile(`^\s*([^#]\w*):\s*(([\w ,.-:]|(#\w))*)(#.*)?$`)
+		re := regexp.MustCompile(`^\s*([^#]\w*):\s*(([\w ,.-:@\'\"]|(#\w))*)(#.*)?$`)
 		for scanner.Scan() {
 			matches := re.FindStringSubmatch(scanner.Text())
 			if len(matches) > 2 {
@@ -141,6 +146,16 @@ func (config *ServerConfig) setValue(key string, value string) bool {
 		config.CleaningInterval = getCleaningInterval(values[0], trimChar)
 	case "statisticInterval":
 		config.StatisticInterval = getStatisticInterval(values[0], trimChar)
+	case "DBUser":
+		config.DBUser = strings.Trim(values[0], trimChar)
+	case "DBPassword":
+		config.DBPassword = strings.Trim(values[0], trimChar)
+	case "DBAddress":
+		config.DBAddress = strings.Trim(values[0], trimChar)
+	case "DBNet":
+		config.DBNet = strings.Trim(values[0], trimChar)
+	case "DBName":
+		config.DBName = strings.Trim(values[0], trimChar)
 
 	default:
 		return false

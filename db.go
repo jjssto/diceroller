@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"errors"
 
 	"github.com/go-sql-driver/mysql"
 )
@@ -14,11 +15,12 @@ type DB struct {
 
 func (db *DB) config() {
 	db.Cfg = mysql.Config{
-		User:   "",
-		Passwd: "",
-		Net:    "tcp",
-		Addr:   "",
-		DBName: "",
+		User:                 globConfig.DBUser,
+		Passwd:               globConfig.DBPassword,
+		Net:                  globConfig.DBNet,
+		Addr:                 globConfig.DBAddress,
+		DBName:               globConfig.DBName,
+		AllowNativePasswords: true,
 	}
 	db.Configured = true
 }
@@ -45,24 +47,25 @@ func (db *DB) close() {
 
 func (db *DB) roll(
 	roomId int,
-	userToken string,
+	userToken int,
 	charName string,
 	charColor string,
+	charAction string,
 	mod int,
 	dice []int8,
 ) error {
 	row := db.Db.QueryRow(
 		`select 
 			game.game,
-			isnull(player.id, -1),
-			isnull(player.char_name, ''),
-			isnull(player.char_color, '')
+			ifnull(chr.id, -1),
+			ifnull(chr.chr_name, ''),
+			ifnull(chr.chr_color, '')
 		from
 			room
-			left join player
-			left join user
-			left join game
-		where room.id = ? and user.token = ?`,
+			left join chr on room.id = chr.room_id 
+			left join user_token on chr.user_token_id = user_token.id 
+			left join game on room.game_id = game.id
+		where room.id = ? and user_token.token = ?`,
 		roomId, userToken,
 	)
 	var gameStr string
@@ -70,7 +73,9 @@ func (db *DB) roll(
 	var dbCharName string
 	var dbCharColor string
 	err := row.Scan(&gameStr, &charId, &dbCharName, &dbCharColor)
-	if err != nil {
+	if err == sql.ErrNoRows {
+		charId = -1
+	} else if err != nil {
 		return err
 	}
 	if charId == -1 {
@@ -81,7 +86,10 @@ func (db *DB) roll(
 	} else {
 		db.updateChar(charId, charName, charColor, dbCharName, dbCharColor)
 	}
-	var roll DiceRoll
+	roll := DiceRoll{
+		Action: charAction,
+		Player: charId,
+	}
 	switch gameStr {
 	case "CoC":
 		err = roll.rollCoC(dice, mod)
@@ -89,34 +97,33 @@ func (db *DB) roll(
 		err = roll.rollRezTech(dice, mod)
 	case "General":
 		err = roll.rollGeneral(dice, mod)
+	default:
+		return errors.New("unknown game")
 	}
 	if err != nil {
 		return err
 	}
-	if err = db.saveRoll(&roll, charId); err != nil {
+	if err = db.saveRoll(&roll); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (db *DB) saveRoll(roll *DiceRoll, charId int) error {
-	result, err := db.Db.Exec(
-		`insert into roll(chr_id, chr_action, result)
-		values (?, ?, ?)
-		`, charId, roll.Action, roll.Result,
+func (db *DB) saveRoll(roll *DiceRoll) error {
+	row := db.Db.QueryRow(
+		`call insert_roll(?, ?, ?)
+		`, roll.Player, roll.Action, roll.Result,
 	)
-	if err != nil {
+	var rollId int
+	if err := row.Scan(&rollId); err != nil {
 		return err
 	}
-	rollId, err := result.LastInsertId()
-	if err != nil {
-		return err
-	}
-	for eyes, result := range roll.Dice {
-		_, err = db.Db.Exec(
+	for i := range roll.Dice {
+		d := roll.Dice[i]
+		_, err := db.Db.Exec(
 			`insert into die(roll_id, eyes, result)
 			values(?, ?, ?)`,
-			rollId, eyes, result,
+			rollId, d.Eyes, d.Result,
 		)
 		if err != nil {
 			return err
@@ -148,47 +155,97 @@ func (db *DB) updateChar(
 	)
 }
 
-func (db *DB) createRoom(game Game) int {
-	return 0
+func (db *DB) createRoom(game Game) (int, error) {
+	var game_id int
+	switch game {
+	case General:
+		game_id = 1
+	case CoC:
+		game_id = 2
+	case RezTech:
+		game_id = 3
+	default:
+		game_id = 1
+	}
+	result := db.Db.QueryRow(`call create_room(?)`, game_id)
+
+	var roomId int
+	err := result.Scan(&roomId)
+	if err != nil {
+		return -1, err
+	}
+	return roomId, nil
 }
 
-func (db *DB) addUser(token string) (int, error) {
-	return -1, nil
+func (db *DB) createToken(oldToken int) (int, int, error) {
+	row := db.Db.QueryRow(`call create_user_token(?)`, oldToken)
+	var newToken int
+	var id int
+	if err := row.Scan(&newToken, &id); err != nil {
+		return 0, 0, err
+	}
+	return newToken, id, nil
+}
+
+func (db *DB) getRoom(roomId int, token int) (Room, error) {
+	row := db.Db.QueryRow(`call get_room(?, ?)`, roomId, token)
+	var gameStr string
+	var isOwnerInt int
+	room := Room{Id: roomId}
+	if err := row.Scan(&gameStr, &isOwnerInt, &room.Name, &room.Color); err != nil {
+		return room, err
+	}
+	switch gameStr {
+	case "CoC":
+		room.Game = CoC
+	case "RezTech":
+		room.Game = RezTech
+	case "":
+		return room, errors.New("room does not exist")
+	default:
+		room.Game = General
+	}
+	room.IsOwner = (isOwnerInt == 1)
+	return room, nil
 }
 
 func (db *DB) addChar(
-	token string,
+	token int,
 	charName string,
 	charColor string,
 	roomId int,
 ) (int, error) {
 	row := db.Db.QueryRow(
 		`select 
-			user.id,
-			isnull(chr.id, -1)
+			user_token.id,
+			ifnull(chr.id, 0)
 		from
-			user
+			user_token
 			left join chr on 
-				user.id = chr.user_id
+				user_token.id = chr.user_token_id
 				and chr.room_id = ?
-		where user.token = ?`,
+		where user_token.token = ?`,
 		roomId, token,
 	)
 	var userId int
 	var charId int
-	var err error
-	err = row.Scan(&userId, &charId)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			userId, err = db.addUser(token)
-		} else {
-			return -1, err
-		}
+	if err := row.Scan(&userId, &charId); err != nil {
+		return -1, err
 	}
-	if charId == -1 {
+	//if err != nil {
+	// if err == sql.ErrNoRows {
+	// 	_, userId, err = db.createToken(token)
+	// 	if err != nil {
+	// 		return -1, err
+	// 	}
+	// } else {
+	//	return -1, err
+	//}
+	//}
+	if charId == 0 {
 		// insert char
 		result, err := db.Db.Exec(
-			`insert into chr(room_id, user_id, chr_name, chr_color)
+			`insert into chr(room_id, user_token_id, chr_name, chr_color)
 			values (?, ?, ?, ?)`, roomId, userId, charName, charColor,
 		)
 		if err != nil {
@@ -203,26 +260,33 @@ func (db *DB) addChar(
 	return charId, nil
 }
 
-func (db *DB) getRolls(roomId int, token string, lastRoll int) string {
-	rows, err := db.Db.Query(
-		`select
-			game.game	
-			if user.token = ? then 1 else 0 end if
-		from
-			roll
-			join die on roll.id = die.roll_id
-			join chr on roll.chr_id = chr.id
-			join user on chr.user_id = user.id
-			join room on roll.room_id = room.id
-			join game on room.game_id = game.id
-		where roll.room_id = ? and roll.id > ?		
-		order by roll.id, die.eyes`, token, roomId, lastRoll,
-	)
+func (db *DB) getRolls(roomId int, token int, lastRoll int) string {
+
+	row := db.Db.QueryRow(`select get_rolls_json(?,?,?)`, roomId, token, lastRoll)
+
+	var str string
+	err := row.Scan(&str)
 	if err != nil {
-		return ""
+		str = ""
 	}
-	for rows.Next() {
-		err = rows.Scan()
+	return "{" + str + "}"
+}
+
+func (db *DB) changeRoomSettings(
+	roomId int, userToken int, name string, color string,
+) error {
+	var ret int
+	row := db.Db.QueryRow(
+		`call change_room_settings(?,?,?,?)`,
+		roomId, userToken, name, color,
+	)
+	if err := row.Scan(&ret); err != nil {
+		return err
 	}
-	return ""
+	if ret > 0 {
+		return nil
+	} else {
+		return errors.New("action is not allowed")
+	}
+
 }

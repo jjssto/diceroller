@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -24,36 +23,22 @@ func getRollsHelper(c *gin.Context, all bool) {
 		if err != nil {
 			rollNbr = 0
 		} else {
-			rollNbr = int(rollNbr64) + 1
+			rollNbr = int(rollNbr64)
 		}
 	} else {
 		rollNbr = 0
 	}
-	_, ok := globRooms[roomId]
-	if !ok {
-		c.JSON(0, "")
-	}
 	session := sessions.Default(c)
-	playerId := session.Get("player_id").(int)
-	data := "{"
-	first := true
-	loc := getTimeZone(c)
-	for rollNbr < len(globRooms[roomId].DiceRolls) {
-		val := globRooms[roomId].DiceRolls[rollNbr]
-		if first {
-			first = false
-		} else {
-			data += ","
-		}
-		isOwnRoll := 0
-		if playerId == val.Player {
-			isOwnRoll = 1
-		}
-		data += fmt.Sprintf("\"%d\": [%s, %d]", rollNbr, val.json(roomId, loc), isOwnRoll)
-		rollNbr++
-	}
-	data += "}"
-	c.String(http.StatusOK, data)
+	userToken := session.Get("player_id").(int)
+	//loc := getTimeZone(c)
+
+	db := DB{Configured: false}
+	db.connect(false)
+	data := db.getRolls(roomId, userToken, rollNbr)
+	db.close()
+	c.Writer.Flush()
+	c.Writer.WriteString(data)
+	c.Status(http.StatusOK)
 
 }
 
