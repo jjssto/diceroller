@@ -21,9 +21,7 @@
 package main
 
 import (
-	"errors"
 	"fmt"
-	"html/template"
 	"net/http"
 	"strconv"
 
@@ -31,7 +29,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func getTitle(room Room) string {
+func (room *Room) getTitle() string {
 	var ret string
 	if len(room.Name) > 0 {
 		ret = room.Name
@@ -49,51 +47,38 @@ func getTitle(room Room) string {
 	return ret
 }
 
-func checkOwnership(c *gin.Context, room Room) bool {
-	playerId := getPlayerId(c, room.Id)
-	if playerId == room.OwnerId {
-		return true
-	} else {
-		return false
-	}
-}
-
 func viewHome(c *gin.Context) {
 	c.HTML(200, "home.html", gin.H{
 		"title": globConfig.Title,
 	})
 }
 
-func viewCoC(c *gin.Context, id int) {
-	room := globRooms[id]
-	template.ParseFiles()
+func viewCoC(c *gin.Context, room Room) {
 	c.HTML(http.StatusOK, "coc.html", gin.H{
-		"title":       getTitle(room),
+		"title":       room.getTitle(),
 		"color":       room.Color,
-		"room_id":     fmt.Sprintf("%d", room.Id),
-		"is_owner":    fmt.Sprint(checkOwnership(c, room)),
+		"room_id":     room.Id,
+		"is_owner":    room.IsOwner,
 		"result_cols": []string{"Roll"},
 	})
 }
 
-func viewRezTech(c *gin.Context, id int) {
-	room := globRooms[id]
+func viewRezTech(c *gin.Context, room Room) {
 	c.HTML(http.StatusOK, "reztech.html", gin.H{
-		"title":       getTitle(room),
+		"title":       room.getTitle(),
 		"color":       room.Color,
-		"room_id":     fmt.Sprintf("%d", room.Id),
-		"is_owner":    fmt.Sprint(checkOwnership(c, room)),
+		"room_id":     room.Id,
+		"is_owner":    room.IsOwner,
 		"result_cols": []string{"D12", "D8", "D6"},
 	})
 }
 
-func viewGeneral(c *gin.Context, id int) {
-	room := globRooms[id]
+func viewGeneral(c *gin.Context, room Room) {
 	c.HTML(http.StatusOK, "general.html", gin.H{
-		"title":       getTitle(room),
+		"title":       room.getTitle(),
 		"color":       room.Color,
-		"room_id":     fmt.Sprintf("%d", room.Id),
-		"is_owner":    fmt.Sprint(checkOwnership(c, room)),
+		"room_id":     room.Id,
+		"is_owner":    room.IsOwner,
 		"result_cols": []string{"D20", "D12", "D10", "D8", "D6", "D4"},
 	})
 }
@@ -102,58 +87,39 @@ func viewGame(c *gin.Context) {
 	roomId64, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
 		displayError(c, err)
-	}
-	roomId := int(roomId64)
-	r, ok := globRooms[roomId]
-	if !ok {
-		displayError(c, nil)
 		return
 	}
-	playerId := getPlayerId(c, roomId)
-	if r.setOwnerId(playerId) {
-		globRooms[roomId] = r
+	roomId := int(roomId64)
+	session := sessions.Default(c)
+	oldToken := session.Get("player_id").(int)
+
+	db := DB{Configured: false}
+	db.connect(false)
+	userToken, _, err := db.createToken(oldToken)
+	if err != nil {
+		displayError(c, err)
+		return
 	}
-	switch r.Game {
+	if userToken != oldToken {
+		session.Set("player_id", userToken)
+		session.Save()
+	}
+	room, err := db.getRoom(roomId, userToken)
+	db.close()
+	if err != nil {
+		displayError(c, err)
+		return
+	}
+	switch room.Game {
 	case CoC:
-		viewCoC(c, roomId)
+		viewCoC(c, room)
 	case RezTech:
-		viewRezTech(c, roomId)
+		viewRezTech(c, room)
 	case General:
-		viewGeneral(c, roomId)
+		viewGeneral(c, room)
 	default:
 		displayError(c, err)
 	}
-}
-
-func (room *Room) setOwnerId(playerId int) bool {
-	if room.OwnerId == 0 {
-		room.OwnerId = playerId
-		return true
-	} else {
-		return false
-	}
-}
-
-func getPlayerId(c *gin.Context, roomId int) int {
-	session := sessions.Default(c)
-	playerIdRaw := session.Get("player_id")
-	var playerId int
-	var ok bool
-	if playerIdRaw == nil {
-		ok = false
-	} else {
-		playerId = playerIdRaw.(int)
-		_, ok = globUserIds[playerId]
-	}
-	if !ok {
-		playerId, ok = genPlayerId(roomId)
-		if !ok {
-			displayError(c, errors.New("error generationg player id"))
-		}
-		session.Set("player_id", playerId)
-		session.Save()
-	}
-	return playerId
 }
 
 func displayError(c *gin.Context, err interface{}) {

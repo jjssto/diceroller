@@ -64,6 +64,7 @@ type Room struct {
 	Players   CharList
 	Color     string
 	OwnerId   int
+	IsOwner   bool
 	Name      string
 	DiceRolls []DiceRoll
 	Created   time.Time
@@ -99,13 +100,15 @@ func (r *Room) roll(dice []int8, mod int, player int, action string) (DiceRoll, 
 	diceRoll.Action = action
 	switch r.Game {
 	case CoC:
-		diceRoll.rollCoC(dice, mod)
+		if diceRoll.rollCoC(dice, mod) != nil {
+			return diceRoll, errors.New("no dice")
+		}
 	case RezTech:
-		if !diceRoll.rollRezTech(dice, mod) {
+		if diceRoll.rollRezTech(dice, mod) != nil {
 			return diceRoll, errors.New("no dice")
 		}
 	case General:
-		if !diceRoll.rollGeneral(dice, mod) {
+		if diceRoll.rollGeneral(dice, mod) != nil {
 			return diceRoll, errors.New("no dice")
 		}
 	}
@@ -204,13 +207,13 @@ func (r *DiceRoll) evaluateRezTech() {
 	r.Result = result
 }
 
-func (r *DiceRoll) rollRezTech(dice []int8, mod int) bool {
+func (r *DiceRoll) rollRezTech(dice []int8, mod int) error {
 	if len(dice) > 0 {
 		r.roll(dice)
 		r.evaluateRezTech()
-		return true
+		return nil
 	} else {
-		return false
+		return errors.New("dice invalid")
 	}
 }
 
@@ -221,13 +224,13 @@ func (r *DiceRoll) evaluateGeneral() {
 	}
 	r.Result = result
 }
-func (r *DiceRoll) rollGeneral(dice []int8, mod int) bool {
+func (r *DiceRoll) rollGeneral(dice []int8, mod int) error {
 	if len(dice) > 0 {
 		r.roll(dice)
 		r.evaluateGeneral()
-		return true
+		return nil
 	} else {
-		return false
+		return errors.New("dice invalid")
 	}
 }
 func (r *DiceRoll) roll(dice []int8) error {

@@ -23,6 +23,7 @@ export {
     hasFocus, 
     highlightOwnRolls,
     addCol,
+    formatTime,
     init,
     initReset
 };
@@ -48,40 +49,6 @@ function settingVisibility() {
         element.style.visibility = 'hidden';
     }
 }
-
-function insertOption(sel, text, value) {
-    var element = document.createElement("option");
-    element.value = value
-    element.textContent = text
-    sel.appendChild(element);
-}
-
-
-function insertColorOptions() {
-    
-    // get setting form, if not present => exit
-    var sel = document.getElementById("f_setting_color");
-    if (sel == null) return
-
-    // create default option
-    insertOption(sel, "-", "-")
-    
-    // get and set the additional color options
-    fetch("/res/colors.json", {
-        method: "GET"
-    })
-    .then( resp => {
-        resp.json().then(
-            data => {
-               for (var i in data) {
-
-                    insertOption(sel, data[i].text, data[i].code)
-               }
-            }
-        )
-    })
-}
-
 
 
 function roomSettingForm() {
@@ -219,6 +186,15 @@ function setHighlightOwnRolls() {
     } else {
         highlightOwnRolls = false;
     }
+}
+
+function formatTime(timestamp) {
+    const d = new Date(parseInt(timestamp) * 1000) 
+    const h = d.getHours()
+    const m = d.getMinutes()
+    const hh = ((h < 10) ? '0' : '') + h 
+    const mm = ((m < 10) ? '0' : '') + m 
+    return hh + ':' + mm
 }
 
 function init(createRow) {

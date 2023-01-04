@@ -51,7 +51,7 @@ func rollDice(c *gin.Context) {
 	}
 	id, _ := strconv.ParseInt(idStr, 10, 32)
 	session := sessions.Default(c)
-	player := session.Get("player_id").(int)
+	userToken := session.Get("player_id").(int)
 	col := data["color"]
 	char := data["char"]
 	mod, _ := strconv.ParseInt(data["mod"], 10, 32)
@@ -62,31 +62,17 @@ func rollDice(c *gin.Context) {
 		json.Unmarshal([]byte(dice), &diceArr)
 	}
 	diceArr, _ = checkDiceArr(diceArr)
-	r := globRooms[int(id)]
-	r.addPlayer(player, char, col)
-	_, err = r.roll(diceArr, int(mod), player, action)
+	db := DB{Configured: false}
+	db.connect(false)
+	err = db.roll(
+		int(id), userToken, char, col, action, int(mod), diceArr,
+	)
+	db.close()
 	if err != nil {
 		c.Status(http.StatusForbidden)
 	} else {
-		globRooms[int(id)] = r
 		c.Status(http.StatusOK)
 	}
-}
-
-func addPlayer(c *gin.Context) {
-	var json map[string]string
-	err := c.BindJSON(&json)
-	if err != nil {
-		c.Status(http.StatusBadRequest)
-		return
-	}
-	room, _ := strconv.ParseInt(json["room"], 10, 32)
-	id, _ := strconv.ParseInt(json["id"], 10, 32)
-	name := json["char"]
-	color := json["color"]
-	r := globRooms[int(room)]
-	r.addPlayer(int(id), name, color)
-	c.Status(http.StatusOK)
 }
 
 func addRoomHandler(c *gin.Context) {
@@ -106,11 +92,14 @@ func addRoomHandler(c *gin.Context) {
 	default:
 		g = General
 	}
-	id, err := addRoom(g)
+	db := DB{Configured: false}
+	db.connect(false)
+	id, err := db.createRoom(g)
 	if err != nil {
 		c.Status(http.StatusBadRequest)
 		return
 	}
+	db.close()
 	c.AsciiJSON(http.StatusOK, id)
 }
 
@@ -122,25 +111,20 @@ func changeRoomSettings(c *gin.Context) {
 		c.Status(http.StatusBadRequest)
 		return
 	}
-	playerId := session.Get("player_id").(int)
+	userToken := session.Get("player_id").(int)
 	roomId, _ := strconv.ParseInt(json["room_id"], 10, 32)
 	roomName := json["room_name"]
 	color := json["color"]
-	room := globRooms[int(roomId)]
-	if int(playerId) != room.OwnerId {
+
+	db := DB{Configured: false}
+	if err := db.connect(false); err != nil {
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+	err = db.changeRoomSettings(int(roomId), userToken, roomName, color)
+	if err != nil {
 		c.Status(http.StatusForbidden)
 		return
 	}
-	if color == "-" {
-		room.Color = ""
-	} else if len(color) > 0 {
-		room.Color = color
-	}
-	if roomName == "-" {
-		room.Name = ""
-	} else if len(roomName) > 0 {
-		room.Name = roomName
-	}
-	globRooms[int(roomId)] = room
 	c.Status(http.StatusOK)
 }
