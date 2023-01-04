@@ -42,13 +42,19 @@ function createRow(drow, id) {
     colP.appendChild(document.createTextNode(dat.P))
     colP.className = "my_name"
     addCol(row, dat.A)
-    const colD = row.insertCell()
-    var text = ""
+    var d10 = ""
+    var d100 = ""
     for(let i in dat.D) {
-        text += dat.D[i].R 
-        text += ", "
+        if (dat.D[i].E == '10') {
+            d10 += dat.D[i].R + ", "
+        } else if (dat.D[i].E == "0") {
+            d100 += dat.D[i].R + ", "
+        } else {
+            d10 += "[inval.], "
+        }
     }
-    colD.appendChild(document.createTextNode(text))
+    addCol(row, d100)
+    addCol(row, d10)
     addCol(row, dat.R)
     return row
 }

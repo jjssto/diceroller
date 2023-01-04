@@ -59,7 +59,7 @@ func viewCoC(c *gin.Context, room Room) {
 		"color":       room.Color,
 		"room_id":     room.Id,
 		"is_owner":    room.IsOwner,
-		"result_cols": []string{"Roll"},
+		"result_cols": []string{"D100", "D10"},
 	})
 }
 
