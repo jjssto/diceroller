@@ -131,13 +131,3 @@ func displayError(c *gin.Context, err interface{}) {
 func viewError(c *gin.Context) {
 	displayError(c, nil)
 }
-
-func viewStats(c *gin.Context) {
-	c.HTML(http.StatusOK, "stats.html", gin.H{
-		"nbrCoC":       globStats.nbrCoC,
-		"nbrRezTech":   globStats.nbrRezTech,
-		"nbrGeneral":   globStats.nbrGeneral,
-		"nbrDiceRolls": globStats.nbrDiceRolls,
-		"nbrPlayers":   globStats.nbrPlayer,
-	})
-}

@@ -70,7 +70,6 @@ func setStaticRoutes(router *gin.Engine, config ServerConfig) {
 
 func setGetRoutes(router *gin.Engine) {
 	router.GET("/", viewHome)
-	router.GET("/stats", viewStats)
 	router.GET("/error", viewError)
 	router.GET("/room/:id", viewGame)
 	router.GET("/rolls/:id", getAllRolls)
@@ -293,19 +292,5 @@ func getStatisticInterval(value string, trimChar string) time.Duration {
 		return ret
 	} else {
 		panic(errors.New("error loading configuration"))
-	}
-}
-
-func cleanup(config ServerConfig) {
-	for {
-		time.Sleep(config.CleaningInterval)
-		deleteOldGames(globRooms, globUserIds, config.InactiveDeleteDelay)
-	}
-}
-
-func runStatistics(config ServerConfig) {
-	for {
-		time.Sleep(config.StatisticInterval)
-		globStats, _ = updateStatistics(globRooms, globUserIds)
 	}
 }

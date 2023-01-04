@@ -74,23 +74,23 @@ func (d *Die) json() string {
 	return fmt.Sprintf("{\"E\":\"%d\", \"R\":\"%d\"}", d.Eyes, d.Result)
 }
 
-func (d *DiceRoll) json(room int, loc *time.Location) string {
-	player := globRooms[room].Players.Detail[d.Player]
-	timeStamp := d.Time.Local().In(loc).Format("15:04:05")
-	info := fmt.Sprintf("\"P\":\"%s\", \"C\":\"%s\",\"A\":\"%s\", \"T\":\"%s\", \"R\":\"%d\"",
-		player.Name, player.Color, d.Action, timeStamp, d.Result)
-	dice := ""
-	first := true
-	for _, val := range d.Dice {
-		if first {
-			first = false
-		} else {
-			dice += ","
-		}
-		dice += val.json()
-	}
-	return fmt.Sprintf("{%s, \"D\":[%s]}", info, dice)
-}
+//func (d *DiceRoll) json(room int, loc *time.Location) string {
+//	player := globRooms[room].Players.Detail[d.Player]
+//	timeStamp := d.Time.Local().In(loc).Format("15:04:05")
+//	info := fmt.Sprintf("\"P\":\"%s\", \"C\":\"%s\",\"A\":\"%s\", \"T\":\"%s\", \"R\":\"%d\"",
+//		player.Name, player.Color, d.Action, timeStamp, d.Result)
+//	dice := ""
+//	first := true
+//	for _, val := range d.Dice {
+//		if first {
+//			first = false
+//		} else {
+//			dice += ","
+//		}
+//		dice += val.json()
+//	}
+//	return fmt.Sprintf("{%s, \"D\":[%s]}", info, dice)
+//}
 
 func (r *Room) roll(dice []int8, mod int, player int, action string) (DiceRoll, error) {
 
@@ -275,83 +275,4 @@ func (r *Room) addPlayer(id int, name string, col string) error {
 		r.Players.Detail[id] = player
 	}
 	return nil
-}
-
-func addRoom(game Game) (int, error) {
-	id, ok := genRoomId()
-	if !ok {
-		return 0, errors.New("error while generating room id")
-	}
-	r := Room{Id: id, Game: game, Created: time.Now(), OwnerId: 0}
-	globRooms[id] = r
-	return id, nil
-}
-
-func genPlayerId(roomId int) (int, bool) {
-	var playerId int
-	var cntr int = 0
-	var ok bool = true
-	if globUserIds == nil {
-		globUserIds = make(map[int][]int)
-	}
-	for ok {
-		if cntr > MAX_TRIES_ID_GEN {
-			return 0, false
-		}
-		playerId = rand.Intn(899999) + 100000
-		_, ok = globUserIds[playerId]
-		cntr++
-	}
-	globUserIds[playerId] = append(globUserIds[playerId], roomId)
-	return playerId, true
-}
-
-func genRoomId() (int, bool) {
-	var roomId int
-	var cntr int = 0
-	var ok bool = true
-	for ok {
-		if cntr > MAX_TRIES_ID_GEN {
-			return 0, false
-		}
-		roomId = rand.Intn(899999) + 100000
-		_, ok = globRooms[roomId]
-		cntr++
-	}
-	return roomId, true
-}
-
-func deleteOldGames(
-	rooms map[int]Room,
-	playerIds map[int][]int,
-	inactiveDeleteDelay time.Duration) {
-
-	comp := time.Now().Add(-1 * inactiveDeleteDelay)
-	for i, v := range rooms {
-		deleteRoom := false
-		if len(v.DiceRolls) == 0 {
-			if v.Created.Before(comp) {
-				deleteRoom = true
-			}
-		} else if v.DiceRolls[len(v.DiceRolls)-1].Time.Before(comp) {
-			deleteRoom = true
-		}
-		if deleteRoom {
-			delete(rooms, i)
-			for j, w := range playerIds {
-				stillActive := false
-				for k, x := range w {
-					if x == i {
-						w[k] = 0
-					} else if x != 0 {
-						stillActive = true
-					}
-				}
-				playerIds[j] = w
-				if !stillActive {
-					delete(playerIds, j)
-				}
-			}
-		}
-	}
 }
