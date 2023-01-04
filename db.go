@@ -83,6 +83,12 @@ func (db *DB) roll(
 		if err != nil {
 			return err
 		}
+		row := db.Db.QueryRow(
+			`select game.game 
+			from room join game on room.game_id = game.id
+			where room.id = ?`, roomId,
+		)
+		row.Scan(&gameStr)
 	} else {
 		db.updateChar(charId, charName, charColor, dbCharName, dbCharColor)
 	}
