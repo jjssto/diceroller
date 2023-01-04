@@ -39,6 +39,8 @@ func setStaticRoutes(router *gin.Engine, config ServerConfig) {
 	router.Static("/js", config.JavaScript)
 	router.Static("/css", config.CSS)
 	router.StaticFile("/favicon.ico", config.Ressources+"/favicon.png")
+	router.StaticFile(
+		"/about/javascript.html", config.Ressources+"/javascript.html")
 }
 
 func setGetRoutes(router *gin.Engine) {
