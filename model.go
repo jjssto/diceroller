@@ -28,20 +28,20 @@ type DiceRoll struct {
 	Time   time.Time
 }
 
-type Player struct {
+type Char struct {
 	Name  string
 	Color string
 }
 
-type PlayerList struct {
+type CharList struct {
 	Id     []int
-	Detail map[int]Player
+	Detail map[int]Char
 }
 
 type Room struct {
 	Id        int
 	Game      Game
-	Players   PlayerList
+	Players   CharList
 	Color     string
 	OwnerId   int
 	IsOwner   bool
@@ -238,11 +238,11 @@ func roll(eyes int8) (Die, error) {
 
 func (r *Room) addPlayer(id int, name string, col string) error {
 	if r.Players.Detail == nil {
-		r.Players.Detail = make(map[int]Player)
+		r.Players.Detail = make(map[int]Char)
 	}
 	player, ok := r.Players.Detail[id]
 	if !ok {
-		p := Player{Name: name, Color: col}
+		p := Char{Name: name, Color: col}
 		r.Players.Detail[id] = p
 		r.Players.Id = append(r.Players.Id, id)
 	} else {
@@ -271,18 +271,18 @@ func genPlayerId(roomId int) (int, bool) {
 	var playerId int
 	var cntr int = 0
 	var ok bool = true
-	if globPlayerIds == nil {
-		globPlayerIds = make(map[int][]int)
+	if globUserIds == nil {
+		globUserIds = make(map[int][]int)
 	}
 	for ok {
 		if cntr > MAX_TRIES_ID_GEN {
 			return 0, false
 		}
 		playerId = rand.Intn(899999) + 100000
-		_, ok = globPlayerIds[playerId]
+		_, ok = globUserIds[playerId]
 		cntr++
 	}
-	globPlayerIds[playerId] = append(globPlayerIds[playerId], roomId)
+	globUserIds[playerId] = append(globUserIds[playerId], roomId)
 	return playerId, true
 }
 

@@ -1,7 +1,7 @@
 package main
 
 var globRooms map[int]Room
-var globPlayerIds map[int][]int
+var globUserIds map[int][]int
 var globStats Statistic
 var globConfig ServerConfig
 

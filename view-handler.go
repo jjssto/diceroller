@@ -118,7 +118,7 @@ func getPlayerId(c *gin.Context, roomId int) int {
 		ok = false
 	} else {
 		playerId = playerIdRaw.(int)
-		_, ok = globPlayerIds[playerId]
+		_, ok = globUserIds[playerId]
 	}
 	if !ok {
 		playerId, ok = genPlayerId(roomId)
