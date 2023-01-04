@@ -153,7 +153,7 @@ begin
 			where 
 				room.id = room_id and ifnull(roll.roll_nbr, 1) > ifnull(last_roll, 0)
 			group by roll.id
-			order by roll.roll_nbr, die.eyes
+			order by roll.roll_nbr
 	) as sub;
     
     return @json_str;
