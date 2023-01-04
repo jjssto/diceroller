@@ -1,4 +1,5 @@
 #!/bin/bash
+mkdir build
 DIR=`pwd`
 cd src
 go mod tidy

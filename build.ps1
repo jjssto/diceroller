@@ -1,3 +1,4 @@
+mkdir build
 $dir = Get-Item .\
 cd src
 go mod tidy
