@@ -1,9 +1,7 @@
 package main
 
 import (
-	"errors"
 	"fmt"
-	"html/template"
 	"net/http"
 	"strconv"
 
@@ -29,10 +27,6 @@ func (room *Room) getTitle() string {
 	return ret
 }
 
-func checkOwnership(c *gin.Context, room Room) bool {
-	return false
-}
-
 func viewHome(c *gin.Context) {
 	c.HTML(200, "home.html", gin.H{
 		"title": globConfig.Title,
@@ -40,7 +34,6 @@ func viewHome(c *gin.Context) {
 }
 
 func viewCoC(c *gin.Context, room Room) {
-	template.ParseFiles()
 	c.HTML(http.StatusOK, "coc.html", gin.H{
 		"title":       room.getTitle(),
 		"color":       room.Color,
@@ -107,28 +100,6 @@ func viewGame(c *gin.Context) {
 	default:
 		displayError(c, err)
 	}
-}
-
-func getPlayerId(c *gin.Context, roomId int) int {
-	session := sessions.Default(c)
-	playerIdRaw := session.Get("player_id")
-	var playerId int
-	var ok bool
-	if playerIdRaw == nil {
-		ok = false
-	} else {
-		playerId = playerIdRaw.(int)
-		_, ok = globUserIds[playerId]
-	}
-	if !ok {
-		playerId, ok = genPlayerId(roomId)
-		if !ok {
-			displayError(c, errors.New("error generationg player id"))
-		}
-		session.Set("player_id", playerId)
-		session.Save()
-	}
-	return playerId
 }
 
 func displayError(c *gin.Context, err interface{}) {

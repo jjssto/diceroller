@@ -2,6 +2,7 @@ export {
     hasFocus, 
     highlightOwnRolls,
     addCol,
+    formatTime,
     init,
     initReset
 };
@@ -164,6 +165,15 @@ function setHighlightOwnRolls() {
     } else {
         highlightOwnRolls = false;
     }
+}
+
+function formatTime(timestamp) {
+    const d = new Date(parseInt(timestamp) * 1000) 
+    const h = d.getHours()
+    const m = d.getMinutes()
+    const hh = ((h < 10) ? '0' : '') + h 
+    const mm = ((m < 10) ? '0' : '') + m 
+    return hh + ':' + mm
 }
 
 function init(createRow) {

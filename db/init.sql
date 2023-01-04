@@ -73,7 +73,7 @@ create table roll (
     chr_id int not null,
     result int,
     chr_action varchar(16),
-    created timestamp,
+    created timestamp default current_timestamp,
     foreign key fk_roll_chr (chr_id) references chr (id)
         on delete cascade
 );
@@ -104,6 +104,13 @@ create function get_rolls_json(
 )
 returns text deterministic
 begin    
+    if last_roll >= (
+        select last_nr
+        from last_roll_nbr where last_roll_nbr.room_id = room_id
+    ) then
+        return '';
+    end if;
+
 	select
 		group_concat(
 			concat(
@@ -126,7 +133,7 @@ begin
 			roll.roll_nbr as nr,
 			roll.chr_action as ac,
 			roll.result as re,
-			roll.created as cr,
+			unix_timestamp(roll.created) as cr,
 			group_concat( 
 				concat('{\"E\": \"', die.eyes, '\", \"R": \"', die.result, '\"}')
 				order by die.eyes desc 
@@ -269,10 +276,11 @@ create procedure change_room_settings (
 ) 
 begin
     declare ret int;
-    if arg_token = (
-        select token
+    if (
+        select count(*)
         from room join user_token on room.owner_id = user_token.id
-    ) then
+        where room.id = arg_room_id and user_token.token = arg_token
+    ) > 0 then
         update room
             set room.room_name = if(trim(arg_name) <> '', arg_name, room.room_name),
             room.color = if(trim(arg_col) <> '', arg_col, room.color)
@@ -284,22 +292,3 @@ begin
     select ret;
 end;
 $$
-
-insert into user_token (id, token) values (1, 123);
-insert into room (id, game_id, room_name) values(1, 2, 'Test');
-insert into chr (id, room_id, user_token_id, chr_name)
-    values (1, 1, 1, 'Test');
-insert into roll (id, chr_id, chr_action, result, roll_nbr)
-    values (1, 1, 'Test', 7, get_roll_nbr(1));
-insert into die (roll_id, eyes, result)
-    values 
-        (1, 6, 4),
-        (1, 6, 3);
-insert into roll (id, chr_id, chr_action, result, roll_nbr)
-    values (2, 1, 'Test', 9, get_roll_nbr(1));
-insert into die (roll_id, eyes, result)
-    values 
-        (2, 6, 5),
-        (2, 6, 4);
-        
-commit;

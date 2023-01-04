@@ -1,6 +1,7 @@
 import {    
     hasFocus,
     addCol,
+    formatTime,
     init,
     highlightOwnRolls
 } from "./fun.js";
@@ -15,7 +16,7 @@ function createRow(drow, id) {
         row.className = "my_roll"
     }
     addCol(row, id)
-    addCol(row, dat.T)
+    addCol(row, formatTime(dat.T))
     const colP = row.insertCell()
     colP.appendChild(document.createTextNode(dat.P))
     colP.className = "my_name"
