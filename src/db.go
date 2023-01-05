@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"errors"
+	"time"
 
 	"github.com/go-sql-driver/mysql"
 )
@@ -295,4 +296,98 @@ func (db *DB) changeRoomSettings(
 		return errors.New("action is not allowed")
 	}
 
+}
+
+func (db *DB) getOwnRooms(userToken int) ([]Room, error) {
+	rows, err := db.Db.Query(
+		`select distinct
+			room.id, 
+			ifnull(room.room_name, ''), 
+			ifnull(room.color, ''), 
+			ifnull(unix_timestamp(room.created), 0),
+			ifnull(game.game, ''),
+			ifnull(unix_timestamp(max(roll.created)), 0)
+		from 
+			room 
+			join user_token on room.owner_id = user_token.id
+			join game on room.game_id = game.id
+			left join chr on room.id = chr.room_id
+			left join roll on chr.id = roll.chr_id
+		where user_token.token = ?
+		group by room.id`, userToken,
+	)
+	if err != nil {
+		return nil, err
+	}
+	var roomId int
+	var roomName string
+	var roomColor string
+	var created int64
+	var lastActivity int64
+	var gameStr string
+	ret := make([]Room, 0)
+	for rows.Next() {
+		err = rows.Scan(
+			&roomId, &roomName, &roomColor, &created, &gameStr, &lastActivity,
+		)
+		if err != nil {
+			return nil, err
+		}
+		ret = append(ret, Room{
+			Id:           roomId,
+			Name:         roomName,
+			Color:        roomColor,
+			Created:      time.Unix(created, 0),
+			LastActivity: time.Unix(lastActivity, 0),
+			GameStr:      gameStr,
+		})
+	}
+	return ret, nil
+}
+
+func (db *DB) getAllRooms(userToken int) ([]Room, error) {
+	rows, err := db.Db.Query(
+		`select distinct
+			room.id, 
+			ifnull(room.room_name, ''), 
+			ifnull(room.color, ''), 
+			ifnull(unix_timestamp(room.created), 0),
+			ifnull(game.game, ''),
+			ifnull(unix_timestamp(max(roll.created)), 0)
+		from 
+			room 
+			join chr on room.id = chr.room_id
+			join user_token on chr.user_token_id = user_token.id
+			join game on room.game_id = game.id
+			left join roll on chr.id = roll.chr_id
+		where user_token.token = ?
+		group by room.id`, userToken,
+	)
+	if err != nil {
+		return nil, err
+	}
+	var roomId int
+	var roomName string
+	var roomColor string
+	var created int64
+	var lastActivity int64
+	var gameStr string
+	ret := make([]Room, 0)
+	for rows.Next() {
+		err = rows.Scan(
+			&roomId, &roomName, &roomColor, &created, &gameStr, &lastActivity,
+		)
+		if err != nil {
+			return nil, err
+		}
+		ret = append(ret, Room{
+			Id:           roomId,
+			Name:         roomName,
+			Color:        roomColor,
+			Created:      time.Unix(created, 0),
+			LastActivity: time.Unix(lastActivity, 0),
+			GameStr:      gameStr,
+		})
+	}
+	return ret, nil
 }

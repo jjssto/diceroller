@@ -125,8 +125,16 @@ thead {
 }
 
 .result_table thead th {
+    order: 1;
     position: sticky;
     top: 0px;
+}
+
+.result_table th {
+    z-index: 10;
+}
+.result_table td {
+    order: -10;
 }
 
 .result_table tbody {
@@ -157,4 +165,46 @@ button.b_room-selection {
     font-weight: bold;
     width: 200px;
     height: 50px;
+}
+
+.icon {
+    display: inline-block;
+    position: relative;
+    text-align: center;
+    color: white;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-right: 10px;
+}
+
+.centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-weight: bold;
+    transform: translate(-50%, -50%);
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-right: 10px;
+}
+
+.dice_icons {
+    order: 5;
+}
+
+.header_2 button {
+    float: right;
+    height: 80%;
+    margin-right: 20px;
+    width: 300px;
+    background-color: transparent;
+    color: var(--ornament_fg_col);
+    font-weight: bold;
+    font-size: large;
+}
+
+.room_id_button {
+    height: 40;
+    width: 100px;
+    font-size: large;
 }

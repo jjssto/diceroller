@@ -25,9 +25,10 @@ import {
     formatTime,
     addCol,
     init,
-    initReset
+    initReset,
+    setResultHeaderDice,
+    createRowDice
 } from "./fun.js";
-
 init(createRow);
 initReset(reset);
 

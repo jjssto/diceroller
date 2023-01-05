@@ -131,3 +131,22 @@ func displayError(c *gin.Context, err interface{}) {
 func viewError(c *gin.Context) {
 	displayError(c, nil)
 }
+
+func viewRooms(c *gin.Context) {
+	session := sessions.Default(c)
+	userToken := session.Get("player_id").(int)
+	db := DB{}
+	db.connect(false)
+	ownRooms, err1 := db.getOwnRooms(userToken)
+	allRooms, err2 := db.getAllRooms(userToken)
+	db.close()
+	if err1 != nil || err2 != nil {
+		displayError(c, nil)
+		return
+	}
+	c.HTML(http.StatusOK, "rooms.html", gin.H{
+		"title":     "Rooms",
+		"own_rooms": ownRooms,
+		"all_rooms": allRooms,
+	})
+}

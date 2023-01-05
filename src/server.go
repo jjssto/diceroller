@@ -63,6 +63,7 @@ func initServer(router *gin.Engine, config ServerConfig) {
 func setStaticRoutes(router *gin.Engine, config ServerConfig) {
 	router.Static("/js", config.JavaScript)
 	router.Static("/css", config.CSS)
+	router.Static("/pic", config.Ressources+"/pic")
 	router.StaticFile("/favicon.ico", config.Ressources+"/favicon.png")
 	router.StaticFile(
 		"/about/javascript.html", config.Ressources+"/javascript.html")
@@ -70,6 +71,7 @@ func setStaticRoutes(router *gin.Engine, config ServerConfig) {
 
 func setGetRoutes(router *gin.Engine) {
 	router.GET("/", viewHome)
+	router.GET("/rooms", viewRooms)
 	router.GET("/error", viewError)
 	router.GET("/room/:id", viewGame)
 	router.GET("/rolls/:id", getAllRolls)

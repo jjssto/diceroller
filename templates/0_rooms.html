@@ -1,0 +1,22 @@
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Game</th>
+            <th>Name</th>
+            <th>Created</th>
+            <th>Last Roll</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{ range . }}
+        <tr>
+            <td><button class="room_id_button" value="{{ .Id }}">{{ .Id }}</button></td>
+            <td>{{ .GameStr }}</td>
+            <td>{{ .Name }}</td>
+            <td class="date_col">{{ .Created }}</td>
+            <td class="date_col">{{ .LastActivity }}</td>
+        </tr>
+        {{ end }}
+    </tbody>
+</table>
