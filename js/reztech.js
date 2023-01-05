@@ -71,10 +71,8 @@ function createRow(drow, id) {
 }
 
 function setDice() {
-    var sel = document.querySelector("#s_attribute");
-    const attr = sel.options[sel.selectedIndex].value;
-    sel = document.querySelector("#s_skill");
-    const skill = sel.options[sel.selectedIndex].value;
+    const attr = document.querySelector("#s_attribute").value;
+    const skill = document.querySelector("#s_skill").value;
     const onlyAttr = document.querySelector("#i_attribute_only").checked;
    
     var first = true
@@ -141,6 +139,8 @@ function setDice() {
 function reset() {
     document.getElementById("s_attribute").value = 0;
     document.getElementById("s_skill").value = 0;
+    document.getElementById("at0").checked = true;
+    document.getElementById("sk0").checked = true;
     document.getElementById("i_attribute_only").checked = false;
   }
 
@@ -165,4 +165,22 @@ document.getElementById("f_roll").addEventListener("submit", event => {
         })
     })
 });
+
+var radios_at = document.getElementById("f_roll").elements["at"]
+var radios_sk = document.getElementById("f_roll").elements["sk"]
+
+for (var i = 0; i < radios_at.length; i++) {
+    radios_at[i].addEventListener("click", (event) => {
+        var element = document.getElementById("s_attribute") 
+        element.value = event.target.value
+    })    
+}
+
+for (var i = 0; i < radios_sk.length; i++) {
+    radios_sk[i].addEventListener("click", (event) => {
+        var element = document.getElementById("s_skill") 
+        element.value = event.target.value
+    })    
+}
+
 

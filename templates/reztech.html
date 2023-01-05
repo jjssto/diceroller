@@ -13,19 +13,71 @@
 
     <div class="roll_form" id="c_roll_form">
       <form id="f_roll">
-        {{ template "0_char_and_action.html" }} 
+        {{ template "0_char_and_action.html" }}
         <p>
-          <label for="s_attribute">Atribute</label>
-          {{ template "0_dd_number.html" "s_attribute"}}
-          <label for="s_skill">Skill</label>
-          {{ template "0_dd_number.html" "s_skill"}}
-          </select>
+        <table>
+          <thead>
+            <tr>
+              <th>Attribute</th>
+              <th>Skill</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <input id="s_attribute" type="number" min="0" max="10">
+              </td>
+              <td>
+                <input id="s_skill" type="number" min="0" max="10">
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p>
+                <div class="roll_form_radio">
+                  <label at="at0">0</label>
+                  <input type="radio" value="0" id="at0" name="at">
+                  <label at="at1">1</label>
+                  <input type="radio" value="1" id="at1" name="at">
+                  <label at="at2">2</label>
+                  <input type="radio" value="2" id="at2" name="at">
+                  <label at="at3">3</label>
+                  <input type="radio" value="3" id="at3" name="at">
+                  <label at="at4">4</label>
+                  <input type="radio" value="4" id="at4" name="at">
+                  <label at="at5">5</label>
+                  <input type="radio" value="5" id="at5" name="at">
+                </div>
+                </p>
+              </td>
+              <td>
+                <p>
+                <div class="roll_form_radio">
+                  <label sk="sk0">0</label>
+                  <input type="radio" value="0" id="sk0" name="sk">
+                  <label sk="sk1">1</label>
+                  <input type="radio" value="1" id="sk1" name="sk">
+                  <label sk="sk2">2</label>
+                  <input type="radio" value="2" id="sk2" name="sk">
+                  <label sk="sk3">3</label>
+                  <input type="radio" value="3" id="sk3" name="sk">
+                  <label sk="sk4">4</label>
+                  <input type="radio" value="4" id="sk4" name="sk">
+                  <label sk="sk5">5</label>
+                  <input type="radio" value="5" id="sk5" name="sk">
+                </div>
+                </p>
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+        <p>
+          <button type="submit">Roll</button>
+          <button type="submit" id="b_reset">Reset</button>
           <label for="i_attribute_only">Attribute only:</label>
           <input type="checkbox" id="i_attribute_only" value="1">
-        </p>
-        <p>
-          <input type="submit" value="Roll">
-          <input type="button" value="Reset" id="b_reset">
+
         </p>
       </form>
     </div>
