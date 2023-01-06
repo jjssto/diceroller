@@ -11,18 +11,7 @@
   {{ template "0_header.html" . }}
    <div class="roll_form">
       <form id="f_roll">
-        <p>
-        <div>
-          <label for="name">Char</label>
-          <input type="text" id="f_name">
-          <label for="action">Action</label>
-          <input type="text" id="f_action">
-        </div>
-        <div style="text-align: right">
-          <label for="i_highlight_own_rolls">Highlight own rolls:</label>
-          <input type="checkbox" id="i_highlight_own_rolls" value="1" checked="true">
-        </div>
-        </p>
+        {{ template "0_char_and_action.html"}} 
         <p>
           <label for="s_d20">d20</label>
           {{ template "0_dd_number.html" "s_d20"}}
