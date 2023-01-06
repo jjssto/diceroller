@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"errors"
+	"time"
 
 	"github.com/go-sql-driver/mysql"
 )
@@ -144,9 +145,9 @@ func (db *DB) updateChar(
 	charColor string,
 	dbCharName string,
 	dbCharColor string,
-) {
+) error {
 	if charName == dbCharName && charColor == dbCharColor {
-		return
+		return nil
 	}
 	if charName == "" {
 		charName = dbCharName
@@ -154,11 +155,14 @@ func (db *DB) updateChar(
 	if charColor == "" {
 		charColor = dbCharColor
 	}
-	db.Db.Exec(
+	if _, err := db.Db.Exec(
 		`update chr 
 			set chr_name = ?, chr_color = ?
-		where chr_id = ?`, charName, charColor, charId,
-	)
+		where id = ?`, charName, charColor, charId,
+	); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (db *DB) createRoom(game Game) (int, error) {
@@ -295,4 +299,123 @@ func (db *DB) changeRoomSettings(
 		return errors.New("action is not allowed")
 	}
 
+}
+
+func (db *DB) getOwnRooms(userToken int) ([]Room, error) {
+	rows, err := db.Db.Query(
+		`select distinct
+			room.id, 
+			ifnull(room.room_name, ''), 
+			ifnull(room.color, ''), 
+			ifnull(unix_timestamp(room.created), 0),
+			ifnull(game.game, ''),
+			ifnull(unix_timestamp(max(roll.created)), 0)
+		from 
+			room 
+			join user_token on room.owner_id = user_token.id
+			join game on room.game_id = game.id
+			left join chr on room.id = chr.room_id
+			left join roll on chr.id = roll.chr_id
+		where user_token.token = ?
+		group by room.id`, userToken,
+	)
+	if err != nil {
+		return nil, err
+	}
+	var roomId int
+	var roomName string
+	var roomColor string
+	var created int64
+	var lastActivity int64
+	var gameStr string
+	ret := make([]Room, 0)
+	for rows.Next() {
+		err = rows.Scan(
+			&roomId, &roomName, &roomColor, &created, &gameStr, &lastActivity,
+		)
+		if err != nil {
+			return nil, err
+		}
+		ret = append(ret, Room{
+			Id:           roomId,
+			Name:         roomName,
+			Color:        roomColor,
+			Created:      time.Unix(created, 0),
+			LastActivity: time.Unix(lastActivity, 0),
+			GameStr:      gameStr,
+		})
+	}
+	return ret, nil
+}
+
+func (db *DB) getAllRooms(userToken int) ([]Room, error) {
+	rows, err := db.Db.Query(
+		`select distinct
+			room.id, 
+			ifnull(room.room_name, ''), 
+			ifnull(room.color, ''), 
+			ifnull(unix_timestamp(room.created), 0),
+			ifnull(game.game, ''),
+			ifnull(unix_timestamp(max(roll.created)), 0)
+		from 
+			room 
+			join chr on room.id = chr.room_id
+			join user_token on chr.user_token_id = user_token.id
+			join game on room.game_id = game.id
+			left join roll on chr.id = roll.chr_id
+		where user_token.token = ?
+		group by room.id`, userToken,
+	)
+	if err != nil {
+		return nil, err
+	}
+	var roomId int
+	var roomName string
+	var roomColor string
+	var created int64
+	var lastActivity int64
+	var gameStr string
+	ret := make([]Room, 0)
+	for rows.Next() {
+		err = rows.Scan(
+			&roomId, &roomName, &roomColor, &created, &gameStr, &lastActivity,
+		)
+		if err != nil {
+			return nil, err
+		}
+		ret = append(ret, Room{
+			Id:           roomId,
+			Name:         roomName,
+			Color:        roomColor,
+			Created:      time.Unix(created, 0),
+			LastActivity: time.Unix(lastActivity, 0),
+			GameStr:      gameStr,
+		})
+	}
+	return ret, nil
+}
+
+func (db *DB) deleteRoom(userToken int, roomId int64) (int, int64, error) {
+	result, err := db.Db.Exec(
+		`delete room 
+		from room join user_token on room.owner_id = user_token.id
+		where room.id = ? and user_token.token = ?`, roomId, userToken,
+	)
+	if err != nil {
+		return -1, -1, err
+	}
+	nbr, err := result.RowsAffected()
+	if err != nil {
+		return -1, -1, err
+	} else {
+		return int(nbr), roomId, nil
+	}
+}
+
+func (db *DB) cleanUp(nbrOfDays int) error {
+	if _, err := db.Db.Exec(`call clean_up(?`, nbrOfDays); err != nil {
+		return err
+	} else {
+		return nil
+	}
 }

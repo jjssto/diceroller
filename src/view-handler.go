@@ -25,9 +25,19 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
+
+var a []string = []string{
+	"Attack", "Defend", "Dodge", "Craft", "Social", "Athletics",
+	"Magic", "Perception",
+}
+
+type Input struct {
+	Id      string
+	Label   string
+	Options []int
+}
 
 func (room *Room) getTitle() string {
 	var ret string
@@ -60,29 +70,48 @@ func viewCoC(c *gin.Context, room Room) {
 		"room_id":     room.Id,
 		"is_owner":    room.IsOwner,
 		"result_cols": []string{"D100", "D10"},
+		"actions":     a,
 	})
 }
 
 func viewRezTech(c *gin.Context, room Room) {
+	s := make([]int, 10)
+	for i := range s {
+		s[i] = i + 1
+	}
 	c.HTML(http.StatusOK, "reztech.html", gin.H{
 		"title":       room.getTitle(),
 		"color":       room.Color,
 		"room_id":     room.Id,
 		"is_owner":    room.IsOwner,
 		"result_cols": []string{"D12", "D8", "D6"},
+		"attr_opt":    Input{Id: "s_attribute", Label: "Attribute:", Options: s},
+		"skill_opt":   Input{Id: "s_skill", Label: "Skill:", Options: s},
+		"actions":     a,
 	})
 }
 
 func viewGeneral(c *gin.Context, room Room) {
+	s := make([]int, 10)
+	for i := range s {
+		s[i] = i + 1
+	}
 	c.HTML(http.StatusOK, "general.html", gin.H{
 		"title":       room.getTitle(),
 		"color":       room.Color,
 		"room_id":     room.Id,
 		"is_owner":    room.IsOwner,
 		"result_cols": []string{"D20", "D12", "D10", "D8", "D6", "D4"},
+		"d20":         Input{Id: "s_d20", Label: "D20:", Options: s},
+		"d12":         Input{Id: "s_d12", Label: "D12:", Options: s},
+		"d10":         Input{Id: "s_d10", Label: "D10:", Options: s},
+		"d00":         Input{Id: "s_d00", Label: "D00:", Options: s},
+		"d8":          Input{Id: "s_d8", Label: "D8:", Options: s},
+		"d6":          Input{Id: "s_d6", Label: "D6:", Options: s},
+		"d4":          Input{Id: "s_d4", Label: "D4:", Options: s},
+		"actions":     a,
 	})
 }
-
 func viewGame(c *gin.Context) {
 	roomId64, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
@@ -90,8 +119,7 @@ func viewGame(c *gin.Context) {
 		return
 	}
 	roomId := int(roomId64)
-	session := sessions.Default(c)
-	oldToken := session.Get("player_id").(int)
+	oldToken := getToken(c)
 
 	db := DB{Configured: false}
 	db.connect(false)
@@ -101,8 +129,7 @@ func viewGame(c *gin.Context) {
 		return
 	}
 	if userToken != oldToken {
-		session.Set("player_id", userToken)
-		session.Save()
+		setToken(c, userToken)
 	}
 	room, err := db.getRoom(roomId, userToken)
 	db.close()
@@ -130,4 +157,22 @@ func displayError(c *gin.Context, err interface{}) {
 
 func viewError(c *gin.Context) {
 	displayError(c, nil)
+}
+
+func viewRooms(c *gin.Context) {
+	userToken := getToken(c)
+	db := DB{}
+	db.connect(false)
+	ownRooms, err1 := db.getOwnRooms(userToken)
+	allRooms, err2 := db.getAllRooms(userToken)
+	db.close()
+	if err1 != nil || err2 != nil {
+		displayError(c, nil)
+		return
+	}
+	c.HTML(http.StatusOK, "rooms.html", gin.H{
+		"title":     "Rooms",
+		"own_rooms": ownRooms,
+		"all_rooms": allRooms,
+	})
 }

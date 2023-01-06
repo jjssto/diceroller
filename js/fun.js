@@ -25,11 +25,13 @@ export {
     addCol,
     formatTime,
     init,
-    initReset
+    createRowDice,
+    setResultHeaderDice
 };
 
 var hasFocus;
 var highlightOwnRolls;
+var displayDice;
 
 function detectFocus() {
     hasFocus = true
@@ -188,6 +190,19 @@ function setHighlightOwnRolls() {
     }
 }
 
+function setDisplayDice() {
+    const element = document.getElementById("i_display_dice")
+    if (element == null) {
+        return
+    }
+    if (element.checked) {
+        displayDice = true;
+        setResultHeaderDice();
+    } else {
+        displayDice = false;
+    }
+}
+
 function formatTime(timestamp) {
     const d = new Date(parseInt(timestamp) * 1000) 
     const h = d.getHours()
@@ -201,23 +216,156 @@ function init(createRow) {
 
     window.addEventListener("DOMContentLoaded", () => {
         setHighlightOwnRolls()
+        setDisplayDice()
         setColor()
         detectFocus()
         settingVisibility()
         roomSettingForm()
         setLink()
 
+       
+        var resetButton = document.querySelector("#b_reset")
+        if (resetButton != null) {
+            resetButton.addEventListener("click", (event) => {
+                reset(event);
+            });
+        }
+        initRadioButtons();
+        initActionButtons();
     })
+
     window.addEventListener("load", () => {
         sessionStorage.setItem("last_roll", "");
-        getRolls(createRow);
+        reset(null)
+        if (displayDice) {
+            getRolls(createRowDice);
+            window.setInterval(() => {getRolls(createRowDice)}, 1000);
+        } else {
+            getRolls(createRow);
+            window.setInterval(() => {getRolls(createRow)}, 1000);
+        }
     });
-
-    window.setInterval(() => {getRolls(createRow)}, 1000);
 }
 
-function initReset(reset) {
-    document.getElementById("b_reset").addEventListener("click", () => {
-        reset();
-    });
+function createDie(p, die) {
+    var div = document.createElement("div")
+    div.classList.add("icon")
+    var img = document.createElement("img")
+    var result 
+    var eyes 
+    if (die.E == "0") {
+        eyes = "10"
+        var r = parseInt(die.R) 
+        if (r == "0") {
+            result = "00"
+        } else {
+            result = (r * 10).toString()
+        }
+    } else {
+        eyes = die.E
+        result = die.R
+    }
+    img.src = "/pic/d" + eyes + ".svg"
+    div.appendChild(img)
+    var nbr = document.createElement("div")
+    nbr.classList.add("centered")
+    nbr.textContent = result
+    div.appendChild(nbr)
+    p.appendChild(div)
+}
+
+function createColDice(row, dice) {
+    var col = document.createElement("td")
+    var div = document.createElement("div")
+    div.classList.add("dice_icons")
+    for(var i = 0; i < dice.length; i++) {
+        createDie(div, dice[i])
+    }
+    col.appendChild(div)
+    row.appendChild(col)
+}
+
+function createRowDice(drow, id) {
+    var row = document.createElement("tr")
+    const dat = drow[0]
+    const isOwnRoll = drow[1]
+    if (isOwnRoll == "1" && highlightOwnRolls) {
+        row.className = "my_roll"
+    }
+    addCol(row, id)
+    addCol(row, formatTime(dat.T))
+    const colP = row.insertCell()
+    colP.appendChild(document.createTextNode(dat.P))
+    colP.className = "my_name"
+    addCol(row, dat.A)
+    createColDice(row, dat.D)
+    addCol(row, dat.R)
+    return row
+}
+
+function setResultHeaderDice() {
+    const thead = document.querySelector(".t_result").querySelector("thead")
+    const cols = thead.querySelectorAll("th")
+    for (var i = 0; i < cols.length; i++) {
+        cols[i].remove()
+    }
+    var h1 = document.createElement("th")
+    var h2 = document.createElement("th")
+    var h3 = document.createElement("th")
+    var h4 = document.createElement("th")
+    var h5 = document.createElement("th")
+    var h6 = document.createElement("th")
+    h1.textContent = "#"
+    h2.textContent = "Time"
+    h3.textContent = "Char"
+    h4.textContent = "Action"
+    h5.textContent = "Dice"
+    h5.style.width = "400px"
+    h6.textContent = "Result"
+    thead.appendChild(h1)
+    thead.appendChild(h2)
+    thead.appendChild(h3)
+    thead.appendChild(h4)
+    thead.appendChild(h5)
+    thead.appendChild(h6)
+}
+    
+    
+function reset(event) {
+    if (event != null) {
+        event.preventDefault()
+    }
+    var numberSelects = document.querySelectorAll(".dd_dice_nbr")
+    for (var i = 0; i < numberSelects.length; i++ ) {
+        numberSelects[i].value = 0
+    }
+    var defaultRadios = document.querySelectorAll(".r1")
+    for (var i = 0; i < defaultRadios.length; i++ ) {
+        defaultRadios[i].checked = true
+    }
+    var action = document.querySelector("#f_action")
+    if (action != null) {
+        action.value = ""
+    }
+}
+
+function initRadioButtons() {
+    var radioButtons = document.querySelectorAll(".i_radio");
+    for (var i = 0; i < radioButtons.length; i++ ) {
+        radioButtons[i].addEventListener("click", (event) => {
+            var element = document.getElementById(event.target.name) 
+            element.value = event.target.value
+        })    
+    }
+}
+
+function initActionButtons() {
+    var actionButtons = document.querySelectorAll(".button_action");
+    var actionInput = document.getElementById("f_action");
+    for (var i = 0; i < actionButtons.length; i++ ) {
+        actionButtons[i].addEventListener("click", (event) => {
+            const val = event.target.textContent;
+            actionInput.value = val;
+        })
+    }
 }

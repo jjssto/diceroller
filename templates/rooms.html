@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script src="js/rooms.js" type="module"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <title>{{ .title }}</title>
+</head>
+<div class="grid-container">
+  <div class="header"></div>
+  <div class="header_1">
+    <h1>{{ .title }}</h1>
+  </div>
+  <div class="header_2">
+   <button id="b_new">Create new room</button> 
+  </div>
+
+  <div class="main">
+    <h2>Rooms created by you</h2>
+    {{ template "0_rooms.html" .own_rooms }}
+    <h2>Rooms you have rolled dice in</h2>
+    {{ template "0_rooms.html" .all_rooms }}
+  </div>
+  {{ template "0_footer.html" }}
+</div>
+
+</html>

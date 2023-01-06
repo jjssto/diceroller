@@ -59,15 +59,17 @@ type CharList struct {
 }
 
 type Room struct {
-	Id        int
-	Game      Game
-	Players   CharList
-	Color     string
-	OwnerId   int
-	IsOwner   bool
-	Name      string
-	DiceRolls []DiceRoll
-	Created   time.Time
+	Id           int
+	Game         Game
+	Players      CharList
+	Color        string
+	OwnerId      int
+	IsOwner      bool
+	Name         string
+	DiceRolls    []DiceRoll
+	Created      time.Time
+	LastActivity time.Time
+	GameStr      string
 }
 
 func (d *Die) json() string {

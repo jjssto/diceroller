@@ -46,3 +46,7 @@ buttons.forEach(element => {
         })
     })
 });
+
+document.getElementById("b_rooms").addEventListener("click", () => {
+    window.open("/rooms", "_self")
+})

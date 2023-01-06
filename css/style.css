@@ -121,17 +121,26 @@ thead {
 
 .result_table {
     overflow-y: auto;
-    height: 50vh;
+    height: 40vh;
+}
+
+.result_table table {
+    top: 0px;
 }
 
 .result_table thead th {
+    order: 1;
     position: sticky;
     top: 0px;
 }
 
-.result_table tbody {
-    min-height: 40vh;
+.result_table th {
+    z-index: 10;
 }
+.result_table td {
+    order: -10;
+}
+
 
 tr.my_roll {
     background: yellowgreen
@@ -148,13 +157,85 @@ button.b_room-selection {
     margin: 1vw;
 }
 
+
+
+.icon {
+    display: inline-block;
+    position: relative;
+    text-align: center;
+    color: white;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-right: 10px;
+}
+
+.centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-weight: bold;
+    transform: translate(-50%, -50%);
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-right: 10px;
+}
+
+.dice_icons {
+    order: 5;
+}
+
+.header_2 button {
+    float: right;
+    height: 80%;
+    margin-right: 20px;
+    width: 300px;
+    background-color: transparent;
+    color: var(--ornament_fg_col);
+    font-weight: bold;
+    font-size: large;
+}
+
+.d_rooms button {
+     height: 40;
+    width: 100px;
+    font-size: large;
+}
+
+.room_id_button {
+    font-weight: bold;
+}
+
+.label_dice_number {
+    font-weight: bold;
+}
+
+.roll_form_top {
+    position: relative;
+}
+.roll_form_char_actions {
+    z-index: 12;
+    position: absolute;
+    left: 0;
+}
+.roll_form_options {
+    position: absolute;
+    z-index: 11;
+    top: 0;
+    right: 0;
+}
+
 .roll_form_radio input {
     margin-right: 25px;
 }
 
-.roll_form button {
+.roll_form_buttons button{
     font-size: large;
     font-weight: bold;
     width: 200px;
     height: 50px;
+}
+
+.button_action {
+    margin-bottom: 10px;    
+    margin-top: 0px;
 }

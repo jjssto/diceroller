@@ -23,8 +23,10 @@ package main
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -53,6 +55,29 @@ type ServerConfig struct {
 	DBName              string
 }
 
+func setToken(c *gin.Context, userToken int) {
+	c.SetCookie(
+		"diceroller_user_id",
+		fmt.Sprint(userToken),
+		0,
+		"",
+		"",
+		true,
+		false,
+	)
+}
+func getToken(c *gin.Context) int {
+	if tokenStr, err := c.Cookie("diceroller_user_id"); err != nil {
+		return 0
+	} else {
+		token, err := strconv.ParseInt(tokenStr, 10, 64)
+		if err != nil {
+			return 0
+		}
+		return int(token)
+	}
+}
+
 func initServer(router *gin.Engine, config ServerConfig) {
 	store := cookie.NewStore([]byte("secret"))
 	router.Use(sessions.Sessions("mysession", store))
@@ -63,6 +88,7 @@ func initServer(router *gin.Engine, config ServerConfig) {
 func setStaticRoutes(router *gin.Engine, config ServerConfig) {
 	router.Static("/js", config.JavaScript)
 	router.Static("/css", config.CSS)
+	router.Static("/pic", config.Ressources+"/pic")
 	router.StaticFile("/favicon.ico", config.Ressources+"/favicon.png")
 	router.StaticFile(
 		"/about/javascript.html", config.Ressources+"/javascript.html")
@@ -70,6 +96,7 @@ func setStaticRoutes(router *gin.Engine, config ServerConfig) {
 
 func setGetRoutes(router *gin.Engine) {
 	router.GET("/", viewHome)
+	router.GET("/rooms", viewRooms)
 	router.GET("/error", viewError)
 	router.GET("/room/:id", viewGame)
 	router.GET("/rolls/:id", getAllRolls)
@@ -80,6 +107,7 @@ func setPostRoutes(router *gin.Engine) {
 	router.POST("/room/:id", rollDice)
 	router.POST("/roomSettings", changeRoomSettings)
 	router.POST("/", addRoomHandler)
+	router.POST("/rooms", deleteRoomHandler)
 }
 
 func serve(config ServerConfig) {

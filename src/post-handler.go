@@ -22,10 +22,10 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -50,8 +50,7 @@ func rollDice(c *gin.Context) {
 		return
 	}
 	id, _ := strconv.ParseInt(idStr, 10, 32)
-	session := sessions.Default(c)
-	userToken := session.Get("player_id").(int)
+	userToken := getToken(c)
 	col := data["color"]
 	char := data["char"]
 	mod, _ := strconv.ParseInt(data["mod"], 10, 32)
@@ -106,12 +105,11 @@ func addRoomHandler(c *gin.Context) {
 func changeRoomSettings(c *gin.Context) {
 	var json map[string]string
 	err := c.BindJSON(&json)
-	session := sessions.Default(c)
 	if err != nil {
 		c.Status(http.StatusBadRequest)
 		return
 	}
-	userToken := session.Get("player_id").(int)
+	userToken := getToken(c)
 	roomId, _ := strconv.ParseInt(json["room_id"], 10, 32)
 	roomName := json["room_name"]
 	color := json["color"]
@@ -127,4 +125,26 @@ func changeRoomSettings(c *gin.Context) {
 		return
 	}
 	c.Status(http.StatusOK)
+}
+
+func deleteRoomHandler(c *gin.Context) {
+	var json map[string]string
+	userToken := getToken(c)
+	if err := c.BindJSON(&json); err != nil {
+		c.Status(http.StatusBadRequest)
+		return
+	}
+	roomId, _ := strconv.ParseInt(json["room_id"], 10, 32)
+	db := DB{}
+	db.connect(false)
+	nbr, _, err := db.deleteRoom(userToken, roomId)
+	db.close()
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
+	}
+	if nbr > 0 {
+		c.String(http.StatusOK, fmt.Sprint(nbr))
+	} else {
+		c.Status(http.StatusForbidden)
+	}
 }

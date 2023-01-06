@@ -1,17 +1,27 @@
+<div class="roll_form_top">
 <p>
-<div>
+<div class="roll_form_char_action">
     <label for="name">Char</label>
     <input type="text" id="f_name" maxlength="16">
     <label for="action">Action</label>
     <input type="text" id="f_action" list="actionlist" maxlength="16">
     <datalist id="actionlist">
-        <option>Attack</option>
-        <option>Defend</option>
-        <option>Dodge</option>
+        {{ range . }}
+            <option>{{ . }}</option>
+        {{ end }}
     </datalist>
-</div>
-<div style="text-align: right">
+   </div>
+<div class="roll_form_options">
     <label for="i_highlight_own_rolls">Highlight own rolls:</label>
     <input type="checkbox" id="i_highlight_own_rolls" value="1" checked="true">
+
+    <label for="i_display_dice">Display dice:</label>
+    <input type="checkbox" id="i_display_dice" value="1" checked="true">
 </div>
 </p>
+<div class="roll_form_acion_buttons">
+    {{ range . }}
+        <button type="button" class="button_action">{{ . }}</button>
+    {{ end }}
+</div>
+</div>
