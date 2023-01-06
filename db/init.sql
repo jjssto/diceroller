@@ -21,6 +21,8 @@ drop procedure if exists insert_roll;
 drop procedure if exists create_user_token;
 drop procedure if exists change_room_settings; 
 drop procedure if exists removeOldRooms;
+drop procedure if exists remove_old_rooms;
+drop procedure if exists remove_old_tokens;
 
 create table game (
     id tinyint primary key,
@@ -294,22 +296,52 @@ begin
 end;
 $$
 
+
+
+
 DELIMITER $$
-create procedure removeOldRooms (
-    in nbr_of_days int,
+create procedure remove_old_rooms (
+    in nbr_of_days int
 ) 
 begin
     declare compar timestamp;
     declare zero timestamp;
-    set comparison = curdate() - interval nbr_of_days day;
+    set compar = curdate() - interval nbr_of_days day;
     set zero = date('2000-01-01');
     delete room 
     from
         room
-        left join chr on room.id = chr.room_id
-        left join roll on chr.id = roll.chr_id
+        left join (
+			select
+				chr.room_id as room_id,
+                max(roll.created) as last_roll
+            from
+				chr
+				left join roll on chr.id = roll.chr_id
+			group by room_id
+		) as sub on room.id = sub.room_id
     where
-       room.created < compar and ifnull(max(roll.creted), zero) < compar
-    group by room.id;
+       room.created < compar and (sub.last_roll is null or sub.last_roll < compar);
+end;
+$$
+
+DELIMITER $$
+create procedure remove_old_tokens () 
+begin
+    delete user_token
+    from
+        user_token
+        left join chr on user_token.id = chr.user_token_id
+        left join room on user_token.id = room.owner_id
+    where
+		chr.id is null and room.id is null;
+end;
+$$
+
+DELIMITER $$
+create procedure clean_up( in nbr_of_days int)
+begin
+	call remove_old_rooms(nbr_of_days);
+    call remove_old_tokens();
 end;
 $$
