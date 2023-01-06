@@ -24,12 +24,10 @@ import {
     highlightOwnRolls,
     addCol,
     formatTime,
-    init,
-    initReset
+    init
 } from "./fun.js";
 
 init(createRow)
-initReset(reset)
 
 function createRow(drow, id) {
     var row = document.createElement("tr")

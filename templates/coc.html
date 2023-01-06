@@ -11,7 +11,7 @@
   {{ template "0_header.html" . }}
     <div class="roll_form">
       <form id="f_roll">
-        {{ template "0_char_and_action.html" }}
+        {{ template "0_char_and_action.html" .actions }}
        <p>
         <div class="roll_form_radio">
         <table class="t_selection">
@@ -26,7 +26,7 @@
             <tr>
               <td>
                 <label for="mod+0">0</label>
-                <input type="radio" name="mod" id="mod+0" value="0">
+                <input type="radio" name="mod" id="mod+0" value="0" class="r1">
 
               </td>
               <td>
@@ -48,7 +48,10 @@
         </div>
         </p>
         <p>
+        <div class="roll_form_buttons">
           <button type="submit">Roll</button>
+          <button type="button" id="b_reset">Reset</button>
+        </div>
         </p>
       </form>
     </div>

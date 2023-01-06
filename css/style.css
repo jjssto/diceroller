@@ -121,7 +121,11 @@ thead {
 
 .result_table {
     overflow-y: auto;
-    height: 50vh;
+    height: 40vh;
+}
+
+.result_table table {
+    top: 0px;
 }
 
 .result_table thead th {
@@ -137,9 +141,6 @@ thead {
     order: -10;
 }
 
-.result_table tbody {
-    min-height: 40vh;
-}
 
 tr.my_roll {
     background: yellowgreen
@@ -156,16 +157,7 @@ button.b_room-selection {
     margin: 1vw;
 }
 
-.roll_form_radio input {
-    margin-right: 25px;
-}
 
-.roll_form button {
-    font-size: large;
-    font-weight: bold;
-    width: 200px;
-    height: 50px;
-}
 
 .icon {
     display: inline-block;
@@ -203,8 +195,47 @@ button.b_room-selection {
     font-size: large;
 }
 
-.room_id_button {
-    height: 40;
+.d_rooms button {
+     height: 40;
     width: 100px;
     font-size: large;
+}
+
+.room_id_button {
+    font-weight: bold;
+}
+
+.label_dice_number {
+    font-weight: bold;
+}
+
+.roll_form_top {
+    position: relative;
+}
+.roll_form_char_actions {
+    z-index: 12;
+    position: absolute;
+    left: 0;
+}
+.roll_form_options {
+    position: absolute;
+    z-index: 11;
+    top: 0;
+    right: 0;
+}
+
+.roll_form_radio input {
+    margin-right: 25px;
+}
+
+.roll_form_buttons button{
+    font-size: large;
+    font-weight: bold;
+    width: 200px;
+    height: 50px;
+}
+
+.button_action {
+    margin-bottom: 10px;    
+    margin-top: 0px;
 }

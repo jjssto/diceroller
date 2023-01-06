@@ -24,13 +24,9 @@ import {
     highlightOwnRolls,
     formatTime,
     addCol,
-    init,
-    initReset,
-    setResultHeaderDice,
-    createRowDice
+    init
 } from "./fun.js";
 init(createRow);
-initReset(reset);
 
 function createRow(drow, id) {
     var row = document.createElement("tr")
@@ -138,6 +134,7 @@ function setDice() {
 }
 
 function reset() {
+
     document.getElementById("s_attribute").value = 0;
     document.getElementById("s_skill").value = 0;
     document.getElementById("at0").checked = true;
@@ -166,22 +163,4 @@ document.getElementById("f_roll").addEventListener("submit", event => {
         })
     })
 });
-
-var radios_at = document.getElementById("f_roll").elements["at"]
-var radios_sk = document.getElementById("f_roll").elements["sk"]
-
-for (var i = 0; i < radios_at.length; i++) {
-    radios_at[i].addEventListener("click", (event) => {
-        var element = document.getElementById("s_attribute") 
-        element.value = event.target.value
-    })    
-}
-
-for (var i = 0; i < radios_sk.length; i++) {
-    radios_sk[i].addEventListener("click", (event) => {
-        var element = document.getElementById("s_skill") 
-        element.value = event.target.value
-    })    
-}
-
 

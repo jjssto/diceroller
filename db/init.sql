@@ -292,3 +292,21 @@ begin
     select ret;
 end;
 $$
+
+DELIMITER $$
+create procedure removeOldRooms (
+    in delay int,
+) 
+begin
+    declare 
+    delete room 
+    from
+        room
+        left join chr on room.id = chr.room_id
+        left join roll on chr.id = roll.chr_id
+    where
+       room.created < delay and ifnull(max(roll.creted), 0) < delay
+    group by room.id
+
+end;
+$$

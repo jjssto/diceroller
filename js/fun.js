@@ -25,7 +25,6 @@ export {
     addCol,
     formatTime,
     init,
-    initReset,
     createRowDice,
     setResultHeaderDice
 };
@@ -224,28 +223,29 @@ function init(createRow) {
         roomSettingForm()
         setLink()
 
-        if (displayDice) {
-            window.setInterval(() => {getRolls(createRowDice)}, 1000);
-        } else {
-            window.setInterval(() => {getRolls(createRow)}, 1000);
+       
+        var resetButton = document.querySelector("#b_reset")
+        if (resetButton != null) {
+            resetButton.addEventListener("click", (event) => {
+                reset(event);
+            });
         }
+        initRadioButtons();
+        initActionButtons();
     })
+
     window.addEventListener("load", () => {
         sessionStorage.setItem("last_roll", "");
+        reset(null)
         if (displayDice) {
             getRolls(createRowDice);
+            window.setInterval(() => {getRolls(createRowDice)}, 1000);
         } else {
             getRolls(createRow);
+            window.setInterval(() => {getRolls(createRow)}, 1000);
         }
     });
 }
-
-function initReset(reset) {
-    document.getElementById("b_reset").addEventListener("click", () => {
-        reset();
-    });
-}
-
 
 function createDie(p, die) {
     var div = document.createElement("div")
@@ -330,3 +330,42 @@ function setResultHeaderDice() {
     thead.appendChild(h6)
 }
     
+    
+function reset(event) {
+    if (event != null) {
+        event.preventDefault()
+    }
+    var numberSelects = document.querySelectorAll(".dd_dice_nbr")
+    for (var i = 0; i < numberSelects.length; i++ ) {
+        numberSelects[i].value = 0
+    }
+    var defaultRadios = document.querySelectorAll(".r1")
+    for (var i = 0; i < defaultRadios.length; i++ ) {
+        defaultRadios[i].checked = true
+    }
+    var action = document.querySelector("#f_action")
+    if (action != null) {
+        action.value = ""
+    }
+}
+
+function initRadioButtons() {
+    var radioButtons = document.querySelectorAll(".i_radio");
+    for (var i = 0; i < radioButtons.length; i++ ) {
+        radioButtons[i].addEventListener("click", (event) => {
+            var element = document.getElementById(event.target.name) 
+            element.value = event.target.value
+        })    
+    }
+}
+
+function initActionButtons() {
+    var actionButtons = document.querySelectorAll(".button_action");
+    var actionInput = document.getElementById("f_action");
+    for (var i = 0; i < actionButtons.length; i++ ) {
+        actionButtons[i].addEventListener("click", (event) => {
+            const val = event.target.textContent;
+            actionInput.value = val;
+        })
+    }
+}

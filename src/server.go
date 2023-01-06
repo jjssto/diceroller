@@ -23,8 +23,10 @@ package main
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -51,6 +53,29 @@ type ServerConfig struct {
 	DBAddress           string
 	DBNet               string
 	DBName              string
+}
+
+func setToken(c *gin.Context, userToken int) {
+	c.SetCookie(
+		"diceroller_user_id",
+		fmt.Sprint(userToken),
+		0,
+		"",
+		"",
+		true,
+		false,
+	)
+}
+func getToken(c *gin.Context) int {
+	if tokenStr, err := c.Cookie("diceroller_user_id"); err != nil {
+		return 0
+	} else {
+		token, err := strconv.ParseInt(tokenStr, 10, 64)
+		if err != nil {
+			return 0
+		}
+		return int(token)
+	}
 }
 
 func initServer(router *gin.Engine, config ServerConfig) {
@@ -82,6 +107,7 @@ func setPostRoutes(router *gin.Engine) {
 	router.POST("/room/:id", rollDice)
 	router.POST("/roomSettings", changeRoomSettings)
 	router.POST("/", addRoomHandler)
+	router.POST("/rooms", deleteRoomHandler)
 }
 
 func serve(config ServerConfig) {

@@ -145,9 +145,9 @@ func (db *DB) updateChar(
 	charColor string,
 	dbCharName string,
 	dbCharColor string,
-) {
+) error {
 	if charName == dbCharName && charColor == dbCharColor {
-		return
+		return nil
 	}
 	if charName == "" {
 		charName = dbCharName
@@ -155,11 +155,14 @@ func (db *DB) updateChar(
 	if charColor == "" {
 		charColor = dbCharColor
 	}
-	db.Db.Exec(
+	if _, err := db.Db.Exec(
 		`update chr 
 			set chr_name = ?, chr_color = ?
-		where chr_id = ?`, charName, charColor, charId,
-	)
+		where id = ?`, charName, charColor, charId,
+	); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (db *DB) createRoom(game Game) (int, error) {
@@ -390,4 +393,21 @@ func (db *DB) getAllRooms(userToken int) ([]Room, error) {
 		})
 	}
 	return ret, nil
+}
+
+func (db *DB) deleteRoom(userToken int, roomId int64) (int, int64, error) {
+	result, err := db.Db.Exec(
+		`delete room 
+		from room join user_token on room.owner_id = user_token.id
+		where room.id = ? and user_token.token = ?`, roomId, userToken,
+	)
+	if err != nil {
+		return -1, -1, err
+	}
+	nbr, err := result.RowsAffected()
+	if err != nil {
+		return -1, -1, err
+	} else {
+		return int(nbr), roomId, nil
+	}
 }
