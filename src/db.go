@@ -411,3 +411,11 @@ func (db *DB) deleteRoom(userToken int, roomId int64) (int, int64, error) {
 		return int(nbr), roomId, nil
 	}
 }
+
+func (db *DB) cleanUp(nbrOfDays int) error {
+	if _, err := db.Db.Exec(`call clean_up(?`, nbrOfDays); err != nil {
+		return err
+	} else {
+		return nil
+	}
+}

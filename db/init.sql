@@ -20,6 +20,7 @@ drop procedure if exists create_room;
 drop procedure if exists insert_roll;
 drop procedure if exists create_user_token;
 drop procedure if exists change_room_settings; 
+drop procedure if exists removeOldRooms;
 
 create table game (
     id tinyint primary key,
@@ -295,18 +296,20 @@ $$
 
 DELIMITER $$
 create procedure removeOldRooms (
-    in delay int,
+    in nbr_of_days int,
 ) 
 begin
-    declare 
+    declare compar timestamp;
+    declare zero timestamp;
+    set comparison = curdate() - interval nbr_of_days day;
+    set zero = date('2000-01-01');
     delete room 
     from
         room
         left join chr on room.id = chr.room_id
         left join roll on chr.id = roll.chr_id
     where
-       room.created < delay and ifnull(max(roll.creted), 0) < delay
-    group by room.id
-
+       room.created < compar and ifnull(max(roll.creted), zero) < compar
+    group by room.id;
 end;
 $$
