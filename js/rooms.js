@@ -21,20 +21,18 @@ for (var i = 0; i < buttons.length; i++) {
                 "room_id": event.target.value,
             })
         })
-        .then( resp => {
-            if (resp.ok) {
-                resp.text().then( dat => {
-                    const id = "row_" + event.target.value;
-                    var rows = document.getElementsByName(id);
-                    for (var i = 0; i < rows.length; i++) {
-                        rows[i].remove();
+            .then(resp => {
+                if (resp.ok) {
+                    const name = "row_" + event.target.value;
+                    var rows = document.getElementsByName(name);
+                    for (var i = rows.length - 1; i >= 0; i--) {
+                        rows[i].remove()
                     }
-                })
-            } else {
-                window.alert("Deleting romm #" + event.target.value + 
-                    " failed!");
-            }
-        })
+                } else {
+                    window.alert("Deleting romm #" + event.target.value +
+                        " failed!");
+                }
+            })
     })
 }
 
