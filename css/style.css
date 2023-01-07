@@ -184,7 +184,7 @@ button.b_room-selection {
     order: 5;
 }
 
-.header_2 button {
+.button_header {
     float: right;
     height: 80%;
     margin-right: 20px;
@@ -239,3 +239,19 @@ button.b_room-selection {
     margin-bottom: 10px;    
     margin-top: 0px;
 }
+
+.header_2 select {
+    color: inherit;
+    background-color: inherit;
+}
+
+.header_2 option {
+    color: black;
+    background-color: grey;
+}
+
+.button_setting {
+    background-color: transparent;
+    color: var(--ornament_fg_col);
+}
+
