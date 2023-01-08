@@ -60,8 +60,7 @@ func getRollsHelper(c *gin.Context, all bool) {
 	data, moreData := db.getRolls(roomId, userToken, rollNbr)
 	db.close()
 	c.Writer.Header().Add("more_data", fmt.Sprint(moreData))
-	c.Writer.WriteString(data)
-	c.Status(http.StatusOK)
+	c.String(http.StatusOK, data)
 
 }
 
