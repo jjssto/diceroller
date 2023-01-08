@@ -430,9 +430,8 @@ func (db *DB) getToken(c *gin.Context) (int, error) {
 	db.connect(false)
 	userToken, _, err := db.createToken(oldToken)
 	if err != nil {
-		setToken(c, userToken)
 		return userToken, err
 	}
+	setToken(c, userToken)
 	return userToken, nil
-
 }
