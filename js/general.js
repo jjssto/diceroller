@@ -180,5 +180,4 @@ document.getElementById("f_roll").addEventListener("submit", event => {
             "action": action
         })
     })
-    .then( getRolls(createRow) )
 })

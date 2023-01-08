@@ -49,7 +49,7 @@ begin
 				order by sub.nr
 				separator ', '
 			),
-			max(sub.nr) as more_data
+			if(max(sub.nr) < sub.last_nr, max(sub.nr), 0) as more_data
 		into json_str, more_data
 		from (
 			select
@@ -64,7 +64,8 @@ begin
 				) as dice,
 				chr.chr_name as na,
 				chr.chr_color as co,
-				if(user_token.token = token, 1, 0) as ow
+				if(user_token.token = token, 1, 0) as ow,
+                last_roll_nbr.last_nr as last_nr
 				from 
 					room 
 					join game on room.game_id = game.id
