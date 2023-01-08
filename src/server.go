@@ -66,15 +66,15 @@ func setToken(c *gin.Context, userToken int) {
 		false,
 	)
 }
-func getToken(c *gin.Context) int {
+func getToken(c *gin.Context) (int, error) {
 	if tokenStr, err := c.Cookie("diceroller_user_id"); err != nil {
-		return 0
+		return 0, err
 	} else {
 		token, err := strconv.ParseInt(tokenStr, 10, 64)
 		if err != nil {
-			return 0
+			return 0, err
 		}
-		return int(token)
+		return int(token), nil
 	}
 }
 

@@ -119,18 +119,10 @@ func viewGame(c *gin.Context) {
 		return
 	}
 	roomId := int(roomId64)
-	oldToken := getToken(c)
 
 	db := DB{Configured: false}
 	db.connect(false)
-	userToken, _, err := db.createToken(oldToken)
-	if err != nil {
-		displayError(c, err)
-		return
-	}
-	if userToken != oldToken {
-		setToken(c, userToken)
-	}
+	userToken, _ := db.getToken(c)
 	room, err := db.getRoom(roomId, userToken)
 	db.close()
 	if err != nil {
@@ -160,9 +152,9 @@ func viewError(c *gin.Context) {
 }
 
 func viewRooms(c *gin.Context) {
-	userToken := getToken(c)
 	db := DB{}
 	db.connect(false)
+	userToken, _ := db.getToken(c)
 	ownRooms, err1 := db.getOwnRooms(userToken)
 	allRooms, err2 := db.getAllRooms(userToken)
 	db.close()

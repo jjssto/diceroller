@@ -4,7 +4,7 @@
 
 use diceroller_test_db;
 
-drop function if exists get_rolls_json;
+drop procedure if exists get_rolls_json;
 drop procedure if exists get_room;
 drop function if exists get_roll_nbr;
 drop procedure if exists create_room;
@@ -18,68 +18,71 @@ drop procedure if exists clean_up;
 
 DELIMITER $$
 
-create function get_rolls_json(
-    room_id integer,
-    token integer,
-    last_roll integer
+create procedure get_rolls_json(
+    in room_id integer,
+    in token integer,
+    in last_roll integer
 )
-returns text deterministic
 begin    
+	declare json_str text;
+    declare more_data int;
     if last_roll >= (
         select last_nr
         from last_roll_nbr where last_roll_nbr.room_id = room_id
     ) then
-        return '';
-    end if;
-
-	select
-		group_concat(
-			concat(
-                '\"', sub.nr,'\":[',
-                    '{',
-						'\"P\":\"', ifnull(sub.na, ''), '\",',
-                        '\"C\":\"', ifnull(sub.co, ''), '\",',
-                        '\"A\":\"', ifnull(sub.ac, ''), '\",',
-                        '\"T\":\"', ifnull(sub.cr, ''), '\",',
-                        '\"R\":\"', ifnull(sub.re, ''), '\",',
-                        '\"D\":[', ifnull(sub.dice, ''), ']',
-                    '}, ',
-                '\"', sub.ow, '\"]')
-			order by sub.nr
-			separator ', '
-		)
-	into @json_str
-	from (
+        set more_data = 0;
+        set json_str = '';
+	else
 		select
-			roll.roll_nbr as nr,
-			roll.chr_action as ac,
-			roll.result as re,
-			unix_timestamp(roll.created) as cr,
-			group_concat( 
-				concat('{\"E\": \"', die.eyes, '\", \"R": \"', die.result, '\"}')
-				order by die.eyes desc 
+			group_concat(
+				concat(
+					'\"', sub.nr,'\":[',
+						'{',
+							'\"P\":\"', ifnull(sub.na, ''), '\",',
+							'\"C\":\"', ifnull(sub.co, ''), '\",',
+							'\"A\":\"', ifnull(sub.ac, ''), '\",',
+							'\"T\":\"', ifnull(sub.cr, ''), '\",',
+							'\"R\":\"', ifnull(sub.re, ''), '\",',
+							'\"D\":[', ifnull(sub.dice, ''), ']',
+						'}, ',
+					'\"', sub.ow, '\"]')
+				order by sub.nr
 				separator ', '
-			) as dice,
-			chr.chr_name as na,
-			chr.chr_color as co,
-			if(user_token.token = token, 1, 0) as ow
-				
-			from 
-				room 
-				join game on room.game_id = game.id
-				join chr on room.id = chr.room_id  
-				join roll on chr.id = roll.chr_id
-				join die on roll.id = die.roll_id
-				left join user_token on chr.user_token_id = user_token.id
-			where 
-				room.id = room_id and ifnull(roll.roll_nbr, 1) > ifnull(last_roll, 0)
-			group by roll.id
-			order by roll.roll_nbr
-	) as sub;
-    
-    return @json_str;
+			),
+			max(sub.nr) as more_data
+		into json_str, more_data
+		from (
+			select
+				roll.roll_nbr as nr,
+				roll.chr_action as ac,
+				roll.result as re,
+				unix_timestamp(roll.created) as cr,
+				group_concat( 
+					concat('{\"E\": \"', die.eyes, '\", \"R": \"', die.result, '\"}')
+					order by die.eyes desc 
+					separator ', '
+				) as dice,
+				chr.chr_name as na,
+				chr.chr_color as co,
+				if(user_token.token = token, 1, 0) as ow
+				from 
+					room 
+					join game on room.game_id = game.id
+					join chr on room.id = chr.room_id  
+					join roll on chr.id = roll.chr_id
+					join die on roll.id = die.roll_id
+					left join user_token on chr.user_token_id = user_token.id
+					left join last_roll_nbr on room.id = last_roll_nbr.room_id
+				where 
+					room.id = room_id 
+					and ifnull(roll.roll_nbr, 1) > ifnull(last_roll, 0) 
+					and roll.roll_nbr <= ifnull(last_roll, 0) + 50
+				group by roll.id
+				order by roll.roll_nbr
+		) as sub;
+	end if;
+    select json_str, more_data;
 end;
-
 $$
 
 DELIMITER $$

@@ -161,15 +161,6 @@ function setDice() {
     return text
 }
 
-function reset() {
-    document.querySelector("#s_d20").value = 0;
-    document.querySelector("#s_d12").value = 0;
-    document.querySelector("#s_d10").value = 0;
-    document.querySelector("#s_d8").value = 0;
-    document.querySelector("#s_d6").value = 0;
-    document.querySelector("#s_d4").value = 0;
- }
-
 document.getElementById("f_roll").addEventListener("submit", event => {
     event.preventDefault()
     const loc = location.href
@@ -189,4 +180,5 @@ document.getElementById("f_roll").addEventListener("submit", event => {
             "action": action
         })
     })
+    .then( getRolls(createRow) )
 })

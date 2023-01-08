@@ -21,6 +21,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -46,14 +47,19 @@ func getRollsHelper(c *gin.Context, all bool) {
 	} else {
 		rollNbr = 0
 	}
-	userToken := getToken(c)
 	//loc := getTimeZone(c)
 
 	db := DB{Configured: false}
 	db.connect(false)
-	data := db.getRolls(roomId, userToken, rollNbr)
+	userToken, err := getToken(c)
+	if err != nil {
+		userToken = 0
+	} else if userToken == 0 {
+		userToken, _ = db.getToken(c)
+	}
+	data, moreData := db.getRolls(roomId, userToken, rollNbr)
 	db.close()
-	c.Writer.Flush()
+	c.Writer.Header().Add("more_data", fmt.Sprint(moreData))
 	c.Writer.WriteString(data)
 	c.Status(http.StatusOK)
 

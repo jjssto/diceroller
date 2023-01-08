@@ -50,7 +50,6 @@ func rollDice(c *gin.Context) {
 		return
 	}
 	id, _ := strconv.ParseInt(idStr, 10, 32)
-	userToken := getToken(c)
 	col := data["color"]
 	char := data["char"]
 	mod, _ := strconv.ParseInt(data["mod"], 10, 32)
@@ -63,6 +62,13 @@ func rollDice(c *gin.Context) {
 	diceArr, _ = checkDiceArr(diceArr)
 	db := DB{Configured: false}
 	db.connect(false)
+	userToken, err := getToken(c)
+	if err != nil {
+		userToken = 0
+	} else if userToken == 0 {
+		userToken, _ = db.getToken(c)
+	}
+
 	err = db.roll(
 		int(id), userToken, char, col, action, int(mod), diceArr,
 	)
@@ -93,6 +99,13 @@ func addRoomHandler(c *gin.Context) {
 	}
 	db := DB{Configured: false}
 	db.connect(false)
+	userToken, err := getToken(c)
+	if err != nil {
+		c.Status(http.StatusForbidden)
+		return
+	} else if userToken == 0 {
+		_, _ = db.getToken(c)
+	}
 	id, err := db.createRoom(g)
 	if err != nil {
 		c.Status(http.StatusBadRequest)
@@ -109,7 +122,11 @@ func changeRoomSettings(c *gin.Context) {
 		c.Status(http.StatusBadRequest)
 		return
 	}
-	userToken := getToken(c)
+	userToken, err := getToken(c)
+	if err != nil {
+		c.Status(http.StatusForbidden)
+		return
+	}
 	roomId, _ := strconv.ParseInt(json["room_id"], 10, 32)
 	roomName := json["room_name"]
 	color := json["color"]
@@ -129,8 +146,12 @@ func changeRoomSettings(c *gin.Context) {
 
 func deleteRoomHandler(c *gin.Context) {
 	var json map[string]string
-	userToken := getToken(c)
-	if err := c.BindJSON(&json); err != nil {
+	userToken, err := getToken(c)
+	if err != nil {
+		c.Status(http.StatusForbidden)
+		return
+	}
+	if err = c.BindJSON(&json); err != nil {
 		c.Status(http.StatusBadRequest)
 		return
 	}

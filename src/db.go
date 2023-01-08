@@ -5,6 +5,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/go-sql-driver/mysql"
 )
 
@@ -270,16 +271,17 @@ func (db *DB) addChar(
 	return charId, nil
 }
 
-func (db *DB) getRolls(roomId int, token int, lastRoll int) string {
+func (db *DB) getRolls(roomId int, token int, lastRoll int) (string, int) {
 
-	row := db.Db.QueryRow(`select get_rolls_json(?,?,?)`, roomId, token, lastRoll)
+	row := db.Db.QueryRow(`call get_rolls_json(?,?,?)`, roomId, token, lastRoll)
 
 	var str string
-	err := row.Scan(&str)
+	var moreData int
+	err := row.Scan(&str, &moreData)
 	if err != nil {
 		str = ""
 	}
-	return "{" + str + "}"
+	return "{" + str + "}", moreData
 }
 
 func (db *DB) changeRoomSettings(
@@ -418,4 +420,18 @@ func (db *DB) cleanUp(nbrOfDays int) error {
 	} else {
 		return nil
 	}
+}
+
+func (db *DB) getToken(c *gin.Context) (int, error) {
+	oldToken, err := getToken(c)
+	if err != nil {
+		return 0, err
+	}
+	db.connect(false)
+	userToken, _, err := db.createToken(oldToken)
+	if err != nil {
+		return userToken, err
+	}
+	return userToken, nil
+
 }

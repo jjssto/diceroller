@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import { initCookieConsent } from "/js/fun.js"
 
 const buttons = document.querySelectorAll(".b_room-selection");
 
@@ -50,3 +51,5 @@ buttons.forEach(element => {
 document.getElementById("b_rooms").addEventListener("click", () => {
     window.open("/rooms", "_self")
 })
+
+initCookieConsent()

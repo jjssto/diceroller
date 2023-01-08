@@ -26,7 +26,8 @@ export {
     formatTime,
     init,
     createRowDice,
-    setResultHeaderDice
+    setResultHeaderDice,
+    initCookieConsent,
 };
 
 var hasFocus;
@@ -167,14 +168,15 @@ function getRolls(createRow) {
     }
     fetch(target, {
         method: "GET",
-        headers: {
-            "ts_offset": offsetStr
-        },
     })
     .then(response => {
+        let moreData = parseInt(response.headers.get("more_data"));
         response.text().then(data => {
                 insertRolls(createRow, data);
         })
+        if (moreData > 0) {
+            getRolls(createRow);
+        }
     });
 }
 
@@ -232,6 +234,7 @@ function init(createRow) {
         }
         initRadioButtons();
         initActionButtons();
+        initCookieConsent();
     })
 
     window.addEventListener("load", () => {
@@ -369,3 +372,67 @@ function initActionButtons() {
         })
     }
 }
+
+function initCookieConsent() {
+
+    // if cookie already exists => leave function
+    if (checkCookie()) {
+        return
+    }
+
+    // otherwise initialise cookie consent form
+    document.querySelector(".cookie_consent")
+        .classList.replace("hidden", "visible");
+    document.getElementById("f_cookie_consent")
+        .addEventListener("submit", (event) => {
+            event.preventDefault();
+            const checkbox = document.getElementById("i_cookie_consent")
+            if (checkbox != null && checkbox.checked ) {
+                if (setCookie()) {               
+                    document.querySelector(".cookie_consent")
+                        .classList.replace("visible", "hidden");
+                }
+            }
+    })
+    document.getElementById("i_cookie_consent")
+        .addEventListener("click", (event) => {
+            if (event.target.checked) {
+                document.getElementById("b_cookie_consent")
+                    .removeAttribute("disabled")
+            } else {
+                document.getElementById("b_cookie_consent")
+                    .setAttribute("disabled", "true")
+                }
+    })
+}
+
+function setCookie() {
+    if (getCookie("diceroller_user_id") == "") {
+        document.cookie = "diceroller_user_id=0"
+    }
+    return true;
+}
+
+function checkCookie() {
+    if (getCookie("diceroller_user_id") == "") {
+        return false
+    } else {
+        return true
+    }
+}
+
+function getCookie(cname) {
+    let name = cname + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for(let i = 0; i <ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+  }
