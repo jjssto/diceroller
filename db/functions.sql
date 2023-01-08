@@ -2,7 +2,8 @@
 -- create user db_user@localhost identified WITH mysql_native_password by '123';
 -- grant all on diceroller_test_db.* to db_user@localhost;
 
-use diceroller_test_db;
+use diceroller_db;
+-- use diceroller_test_db;
 
 drop procedure if exists get_rolls_json;
 drop procedure if exists get_room;
@@ -65,7 +66,8 @@ begin
 				chr.chr_name as na,
 				chr.chr_color as co,
 				if(user_token.token = token, 1, 0) as ow,
-                last_roll_nbr.last_nr as last_nr
+                last_roll_nbr.last_nr as last_nr,
+                room.id as room_id
 				from 
 					room 
 					join game on room.game_id = game.id
@@ -80,7 +82,8 @@ begin
 					and roll.roll_nbr <= ifnull(last_roll, 0) + 50
 				group by roll.id
 				order by roll.roll_nbr
-		) as sub;
+		) as sub
+	group by sub.room_id;
 	end if;
     select json_str, more_data;
 end;
