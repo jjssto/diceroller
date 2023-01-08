@@ -2,7 +2,7 @@
 -- create user db_user@localhost identified WITH mysql_native_password by '123';
 -- grant all on diceroller_test_db.* to db_user@localhost;
 
-use diceroller_db;
+use diceroller_test_db;
 
 drop procedure if exists get_rolls_json;
 drop procedure if exists get_room;
