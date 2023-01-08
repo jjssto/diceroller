@@ -408,8 +408,8 @@ function initCookieConsent() {
 
 function setCookie() {
     if (getCookie("diceroller_user_id") == "") {
-        document.cookie = "diceroller_user_id=0"
-    }
+        document.cookie = "diceroller_user_id=0; path=/; secure=true"
+    }   
     return true;
 }
 
