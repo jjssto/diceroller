@@ -224,6 +224,7 @@ function init(createRow) {
         settingVisibility()
         roomSettingForm()
         setLink()
+        smallScreen()
 
        
         var resetButton = document.querySelector("#b_reset")
@@ -435,4 +436,11 @@ function getCookie(cname) {
         }
     }
     return "";
+  }
+  
+  function smallScreen() {
+    if (window.innerWidth < 1100) {
+       let div = document.querySelector(".roll_form_options")
+       div.remove()
+    }
   }
