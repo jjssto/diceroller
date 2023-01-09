@@ -442,9 +442,6 @@ function getCookie(cname) {
     if (window.innerWidth < 800) {
         document.getElementById("i_display_dice").remove()
         document.getElementById("l_display_dice").remove()
-    }
-
-    if (navigator.userAgent.toLowerCase().match(/mobile/i)) {
         document.getElementById("p_share").remove()
     }
   }
