@@ -84,8 +84,9 @@
     width: 750px;
     color: #ffff;
     background-color: #808080;
-    opacity: 0.9;
+    opacity: 0.95;
     z-index: 100;
+    border-radius: 20px;
 }
 @media screen and (max-height: 1000px) {
  .cookie_consent {
@@ -96,7 +97,7 @@
     width: 750px;
     color: #ffff;
     background-color: #808080;
-    opacity: 0.9;
+    opacity: 0.95;
     z-index: 100;
 }   
 }
@@ -288,4 +289,13 @@ button.b_room-selection {
 
 .visible {
     visibility: visible;
+}
+
+.home_sep {
+    border: 10px solid var(--ornament_bg_col);
+    border-radius: 5px;
+}
+
+.main li:not(:last-child) {
+    margin-bottom: 1rem;
 }
