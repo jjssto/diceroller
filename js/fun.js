@@ -448,5 +448,7 @@ function getCookie(cname) {
         document.getElementById("p_share").remove()
         document.getElementById("i_display_dice").remove()
         document.getElementById("l_display_dice").remove()
+        document.getElementById("i_highlight_own_rolls").remove()
+        document.getElementById("i_highlight_own_rolls").remove()
     }
   }
