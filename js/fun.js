@@ -440,7 +440,7 @@ function getCookie(cname) {
   
   function smallScreen() {
     if (window.innerWidth < 1100) {
-       let div = document.querySelector(".roll_form_options")
-       div.remove()
+        document.getElementById("i_display_dice").remove()
+        document.getElementById("l_display_dice").remove()
     }
   }
