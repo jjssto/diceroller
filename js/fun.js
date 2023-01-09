@@ -439,7 +439,13 @@ function getCookie(cname) {
   }
   
   function smallScreen() {
-    if (window.innerWidth < 1100) {
+    if (window.innerWidth < 800) {
+        document.getElementById("i_display_dice").remove()
+        document.getElementById("l_display_dice").remove()
+    }
+
+    if (navigator.userAgent.toLowerCase().match(/mobile/i)) {
+        document.getElementById("p_share").remove()
         document.getElementById("i_display_dice").remove()
         document.getElementById("l_display_dice").remove()
     }

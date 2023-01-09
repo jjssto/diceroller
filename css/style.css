@@ -50,6 +50,12 @@
     width: 1100px;
 }
 
+@media (any-pointer: coarse) {
+    .grid-container{
+        grid-template-rows: 80px 75px auto auto 75px;
+    }
+}
+
 @media screen and (max-width: 1100px) {
     .grid-container {
         width: 100vw;
