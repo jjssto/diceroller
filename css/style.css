@@ -27,7 +27,7 @@
 }
 
 @media (any-pointer: coarse) {
-    p td th {
+    * {
         font-size: x-large;
     }
     
