@@ -449,5 +449,9 @@ function getCookie(cname) {
         document.getElementById("i_display_dice").remove()
         document.getElementById("l_display_dice").remove()
         document.getElementById("l_highlight_own_rolls").remove()
+        let radio_buttons = document.querySelectorAll(".roll_form_radio");
+        for (let i = radio_buttons.length - 1; i >= 0; i--) {
+            radio_buttons[i].remove()
+        }
     }
   }
