@@ -28,7 +28,15 @@
 
 @media (any-pointer: coarse) {
     * {
-        font-size: x-large
+        font-size: x-large;
+    }
+    
+    .header_2 {
+        font-size: medium;
+    }
+    
+    .footer {
+        font-size: medium;
     }
 }
 
