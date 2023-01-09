@@ -26,6 +26,12 @@
     --highligh_col: #98fb98;
 }
 
+@media (any-pointer: coarse) {
+    * {
+        font-size: large
+    }
+}
+
 
 .grid-container {
     display: inline-grid;
