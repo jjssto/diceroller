@@ -343,9 +343,17 @@ function reset(event) {
     for (var i = 0; i < numberSelects.length; i++ ) {
         numberSelects[i].value = 0
     }
+    var selectedRadios = document.querySelectorAll(".r_selected");
+    for (var i = 0; i < selectedRadios.length; i++ ) {
+        selectedRadios[i].classList.remove('r_selected');
+    }
     var defaultRadios = document.querySelectorAll(".r1")
     for (var i = 0; i < defaultRadios.length; i++ ) {
-        defaultRadios[i].checked = true
+        defaultRadios[i].classList.add('r_selected');
+    }
+    let mod = sessionStorage.getItem("mod");
+    if (mod != null) {
+        sessionStorage.setItem("mod", 0);
     }
     var action = document.querySelector("#f_action")
     if (action != null) {
@@ -354,12 +362,41 @@ function reset(event) {
 }
 
 function initRadioButtons() {
-    var radioButtons = document.querySelectorAll(".i_radio");
+    var radioButtons = document.querySelectorAll(".b_radio");
     for (var i = 0; i < radioButtons.length; i++ ) {
         radioButtons[i].addEventListener("click", (event) => {
-            var element = document.getElementById(event.target.name) 
-            element.value = event.target.value
+            let selected = document.querySelectorAll('.r_selected')
+            for (let j = 0; j < selected.length; j++) {
+                if (selected[j].name == event.target.name ) {
+                    selected[j].classList.remove("r_selected");
+                    break;
+                }
+            }
+            event.target.classList.add('r_selected')
+            let element = document.getElementById(event.target.name) 
+            if (element != null && !(typeof element === 'undefined')) {
+                element.value = event.target.value
+            } else {
+                sessionStorage.setItem("mod", event.target.value);
+            }
         })    
+    }
+    var defaultButtons = document.querySelectorAll(".r1");
+    for (var i = 0; i < defaultButtons.length; i++ ) {
+        let element = document.getElementById(defaultButtons[i].name);
+        if (element == null) {
+            continue;
+        }
+        element.addEventListener("change", (event) => {
+            let radio = document.getElementById("radio_" + event.target.id)
+            for (var j = 0; j < radio.children.length; j++ ) {
+                if (radio.children[j].value == event.target.selectedIndex) {
+                    radio.children[j].classList.add("r_selected")
+                } else {
+                    radio.children[j].classList.remove("r_selected")
+                }
+            }
+        })
     }
 }
 
@@ -449,13 +486,13 @@ function getCookie(cname) {
         document.getElementById("i_display_dice").remove()
         document.getElementById("l_display_dice").remove()
         document.getElementById("l_highlight_own_rolls").remove()
-        let radio_buttons = document.querySelectorAll(".roll_form_radio");
-        for (let i = radio_buttons.length - 1; i >= 0; i--) {
-            let ids = ['radio_s_skill', 'radio_s_attribute', 'radio_coc']
-            if ( ids.includes(radio_buttons[i].id) ) {
-                continue;
-            }
-            radio_buttons[i].remove()
-        }
+        //let radio_buttons = document.querySelectorAll(".roll_form_radio");
+        //for (let i = radio_buttons.length - 1; i >= 0; i--) {
+        //    let ids = ['radio_s_skill', 'radio_s_attribute', 'radio_coc']
+        //    if ( ids.includes(radio_buttons[i].id) ) {
+        //        continue;
+        //    }
+        //    radio_buttons[i].remove()
+        //}
     }
   }

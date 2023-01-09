@@ -281,8 +281,18 @@ button.b_room-selection {
     top: 0;
     right: 0;
 }
-.roll_form_radio input {
-    margin-right: 25px;
+.b_radio {
+    float: left;
+    padding: 5px 20px;
+    text-align: center;
+    cursor: pointer;
+    outline: none;
+    color: #fff;
+    background: #a9a9a9;
+    border: none;
+}
+.r_selected {
+    background: #696969;
 }
 
 .roll_form_buttons button{

@@ -64,13 +64,7 @@ document.getElementById("f_roll").addEventListener("submit", event => {
     event.preventDefault()
     const loc = location.href
     const player_id = "0"
-    const checked = document.querySelector('input[name="mod"]:checked');
-    var mod = "";
-    if (checked != null) {
-        mod = checked.value;
-    } else {
-        mod = "0";
-    }
+    var mod = sessionStorage.getItem("mod");
     const chr = document.getElementById("f_name").value;
     const action = document.getElementById("f_action").value;
     fetch(loc, {
@@ -85,3 +79,5 @@ document.getElementById("f_roll").addEventListener("submit", event => {
         })
     })
 })
+
+sessionStorage.setItem("mod", 0);
