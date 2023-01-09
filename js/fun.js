@@ -451,6 +451,9 @@ function getCookie(cname) {
         document.getElementById("l_highlight_own_rolls").remove()
         let radio_buttons = document.querySelectorAll(".roll_form_radio");
         for (let i = radio_buttons.length - 1; i >= 0; i--) {
+            if ( ['radio_s_skill', 'radio_s_attribute'].includes(radio_buttons[i].id) ) {
+                continue;
+            }
             radio_buttons[i].remove()
         }
     }
