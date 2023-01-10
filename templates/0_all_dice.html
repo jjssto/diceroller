@@ -1,0 +1,32 @@
+<div class="all_dice_form hidden">
+<form id="f_roll_all">
+<table>
+  <tbody>
+    <tr>
+      <td>{{ template "0_dd_number.html" .d20 }}</td>
+      <td>{{ template "0_radio_0_4.html" "s_d20" }}</td>
+      <td>{{ template "0_dd_number.html" .d8 }}</td>
+      <td>{{ template "0_radio_0_4.html" "s_d8"}}</td>
+
+    </tr>
+    <tr>
+      <td>{{ template "0_dd_number.html" .d12 }}</td>
+      <td>{{ template "0_radio_0_4.html" "s_d12" }}</td>
+      <td>{{ template "0_dd_number.html" .d6 }}</td>
+      <td>{{ template "0_radio_0_4.html" "s_d6"}}</td>
+    </tr>
+    <tr>
+      <td>{{ template "0_dd_number.html" .d10 }}</td>
+      <td>{{ template "0_radio_0_4.html" "s_d10" }}</td>
+      <td>{{ template "0_dd_number.html" .d4 }}</td>
+      <td>{{ template "0_radio_0_4.html" "s_d4" }}</td>
+    </tr>
+  </tbody>
+</table>
+<p>
+<div class="roll_form_buttons">
+  <button type="submit">Roll</button>
+  <button type="button" id="b_close_all_dice">Close</button>
+  </div>
+</p>
+</div>

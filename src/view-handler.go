@@ -64,12 +64,23 @@ func viewHome(c *gin.Context) {
 }
 
 func viewCoC(c *gin.Context, room Room) {
+	s := make([]int, 10)
+	for i := range s {
+		s[i] = i + 1
+	}
 	c.HTML(http.StatusOK, "coc.html", gin.H{
 		"title":       room.getTitle(),
 		"color":       room.Color,
 		"room_id":     room.Id,
 		"is_owner":    room.IsOwner,
 		"result_cols": []string{"D100", "D10"},
+		"d20":         Input{Id: "s_d20", Label: "D20:", Options: s},
+		"d12":         Input{Id: "s_d12", Label: "D12:", Options: s},
+		"d10":         Input{Id: "s_d10", Label: "D10:", Options: s},
+		"d00":         Input{Id: "s_d00", Label: "D00:", Options: s},
+		"d8":          Input{Id: "s_d8", Label: "D8:", Options: s},
+		"d6":          Input{Id: "s_d6", Label: "D6:", Options: s},
+		"d4":          Input{Id: "s_d4", Label: "D4:", Options: s},
 		"actions":     a,
 	})
 }
@@ -87,6 +98,13 @@ func viewRezTech(c *gin.Context, room Room) {
 		"result_cols": []string{"D12", "D8", "D6"},
 		"attr_opt":    Input{Id: "s_attribute", Label: "Attribute:", Options: s},
 		"skill_opt":   Input{Id: "s_skill", Label: "Skill:", Options: s},
+		"d20":         Input{Id: "s_d20", Label: "D20:", Options: s},
+		"d12":         Input{Id: "s_d12", Label: "D12:", Options: s},
+		"d10":         Input{Id: "s_d10", Label: "D10:", Options: s},
+		"d00":         Input{Id: "s_d00", Label: "D00:", Options: s},
+		"d8":          Input{Id: "s_d8", Label: "D8:", Options: s},
+		"d6":          Input{Id: "s_d6", Label: "D6:", Options: s},
+		"d4":          Input{Id: "s_d4", Label: "D4:", Options: s},
 		"actions":     a,
 	})
 }

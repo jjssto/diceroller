@@ -105,6 +105,29 @@
 }
 
 
+.all_dice_form {
+    padding: 2.5%;
+    position: fixed;
+    top: 200px;
+    left: 100px;
+    color: #ffff;
+    background-color: #808080;
+    opacity: 0.95;
+    z-index: 90;
+    border-radius: 20px;
+}
+@media screen and (max-height: 1000px) {
+ .all_dice_form {
+    padding: 2.5%;
+    position: fixed;
+    left: 5px;
+    top: 5px;
+    color: #ffff;
+    background-color: #808080;
+    opacity: 0.95;
+    z-index: 90;
+}   
+}
 .cookie_consent {
     padding: 2.5%;
     position: fixed;
@@ -130,6 +153,8 @@
     z-index: 100;
 }   
 }
+
+
 
 .footer {
     padding: 2.5%;
@@ -283,7 +308,10 @@ button.b_room-selection {
 }
 .b_radio {
     float: left;
-    padding: 5px 20px;
+    width: 45px;
+    height: 30px;
+    margin-bottom: 1px;
+    margin-right: 1px;
     text-align: center;
     cursor: pointer;
     outline: none;
@@ -337,4 +365,11 @@ button.b_room-selection {
 
 .main li:not(:last-child) {
     margin-bottom: 1rem;
+}
+
+.all_dice_form .roll_form_buttons:first-child {
+    float: left;
+}
+.all_dice_form #b_close_all_dice {
+    float: right;
 }

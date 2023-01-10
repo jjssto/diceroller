@@ -20,6 +20,10 @@
             <tr>
               <th>
                {{ template "0_dd_number.html" .attr_opt }}
+               
+                <label for="i_attribute_only">Only:</label>
+                <input type="checkbox" id="i_attribute_only" value="1">
+               
               </th>
               <th>
                {{ template "0_dd_number.html" .skill_opt }}
@@ -27,30 +31,24 @@
             </tr>
           </thead>
           <tbody>
-                        <tr>
+              <tr>
               <td>
-                {{ template "0_radio_0_5.html" "s_attribute" }}
+                {{ template "0_radio_0_10.html" "s_attribute" }}
               </td>
               <td>
-                {{ template "0_radio_0_5.html" "s_skill" }}
+                {{ template "0_radio_0_10.html" "s_skill" }}
               </td>
             </tr>
           </tbody>
 
         </table>
-        <p>
-        <div class="roll_form_buttons">
-          <button type="submit">Roll</button>
-          <button type="submit" id="b_reset">Reset</button>
-          <label for="i_attribute_only">Attribute only:</label>
-          <input type="checkbox" id="i_attribute_only" value="1">
-        </div>
-        </p>
-      </form>
+        {{ template "0_roll_form_buttons.html" }}
+       </form>
     </div>
     {{ template "0_roll_results.html" .result_cols }}
     {{ template "0_footer.html" }}
     {{ template "0_cookie_consent.html" }}
+    {{ template "0_all_dice.html" . }}
   </div>
 </body>
 

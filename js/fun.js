@@ -236,6 +236,7 @@ function init(createRow) {
         initRadioButtons();
         initActionButtons();
         initCookieConsent();
+        initAllDiceForm();
     })
 
     window.addEventListener("load", () => {
@@ -486,13 +487,122 @@ function getCookie(cname) {
         document.getElementById("i_display_dice").remove()
         document.getElementById("l_display_dice").remove()
         document.getElementById("l_highlight_own_rolls").remove()
-        //let radio_buttons = document.querySelectorAll(".roll_form_radio");
-        //for (let i = radio_buttons.length - 1; i >= 0; i--) {
-        //    let ids = ['radio_s_skill', 'radio_s_attribute', 'radio_coc']
-        //    if ( ids.includes(radio_buttons[i].id) ) {
-        //        continue;
-        //    }
-        //    radio_buttons[i].remove()
-        //}
+   
     }
+  }
+  
+  function setDice() {
+    var sel = document.querySelector("#s_d20");
+    const d20 = sel.options[sel.selectedIndex].value; 
+    sel = document.querySelector("#s_d12");  
+    const d12 = sel.options[sel.selectedIndex].value; 
+    sel = document.querySelector("#s_d10");  
+    const d10 = sel.options[sel.selectedIndex].value; 
+    sel = document.querySelector("#s_d8");
+    const d8 = sel.options[sel.selectedIndex].value; 
+    sel = document.querySelector("#s_d6");
+    const d6 = sel.options[sel.selectedIndex].value; 
+    sel = document.querySelector("#s_d4");
+    const d4 = sel.options[sel.selectedIndex].value; 
+    
+    var first = true
+    var isEmpty = false
+    var text= "["
+    for (let i = 0; i < d20; i++) {
+        if (first) {
+            first = false
+        } else {
+            text += ", "
+        }
+        text += "20"
+        isEmpty = false
+    }
+    for (let i = 0; i < d12; i++) {
+        if (first) {
+            first = false
+        } else {
+            text += ", "
+        }
+        text += "12"
+        isEmpty = false
+    }
+    for (let i = 0; i < d10; i++) {
+        if (first) {
+            first = false
+        } else {
+            text += ", "
+        }
+        text += "10"
+        isEmpty = false
+    }
+    for (let i = 0; i < d8; i++) {
+        if (first) {
+            first = false
+        } else {
+            text += ", "
+        }
+        text += "8"
+        isEmpty = false
+    }
+    for (let i = 0; i < d6; i++) {
+        if (first) {
+            first = false
+        } else {
+            text += ", "
+        }
+        text += "6"
+        isEmpty = false
+    }
+    for (let i = 0; i < d4; i++) {
+        if (first) {
+            first = false
+        } else {
+            text += ", "
+        }
+        text += "4"
+        isEmpty = false
+    }
+    text += "]"
+    return text
+}
+
+
+  
+  function initAllDiceForm() {
+    document.getElementById("f_roll_all")
+        .addEventListener("submit", (event) => {
+            event.preventDefault();
+            const loc = location.href
+            const player_id = "0"
+            const dice = setDice(); 
+            const chr = document.getElementById("f_name").value;
+            const action = document.getElementById("f_action").value;
+
+            fetch(loc, {
+                method: "POST",
+                headers: {
+                    "contentType": "application/json"
+                },
+                body: JSON.stringify({
+                    "dice": dice,
+                    "char": chr,
+                    "action": action
+                })
+            })
+            document.querySelector(".all_dice_form")
+                .classList.add("hidden")
+    });
+        
+    document.getElementById("b_close_all_dice")
+        .addEventListener("click", (event) => {
+            document.querySelector(".all_dice_form")
+                .classList.add("hidden")
+        });
+    document.getElementById("b_show_all_dice")
+        .addEventListener("click", (event) => {
+            document.querySelector(".all_dice_form")
+                .classList.remove("hidden")
+        });
+
+    
   }
