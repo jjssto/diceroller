@@ -200,7 +200,7 @@ func (r *DiceRoll) evaluateCoC(mod int) {
 func (r *DiceRoll) evaluateRezTech() {
 	result := 0
 	for _, val := range r.Dice {
-		if val.Result == 12 {
+		if val.Result >= 11 {
 			result += 2
 		} else if val.Result >= 5 {
 			result += 1
