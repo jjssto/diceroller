@@ -25,24 +25,24 @@
           <tbody>
             <tr>
               <td>
-                <button type="button" value="0" id="mod_0" name="mod" class="b_radio r1 r_selected">
+                <button type="button" value="0" id="mod_0" name="mod" class="b_radio b_radio_coc r1 r_selected">
                   Standard
                 </button>
               </td>
               <td>
-                <button type="button" value="1" id="mod_+1" name="mod" class="b_radio">
-                  1
+                <button type="button" value="1" id="mod_+1" name="mod" class="b_radio b_radio_coc">
+                  Advantage
                 </button>
-                <button type="button" value="2" id="mod_+2" name="mod" class="b_radio">
-                  2
+                <button type="button" value="2" id="mod_+2" name="mod" class="b_radio b_radio_coc">
+                  2 × Advantage
                 </button>
               </td>
               <td>
-                <button type="button" value="-1" id="mod_-1" name="mod" class="b_radio">
-                  -1
+                <button type="button" value="-1" id="mod_-1" name="mod" class="b_radio b_radio_coc">
+                  Disadvantage
                 </button>
-                <button type="button" value="-2" id="mod_-2" name="mod" class="b_radio">
-                  -2
+                <button type="button" value="-2" id="mod_-2" name="mod" class="b_radio b_radio_coc">
+                  2 × Disadvantage
                 </button>
               </td>
             </tr>
@@ -50,18 +50,14 @@
         </table>
         </div>
         </p>
-        <p>
-        <div class="roll_form_buttons">
-          <button type="submit">Roll</button>
-          <button type="button" id="b_reset">Reset</button>
-        </div>
-        </p>
+        {{ template "0_roll_form_buttons.html" }}
       </form>
     </div>
 
     {{ template "0_roll_results.html" .result_cols }}
     {{ template "0_footer.html" }}
     {{ template "0_cookie_consent.html" }}
+    {{ template "0_all_dice.html" . }}
     </div>
 </body>
 

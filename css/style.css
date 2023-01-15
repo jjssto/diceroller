@@ -323,6 +323,10 @@ button.b_room-selection {
     background: #696969;
 }
 
+.b_radio_coc {
+    width: 150px;
+}
+
 .roll_form_buttons button{
     font-size: large;
     font-weight: bold;

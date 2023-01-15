@@ -382,13 +382,12 @@ function initRadioButtons() {
             }
         })    
     }
-    var defaultButtons = document.querySelectorAll(".r1");
-    for (var i = 0; i < defaultButtons.length; i++ ) {
-        let element = document.getElementById(defaultButtons[i].name);
-        if (element == null) {
-            continue;
-        }
-        element.addEventListener("change", (event) => {
+    let radioElements = document.getElementsByClassName("roll_form_radio"); 
+    for (var i = 0; i < radioElements.length; i++ ) {
+        let idStr = radioElements[i].id.substring(6);
+        let element = document.getElementById(idStr);
+        if (element == null) continue;
+         element.addEventListener("change", (event) => {
             let radio = document.getElementById("radio_" + event.target.id)
             for (var j = 0; j < radio.children.length; j++ ) {
                 if (radio.children[j].value == event.target.selectedIndex) {
@@ -566,7 +565,36 @@ function getCookie(cname) {
     return text
 }
 
+function resetDice() {
+    let elements =  [
+        document.querySelector("#s_d20"),
+        document.querySelector("#s_d12"),
+        document.querySelector("#s_d10"),
+        document.querySelector("#s_d8"),
+        document.querySelector("#s_d6"),
+        document.querySelector("#s_d4"),
 
+        document.querySelector("#s_d20"),
+        document.querySelector("#s_d12"),
+        document.querySelector("#s_d10"),
+        document.querySelector("#s_d8"),
+        document.querySelector("#s_d6"),
+        document.querySelector("#s_d4")
+    ]
+    let e = new Event("change");
+    for (let i = 0; i < elements.length; i++) {
+        elements[i].value = 0;
+        elements[i].dispatchEvent(e);
+    }
+}
+
+
+function hideAllDiceForm() {
+    resetDice();                    
+    document.querySelector(".all_dice_form")
+        .classList.add("hidden")
+}
+ 
   
   function initAllDiceForm() {
     document.getElementById("f_roll_all")
@@ -589,14 +617,17 @@ function getCookie(cname) {
                     "action": action
                 })
             })
-            document.querySelector(".all_dice_form")
-                .classList.add("hidden")
+            .then( (response) => {
+                if (response.ok) {
+                    hideAllDiceForm()
+                }
+            })
     });
-        
+      
+       
     document.getElementById("b_close_all_dice")
         .addEventListener("click", (event) => {
-            document.querySelector(".all_dice_form")
-                .classList.add("hidden")
+            hideAllDiceForm()
         });
     document.getElementById("b_show_all_dice")
         .addEventListener("click", (event) => {
