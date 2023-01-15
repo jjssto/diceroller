@@ -27,7 +27,7 @@ import {
     highlightOwnRolls
 } from "./fun.js";
 
-init(createRow);
+init(createRow, rollDice);
 
 function createRow(drow, id) {
     var row = document.createElement("tr")
@@ -59,10 +59,8 @@ function createRow(drow, id) {
     return row
 }
 
-
-document.getElementById("f_roll").addEventListener("submit", event => {
-    event.preventDefault()
-    const loc = location.href
+function rollDice() {
+     const loc = location.href
     const player_id = "0"
     var mod = sessionStorage.getItem("mod");
     const chr = document.getElementById("f_name").value;
@@ -78,6 +76,7 @@ document.getElementById("f_roll").addEventListener("submit", event => {
             "action": action 
         })
     })
-})
+
+}
 
 sessionStorage.setItem("mod", 0);

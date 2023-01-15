@@ -156,13 +156,6 @@ function getRolls(createRow) {
     }
     var target = location.href.replace("room/", "rolls/");
     const last_roll = sessionStorage.getItem("last_roll");
-    var offsetStr = sessionStorage.getItem("ts_offset");
-    if (offsetStr == null || offsetStr.length == 0) {
-        const date = new Date();
-        const offset = -1 * date.getTimezoneOffset() * 60; 
-        offsetStr = offset.toString();
-        sessionStorage.setItem("ts_offset", offsetStr)
-    }
     if (last_roll != "") {
         target += "/" + last_roll
     }
@@ -214,7 +207,7 @@ function formatTime(timestamp) {
     return hh + ':' + mm
 }
 
-function init(createRow) {
+function init(createRow, rollDice) {
 
     window.addEventListener("DOMContentLoaded", () => {
         setHighlightOwnRolls()
@@ -226,6 +219,12 @@ function init(createRow) {
         setLink()
         smallScreen()
 
+        document.getElementById("f_roll").addEventListener("submit", event => {
+        event.preventDefault()
+        rollDice()
+})
+
+
        
         var resetButton = document.querySelector("#b_reset")
         if (resetButton != null) {
@@ -234,7 +233,7 @@ function init(createRow) {
             });
         }
         initRadioButtons();
-        initActionButtons();
+        initActionButtons(rollDice);
         initCookieConsent();
         initAllDiceForm();
     })
@@ -400,13 +399,15 @@ function initRadioButtons() {
     }
 }
 
-function initActionButtons() {
+function initActionButtons(rollFunction) {
     var actionButtons = document.querySelectorAll(".button_action");
     var actionInput = document.getElementById("f_action");
     for (var i = 0; i < actionButtons.length; i++ ) {
         actionButtons[i].addEventListener("click", (event) => {
-            const val = event.target.textContent;
-            actionInput.value = val;
+            let oldVal = actionInput.value;
+            actionInput.value = event.target.textContent;;
+            rollFunction();
+            actionInput.value = oldVal;
         })
     }
 }
@@ -597,33 +598,36 @@ function hideAllDiceForm() {
  
   
   function initAllDiceForm() {
-    document.getElementById("f_roll_all")
-        .addEventListener("submit", (event) => {
-            event.preventDefault();
-            const loc = location.href
-            const player_id = "0"
-            const dice = setDice(); 
-            const chr = document.getElementById("f_name").value;
-            const action = document.getElementById("f_action").value;
+    let element = document.getElementById("f_roll_all");
+    if (element == null) {
+        return
+    }
 
-            fetch(loc, {
-                method: "POST",
-                headers: {
-                    "contentType": "application/json"
-                },
-                body: JSON.stringify({
-                    "dice": dice,
-                    "char": chr,
-                    "action": action
-                })
+    element.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const loc = location.href
+        const player_id = "0"
+        const dice = setDice(); 
+        const chr = document.getElementById("f_name").value;
+        const action = document.getElementById("f_action").value;
+
+        fetch(loc, {
+            method: "POST",
+            headers: {
+                "contentType": "application/json"
+            },
+            body: JSON.stringify({
+                "dice": dice,
+                "char": chr,
+                "action": action
             })
-            .then( (response) => {
-                if (response.ok) {
-                    hideAllDiceForm()
-                }
-            })
+        })
+        .then( (response) => {
+            if (response.ok) {
+                hideAllDiceForm()
+            }
+        })
     });
-      
        
     document.getElementById("b_close_all_dice")
         .addEventListener("click", (event) => {

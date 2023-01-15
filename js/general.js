@@ -27,7 +27,7 @@ import {
     init
 } from "./fun.js";
 
-init(createRow)
+init(createRow, rollDice)
 
 function createRow(drow, id) {
     var row = document.createElement("tr")
@@ -161,8 +161,7 @@ function setDice() {
     return text
 }
 
-document.getElementById("f_roll").addEventListener("submit", event => {
-    event.preventDefault()
+function rollDice() {
     const loc = location.href
     const player_id = "0"
     const dice = setDice(); 
@@ -180,4 +179,4 @@ document.getElementById("f_roll").addEventListener("submit", event => {
             "action": action
         })
     })
-})
+}

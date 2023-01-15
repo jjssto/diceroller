@@ -331,12 +331,11 @@ button.b_room-selection {
     font-size: large;
     font-weight: bold;
     width: 200px;
-    height: 50px;
+    height: 30px;
 }
 
-.button_action {
-    margin-bottom: 10px;    
-    margin-top: 0px;
+.roll_form_action_buttons button {
+    height: 30px;
 }
 
 .header_2 select {
