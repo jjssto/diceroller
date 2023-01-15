@@ -28,11 +28,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var a []string = []string{
-	"Attack", "Defend", "Dodge", "Craft", "Social", "Athletics",
-	"Magic", "Perception",
-}
-
 type Input struct {
 	Id      string
 	Label   string
@@ -64,6 +59,7 @@ func viewHome(c *gin.Context) {
 }
 
 func viewCoC(c *gin.Context, room Room) {
+	a := globConfig.getActions(0)
 	s := make([]int, 10)
 	for i := range s {
 		s[i] = i + 1
@@ -86,6 +82,7 @@ func viewCoC(c *gin.Context, room Room) {
 }
 
 func viewRezTech(c *gin.Context, room Room) {
+	a := globConfig.getActions(1)
 	s := make([]int, 10)
 	for i := range s {
 		s[i] = i + 1
@@ -110,6 +107,7 @@ func viewRezTech(c *gin.Context, room Room) {
 }
 
 func viewGeneral(c *gin.Context, room Room) {
+	a := globConfig.getActions(2)
 	s := make([]int, 10)
 	for i := range s {
 		s[i] = i + 1

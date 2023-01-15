@@ -220,11 +220,9 @@ function init(createRow, rollDice) {
         smallScreen()
 
         document.getElementById("f_roll").addEventListener("submit", event => {
-        event.preventDefault()
-        rollDice()
-})
-
-
+            event.preventDefault()
+            rollDice()
+        })
        
         var resetButton = document.querySelector("#b_reset")
         if (resetButton != null) {

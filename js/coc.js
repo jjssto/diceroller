@@ -60,7 +60,7 @@ function createRow(drow, id) {
 }
 
 function rollDice() {
-     const loc = location.href
+    const loc = location.href
     const player_id = "0"
     var mod = sessionStorage.getItem("mod");
     const chr = document.getElementById("f_name").value;
