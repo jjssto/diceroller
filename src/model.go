@@ -22,7 +22,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"math/rand"
 	"time"
 )
@@ -72,9 +71,9 @@ type Room struct {
 	GameStr      string
 }
 
-func (d *Die) json() string {
-	return fmt.Sprintf("{\"E\":\"%d\", \"R\":\"%d\"}", d.Eyes, d.Result)
-}
+//	func (d *Die) json() string {
+//		return fmt.Sprintf("{\"E\":\"%d\", \"R\":\"%d\"}", d.Eyes, d.Result)
+//	}
 
 //func (d *DiceRoll) json(room int, loc *time.Location) string {
 //	player := globRooms[room].Players.Detail[d.Player]
@@ -94,38 +93,43 @@ func (d *Die) json() string {
 //	return fmt.Sprintf("{%s, \"D\":[%s]}", info, dice)
 //}
 
-func (r *Room) roll(dice []int8, mod int, player int, action string) (DiceRoll, error) {
-
-	var diceRoll DiceRoll
-	diceRoll.Time = time.Now()
-	diceRoll.Player = player
-	diceRoll.Action = action
-	switch r.Game {
-	case CoC:
-		if diceRoll.rollCoC(dice, mod) != nil {
-			return diceRoll, errors.New("no dice")
-		}
-	case RezTech:
-		if diceRoll.rollRezTech(dice, mod) != nil {
-			return diceRoll, errors.New("no dice")
-		}
-	case General:
-		if diceRoll.rollGeneral(dice, mod) != nil {
-			return diceRoll, errors.New("no dice")
-		}
-	}
-	if r.DiceRolls == nil {
-		r.DiceRolls = make([]DiceRoll, 0, 1000)
-	}
-	r.DiceRolls = append(r.DiceRolls, diceRoll)
-	return diceRoll, nil
-}
+// func (r *Room) roll(dice []int8, mod int, player int, action string) (DiceRoll, error) {
+//
+// 	var diceRoll DiceRoll
+// 	diceRoll.Time = time.Now()
+// 	diceRoll.Player = player
+// 	diceRoll.Action = action
+// 	switch r.Game {
+// 	case CoC:
+// 		if diceRoll.rollCoC(dice, mod) != nil {
+// 			return diceRoll, errors.New("no dice")
+// 		}
+// 	case RezTech:
+// 		if diceRoll.rollRezTech(dice, mod) != nil {
+// 			return diceRoll, errors.New("no dice")
+// 		}
+// 	case General:
+// 		if diceRoll.rollGeneral(dice, mod) != nil {
+// 			return diceRoll, errors.New("no dice")
+// 		}
+// 	}
+// 	if r.DiceRolls == nil {
+// 		r.DiceRolls = make([]DiceRoll, 0, 1000)
+// 	}
+// 	r.DiceRolls = append(r.DiceRolls, diceRoll)
+// 	return diceRoll, nil
+// }
 
 func initRand() {
 	rand.Seed(time.Now().UnixNano())
 }
 
 func (r *DiceRoll) rollCoC(dice []int8, mod int) error {
+	// if dice array was passed => roll these dice
+	if len(dice) > 0 {
+		return r.rollGeneral(dice, mod)
+	}
+	// if dice array is empty create dice array based on mod
 	switch mod {
 	case 2:
 		dice = []int8{0, 0, 0, 10}
@@ -256,25 +260,4 @@ func roll(eyes int8) (Die, error) {
 		return Die{}, errors.New("invalid number of eyes")
 	}
 	return Die{Eyes: eyes, Result: int8(rand.Intn(max) + 1)}, nil
-}
-
-func (r *Room) addPlayer(id int, name string, col string) error {
-	if r.Players.Detail == nil {
-		r.Players.Detail = make(map[int]Char)
-	}
-	player, ok := r.Players.Detail[id]
-	if !ok {
-		p := Char{Name: name, Color: col}
-		r.Players.Detail[id] = p
-		r.Players.Id = append(r.Players.Id, id)
-	} else {
-		if name != "" {
-			player.Name = name
-		}
-		if col != "" {
-			player.Color = col
-		}
-		r.Players.Detail[id] = player
-	}
-	return nil
 }
