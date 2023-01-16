@@ -46,7 +46,7 @@
 
 .grid-container {
     display: inline-grid;
-    grid-template-rows: 80px 75px auto auto 75px;
+    grid-template-rows: 80px 60px auto auto 75px;
     /*grid-template-rows: 8vh 8vh 16vh 50vh 8vh;*/
     grid-template-columns: 300px auto;
     height: 100vh;
@@ -223,6 +223,12 @@ thead {
     order: -10;
 }
 
+.result_table tr td {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+
 
 tr.my_roll {
     background: yellowgreen
@@ -248,8 +254,10 @@ button.b_room-selection {
     color: white;
     padding-top: 0px;
     padding-bottom: 0px;
-    padding-right: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
 }
+
 
 .centered {
     position: absolute;
@@ -259,7 +267,8 @@ button.b_room-selection {
     transform: translate(-50%, -50%);
     padding-top: 0px;
     padding-bottom: 0px;
-    padding-right: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 .dice_icons {
@@ -306,6 +315,21 @@ button.b_room-selection {
     top: 0;
     right: 0;
 }
+
+.roll_form .attr_only {
+    float: right;
+}
+
+.roll_form td {
+    padding: 2.5px
+}
+
+.roll_form td div {
+    padding: 2.5px
+}
+
+
+
 .b_radio {
     float: left;
     width: 45px;
@@ -332,10 +356,14 @@ button.b_room-selection {
     font-weight: bold;
     width: 200px;
     height: 30px;
+    margin-bottom: -10px;
+    margin-top: 0px;
 }
 
 .roll_form_action_buttons button {
     height: 30px;
+    margin-top: 10px;
+    margin-bottom: 0px;
 }
 
 .header_2 select {

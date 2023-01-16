@@ -268,6 +268,7 @@ function createDie(p, die) {
         result = die.R
     }
     img.src = "/pic/d" + eyes + ".svg"
+    img.alt = "d" + eyes 
     div.appendChild(img)
     var nbr = document.createElement("div")
     nbr.classList.add("centered")
