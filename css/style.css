@@ -252,10 +252,14 @@ button.b_room-selection {
     position: relative;
     text-align: center;
     color: white;
+}
+
+.icon img {
+    height: 35px;
+    padding-left: 3px;
+    padding-right: 3px;
     padding-top: 0px;
     padding-bottom: 0px;
-    padding-left: 5px;
-    padding-right: 5px;
 }
 
 
@@ -265,10 +269,6 @@ button.b_room-selection {
     left: 50%;
     font-weight: bold;
     transform: translate(-50%, -50%);
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-left: 5px;
-    padding-right: 5px;
 }
 
 .dice_icons {
