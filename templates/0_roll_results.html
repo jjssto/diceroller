@@ -1,16 +1,14 @@
-<div class="roll_result">
+<div class="roll_result hidden">
     <div class="result_table">
         <table class="t_result">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>Time</th>
-                    <th>Char</th>
-                    <th>Action</th>
-                    {{ range . }}
-                    <th>{{ . }}</th>
-                    {{ end }}
-                    <th>Result</th>
+                    <th class="nbr">#</th>
+                    <th class="time">T</th>
+                    <th class="char">Char</th>
+                    <th class="action">Action</th>
+                    <th class="dice">Dice</th>
+                    <th class="result">R</th>
                 </tr>
             </thead>
             <tbody id="tbody_rolls"></tbody>
