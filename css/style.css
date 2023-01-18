@@ -46,7 +46,7 @@
 
 .grid-container {
     display: inline-grid;
-    grid-template-rows: 80px 75px auto auto 75px;
+    grid-template-rows: 80px 60px auto auto 75px;
     /*grid-template-rows: 8vh 8vh 16vh 50vh 8vh;*/
     grid-template-columns: 300px auto;
     height: 100vh;
@@ -102,6 +102,18 @@
 .roll_result {
     padding: 2.5%;
     grid-area: 4/1/span 1/span 2;
+}
+
+.roll_result th.dice {
+    width: 400px;
+}
+
+.roll_result th.char, .roll_result th.action {
+    width: 100px;
+}
+
+.roll_result th.result {
+    width: 30px;
 }
 
 
@@ -223,6 +235,12 @@ thead {
     order: -10;
 }
 
+.result_table tr td {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+
 
 tr.my_roll {
     background: yellowgreen
@@ -246,10 +264,16 @@ button.b_room-selection {
     position: relative;
     text-align: center;
     color: white;
+}
+
+.icon img {
+    height: 35px;
+    padding-left: 3px;
+    padding-right: 3px;
     padding-top: 0px;
     padding-bottom: 0px;
-    padding-right: 10px;
 }
+
 
 .centered {
     position: absolute;
@@ -257,13 +281,14 @@ button.b_room-selection {
     left: 50%;
     font-weight: bold;
     transform: translate(-50%, -50%);
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-right: 10px;
 }
 
 .dice_icons {
     order: 5;
+}
+
+.dice_icons .text_die:last-child .sep {
+    visibility: hidden;
 }
 
 .button_header {
@@ -287,7 +312,7 @@ button.b_room-selection {
     font-weight: bold;
 }
 
-.label_dice_number {
+.label_dice_number, .mod_title {
     font-weight: bold;
 }
 
@@ -306,6 +331,21 @@ button.b_room-selection {
     top: 0;
     right: 0;
 }
+
+.roll_form .attr_only {
+    float: right;
+}
+
+.roll_form td {
+    padding: 2.5px
+}
+
+.roll_form td div {
+    padding: 2.5px
+}
+
+
+
 .b_radio {
     float: left;
     width: 45px;
@@ -327,16 +367,33 @@ button.b_room-selection {
     width: 150px;
 }
 
+.roll_form .mod_buttons {
+    text-align: center;
+}
+
+.roll_form .mod_buttons .roll_form_radio {
+    display: block;
+    margin-left: 20px;
+    margin-right: auto;
+}
+
+.roll_form .mod_buttons button {
+    float: left;
+}
+
 .roll_form_buttons button{
     font-size: large;
     font-weight: bold;
     width: 200px;
-    height: 50px;
+    height: 30px;
+    margin-bottom: -10px;
+    margin-top: 0px;
 }
 
-.button_action {
-    margin-bottom: 10px;    
-    margin-top: 0px;
+.roll_form_action_buttons button {
+    height: 30px;
+    margin-top: 10px;
+    margin-bottom: 0px;
 }
 
 .header_2 select {

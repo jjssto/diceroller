@@ -26,7 +26,6 @@ export {
     formatTime,
     init,
     createRowDice,
-    setResultHeaderDice,
     initCookieConsent,
 };
 
@@ -55,7 +54,6 @@ function settingVisibility() {
 
 
 function roomSettingForm() {
-    //insertColorOptions()
     var settingsForm = document.getElementById("f_setting");
     settingsForm.addEventListener("submit", function (event) {
         event.preventDefault();
@@ -123,9 +121,18 @@ function addCol(row, text) {
 }
 
 
+function resultTableVisibility() {
+    let element = document.querySelector(".roll_result");
+    if (element != null) {
+        element.classList.remove("hidden");
+    }
+}
 
 function insertRolls(createRow, data_raw) {
     const data = JSON.parse(data_raw)
+    if (Object.keys(data).length > 0) {
+        resultTableVisibility()
+    }
     const tbody = document.getElementById("tbody_rolls")
     const first_row = tbody.firstChild
     var roll_id
@@ -156,13 +163,6 @@ function getRolls(createRow) {
     }
     var target = location.href.replace("room/", "rolls/");
     const last_roll = sessionStorage.getItem("last_roll");
-    var offsetStr = sessionStorage.getItem("ts_offset");
-    if (offsetStr == null || offsetStr.length == 0) {
-        const date = new Date();
-        const offset = -1 * date.getTimezoneOffset() * 60; 
-        offsetStr = offset.toString();
-        sessionStorage.setItem("ts_offset", offsetStr)
-    }
     if (last_roll != "") {
         target += "/" + last_roll
     }
@@ -199,7 +199,6 @@ function setDisplayDice() {
     }
     if (element.checked) {
         displayDice = true;
-        setResultHeaderDice();
     } else {
         displayDice = false;
     }
@@ -214,9 +213,10 @@ function formatTime(timestamp) {
     return hh + ':' + mm
 }
 
-function init(createRow) {
+function init(createRow, rollDice) {
 
     window.addEventListener("DOMContentLoaded", () => {
+        sessionStorage.setItem("mod", 0);
         setHighlightOwnRolls()
         setDisplayDice()
         setColor()
@@ -226,6 +226,10 @@ function init(createRow) {
         setLink()
         smallScreen()
 
+        document.getElementById("f_roll").addEventListener("submit", event => {
+            event.preventDefault()
+            rollDice()
+        })
        
         var resetButton = document.querySelector("#b_reset")
         if (resetButton != null) {
@@ -234,7 +238,7 @@ function init(createRow) {
             });
         }
         initRadioButtons();
-        initActionButtons();
+        initActionButtons(rollDice);
         initCookieConsent();
         initAllDiceForm();
     })
@@ -242,20 +246,12 @@ function init(createRow) {
     window.addEventListener("load", () => {
         sessionStorage.setItem("last_roll", "");
         reset(null)
-        if (displayDice) {
-            getRolls(createRowDice);
-            window.setInterval(() => {getRolls(createRowDice)}, 1000);
-        } else {
-            getRolls(createRow);
-            window.setInterval(() => {getRolls(createRow)}, 1000);
-        }
+        getRolls(createRowDice);
+        window.setInterval(() => {getRolls(createRowDice)}, 1000);
     });
 }
 
 function createDie(p, die) {
-    var div = document.createElement("div")
-    div.classList.add("icon")
-    var img = document.createElement("img")
     var result 
     var eyes 
     if (die.E == "0") {
@@ -270,13 +266,30 @@ function createDie(p, die) {
         eyes = die.E
         result = die.R
     }
-    img.src = "/pic/d" + eyes + ".svg"
-    div.appendChild(img)
-    var nbr = document.createElement("div")
-    nbr.classList.add("centered")
-    nbr.textContent = result
-    div.appendChild(nbr)
-    p.appendChild(div)
+    if (displayDice) {
+        var div = document.createElement("div")
+        div.classList.add("icon")
+        var img = document.createElement("img")
+        img.src = "/pic/d" + eyes + ".svg"
+        img.alt = "d" + eyes 
+        div.appendChild(img)
+        var nbr = document.createElement("div")
+        nbr.classList.add("centered")
+        nbr.textContent = result
+        div.appendChild(nbr)
+        p.appendChild(div)
+    } else {
+        var span0 = document.createElement("span");
+        span0.classList.add("text_die");    
+        var span1 = document.createElement("span");
+        span1.textContent = "d" + eyes + ":" + result;
+        var span2 = document.createElement("span");
+        span2.classList.add("sep");
+        span2.textContent = "|";
+        span0.appendChild(span1)
+        span0.appendChild(span2)
+        p.appendChild(span0)
+    }
 }
 
 function createColDice(row, dice) {
@@ -307,34 +320,6 @@ function createRowDice(drow, id) {
     addCol(row, dat.R)
     return row
 }
-
-function setResultHeaderDice() {
-    const thead = document.querySelector(".t_result").querySelector("thead")
-    const cols = thead.querySelectorAll("th")
-    for (var i = 0; i < cols.length; i++) {
-        cols[i].remove()
-    }
-    var h1 = document.createElement("th")
-    var h2 = document.createElement("th")
-    var h3 = document.createElement("th")
-    var h4 = document.createElement("th")
-    var h5 = document.createElement("th")
-    var h6 = document.createElement("th")
-    h1.textContent = "#"
-    h2.textContent = "Time"
-    h3.textContent = "Char"
-    h4.textContent = "Action"
-    h5.textContent = "Dice"
-    h5.style.width = "400px"
-    h6.textContent = "Result"
-    thead.appendChild(h1)
-    thead.appendChild(h2)
-    thead.appendChild(h3)
-    thead.appendChild(h4)
-    thead.appendChild(h5)
-    thead.appendChild(h6)
-}
-    
     
 function reset(event) {
     if (event != null) {
@@ -400,13 +385,15 @@ function initRadioButtons() {
     }
 }
 
-function initActionButtons() {
+function initActionButtons(rollFunction) {
     var actionButtons = document.querySelectorAll(".button_action");
     var actionInput = document.getElementById("f_action");
     for (var i = 0; i < actionButtons.length; i++ ) {
         actionButtons[i].addEventListener("click", (event) => {
-            const val = event.target.textContent;
-            actionInput.value = val;
+            let oldVal = actionInput.value;
+            actionInput.value = event.target.textContent;;
+            rollFunction();
+            actionInput.value = oldVal;
         })
     }
 }
@@ -446,7 +433,7 @@ function initCookieConsent() {
 
 function setCookie() {
     if (getCookie("diceroller_user_id") == "") {
-        document.cookie = "diceroller_user_id=0; path=/; secure=true"
+        document.cookie = "diceroller_user_id=0; path=/; secure=true;"
     }   
     return true;
 }
@@ -597,33 +584,36 @@ function hideAllDiceForm() {
  
   
   function initAllDiceForm() {
-    document.getElementById("f_roll_all")
-        .addEventListener("submit", (event) => {
-            event.preventDefault();
-            const loc = location.href
-            const player_id = "0"
-            const dice = setDice(); 
-            const chr = document.getElementById("f_name").value;
-            const action = document.getElementById("f_action").value;
+    let element = document.getElementById("f_roll_all");
+    if (element == null) {
+        return
+    }
 
-            fetch(loc, {
-                method: "POST",
-                headers: {
-                    "contentType": "application/json"
-                },
-                body: JSON.stringify({
-                    "dice": dice,
-                    "char": chr,
-                    "action": action
-                })
+    element.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const loc = location.href
+        const player_id = "0"
+        const dice = setDice(); 
+        const chr = document.getElementById("f_name").value;
+        const action = document.getElementById("f_action").value;
+
+        fetch(loc, {
+            method: "POST",
+            headers: {
+                "contentType": "application/json"
+            },
+            body: JSON.stringify({
+                "dice": dice,
+                "char": chr,
+                "action": action
             })
-            .then( (response) => {
-                if (response.ok) {
-                    hideAllDiceForm()
-                }
-            })
+        })
+        .then( (response) => {
+            if (response.ok) {
+                hideAllDiceForm()
+            }
+        })
     });
-      
        
     document.getElementById("b_close_all_dice")
         .addEventListener("click", (event) => {

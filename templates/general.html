@@ -11,7 +11,7 @@
     {{ template "0_header.html" . }}
     <div class="roll_form">
       <form id="f_roll">
-        {{ template "0_char_and_action.html" .actions }}
+        {{ template "0_char_and_action.html" }}
         <table>
           <tbody>
             <tr>
@@ -33,6 +33,14 @@
               <td>{{ template "0_dd_number.html" .d4 }}</td>
               <td>{{ template "0_radio_0_4.html" "s_d4" }}</td>
             </tr>
+            <tr>
+              <td class="mod_title">
+                Mod:
+              </td>
+                <td class="mod_buttons" colspan="3">
+                  {{ template "0_mod_m5p5.html" }} 
+                </td>
+            </tr>
           </tbody>
         </table>
         <p>
@@ -41,9 +49,10 @@
           <button type="button" id="b_reset">Reset</button>
           </div>
         </p>
+        {{ template "0_action_buttons.html" .actions }}
       </form>
     </div>
-    {{ template "0_roll_results.html" .result_cols }}
+    {{ template "0_roll_results.html" }}
     {{ template "0_footer.html" }}
     {{ template "0_cookie_consent.html" }}
   </div>

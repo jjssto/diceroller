@@ -26,7 +26,8 @@ import {
     addCol,
     init
 } from "./fun.js";
-init(createRow);
+
+init(createRow, rollDice);
 
 function createRow(drow, id) {
     var row = document.createElement("tr")
@@ -133,20 +134,9 @@ function setDice() {
     return text
 }
 
-function reset() {
 
-    document.getElementById("s_attribute").value = 0;
-    document.getElementById("s_skill").value = 0;
-    document.getElementById("at0").checked = true;
-    document.getElementById("sk0").checked = true;
-    document.getElementById("i_attribute_only").checked = false;
-  }
-
-
-document.getElementById("f_roll").addEventListener("submit", event => {
-    event.preventDefault()
+function rollDice() {
     const loc = location.href
-    const player_id = "0"
     const dice = setDice() 
     const name = document.getElementById("f_name").value;
     const action = document.getElementById("f_action").value;
@@ -162,5 +152,5 @@ document.getElementById("f_roll").addEventListener("submit", event => {
             "action": action
         })
     })
-});
+};
 

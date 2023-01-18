@@ -13,7 +13,7 @@
 
     <div class="roll_form" id="c_roll_form">
       <form id="f_roll">
-        {{ template "0_char_and_action.html" .actions }}
+        {{ template "0_char_and_action.html" }}
         <p>
         <table>
           <thead>
@@ -21,9 +21,10 @@
               <th>
                {{ template "0_dd_number.html" .attr_opt }}
                
+               <div class="attr_only">
                 <label for="i_attribute_only">Only:</label>
                 <input type="checkbox" id="i_attribute_only" value="1">
-               
+               </div>
               </th>
               <th>
                {{ template "0_dd_number.html" .skill_opt }}
@@ -43,9 +44,10 @@
 
         </table>
         {{ template "0_roll_form_buttons.html" }}
+        {{ template "0_action_buttons.html" .actions }}
        </form>
     </div>
-    {{ template "0_roll_results.html" .result_cols }}
+    {{ template "0_roll_results.html" }}
     {{ template "0_footer.html" }}
     {{ template "0_cookie_consent.html" }}
     {{ template "0_all_dice.html" . }}

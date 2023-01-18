@@ -53,6 +53,8 @@ type ServerConfig struct {
 	DBAddress           string
 	DBNet               string
 	DBName              string
+	Actions             []string
+	SystemActions       []([]string)
 }
 
 func setToken(c *gin.Context, userToken int) {
@@ -125,6 +127,7 @@ func serve(config ServerConfig) {
 func (config *ServerConfig) loadConfig(file string) {
 
 	config.setDefaultValues()
+	config.initActions()
 
 	configFile, err := os.Open(file)
 	if err == nil {
@@ -205,11 +208,31 @@ func (config *ServerConfig) setValue(key string, value string) bool {
 		config.DBNet = strings.Trim(values[0], trimChar)
 	case "DBName":
 		config.DBName = strings.Trim(values[0], trimChar)
+	case "Actions":
+		config.addActions(-1, values, trimChar)
+	case "CoCActions":
+		config.addActions(0, values, trimChar)
+	case "RezTechActions":
+		config.addActions(1, values, trimChar)
+	case "GeneralActions":
+		config.addActions(2, values, trimChar)
 
 	default:
 		return false
 	}
 	return true
+}
+
+func (config *ServerConfig) initActions() {
+	if config.Actions == nil {
+		config.Actions = make([]string, 0)
+	}
+	if config.SystemActions == nil {
+		config.SystemActions = make([]([]string), 3)
+	}
+	for i := 0; i < 3; i++ {
+		config.SystemActions[i] = make([]string, 0)
+	}
 }
 
 func getPageTitle(value string, trimChar string) string {
@@ -321,4 +344,29 @@ func getStatisticInterval(value string, trimChar string) time.Duration {
 	} else {
 		panic(errors.New("error loading configuration"))
 	}
+}
+
+func (config *ServerConfig) addActions(
+	index int, values []string, trimChar string,
+) {
+	for i := range values {
+		if index < 0 {
+			config.Actions = append(
+				config.Actions, strings.Trim(values[i], trimChar),
+			)
+		} else if index < len(config.SystemActions) {
+			config.SystemActions[index] = append(
+				config.SystemActions[index], strings.Trim(values[i], trimChar),
+			)
+		}
+	}
+}
+
+func (config *ServerConfig) getActions(gameId int) []string {
+	if gameId >= 0 && gameId < len(config.SystemActions) {
+		if len(config.SystemActions[gameId]) > 0 {
+			return config.SystemActions[gameId]
+		}
+	}
+	return config.Actions
 }
