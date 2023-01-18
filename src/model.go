@@ -203,12 +203,19 @@ func (r *DiceRoll) evaluateCoC(mod int) {
 
 func (r *DiceRoll) evaluateRezTech() {
 	result := 0
+	nbrOfOnes := 0
 	for _, val := range r.Dice {
+		if val.Result == 1 {
+			nbrOfOnes++
+		}
 		if val.Result >= 11 {
 			result += 2
 		} else if val.Result >= 5 {
 			result += 1
 		}
+	}
+	if result == 0 && nbrOfOnes > 0 {
+		result = -1
 	}
 	r.Result = result
 }
