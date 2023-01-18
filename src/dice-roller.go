@@ -20,8 +20,6 @@
 
 package main
 
-import "time"
-
 var globConfig ServerConfig
 
 var MAX_TRIES_ID_GEN int = 100
@@ -30,17 +28,6 @@ var MAX_DICE int = 20
 func main() {
 	globConfig.loadConfig("diceroller.conf")
 	initRand()
-
-	go func() {
-		db := DB{}
-		for {
-			if err := db.connect(false); err == nil {
-				db.cleanUp(7)
-				db.close()
-			}
-			time.Sleep(time.Hour)
-		}
-	}()
 
 	serve(globConfig)
 }
