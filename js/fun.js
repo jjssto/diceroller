@@ -157,11 +157,13 @@ function insertRolls(createRow, data_raw) {
     }
 }
 
+
 function getRolls(createRow) {
     if (!hasFocus) {
         return
     }
-    var target = location.href.replace("room/", "rolls/");
+    var url = `${location.protocol}//${location.host}${location.pathname}`
+    var target = url.replace("room/", "rolls/");
     const last_roll = sessionStorage.getItem("last_roll");
     if (last_roll != "") {
         target += "/" + last_roll
