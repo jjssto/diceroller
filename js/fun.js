@@ -287,7 +287,7 @@ function createDie(p, die) {
         span1.textContent = "d" + eyes + ":" + result;
         var span2 = document.createElement("span");
         span2.classList.add("sep");
-        span2.textContent = "|";
+        span2.textContent = " |";
         span0.appendChild(span1)
         span0.appendChild(span2)
         p.appendChild(span0)
