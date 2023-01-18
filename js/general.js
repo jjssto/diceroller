@@ -165,6 +165,7 @@ function rollDice() {
     const loc = location.href
     const player_id = "0"
     const dice = setDice(); 
+    const mod = sessionStorage.getItem("mod");
     const chr = document.getElementById("f_name").value;
     const action = document.getElementById("f_action").value;
 
@@ -175,6 +176,7 @@ function rollDice() {
         },
         body: JSON.stringify({
             "dice": dice,
+            "mod": mod,
             "char": chr,
             "action": action
         })

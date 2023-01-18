@@ -78,5 +78,3 @@ function rollDice() {
     })
 
 }
-
-sessionStorage.setItem("mod", 0);

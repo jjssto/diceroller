@@ -216,6 +216,7 @@ function formatTime(timestamp) {
 function init(createRow, rollDice) {
 
     window.addEventListener("DOMContentLoaded", () => {
+        sessionStorage.setItem("mod", 0);
         setHighlightOwnRolls()
         setDisplayDice()
         setColor()
@@ -281,10 +282,10 @@ function createDie(p, die) {
         var span0 = document.createElement("span");
         span0.classList.add("text_die");    
         var span1 = document.createElement("span");
-        span1.textContent = "d" + eyes + ": " + result;
+        span1.textContent = "d" + eyes + ":" + result;
         var span2 = document.createElement("span");
         span2.classList.add("sep");
-        span2.textContent = " | ";
+        span2.textContent = "|";
         span0.appendChild(span1)
         span0.appendChild(span2)
         p.appendChild(span0)

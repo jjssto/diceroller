@@ -223,17 +223,17 @@ func (r *DiceRoll) rollRezTech(dice []int8, mod int) error {
 	}
 }
 
-func (r *DiceRoll) evaluateGeneral() {
+func (r *DiceRoll) evaluateGeneral(mod int) {
 	result := 0
 	for _, val := range r.Dice {
 		result += int(val.Result)
 	}
-	r.Result = result
+	r.Result = result + mod
 }
 func (r *DiceRoll) rollGeneral(dice []int8, mod int) error {
 	if len(dice) > 0 {
 		r.roll(dice)
-		r.evaluateGeneral()
+		r.evaluateGeneral(mod)
 		return nil
 	} else {
 		return errors.New("dice invalid")

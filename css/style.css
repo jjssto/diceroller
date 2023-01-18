@@ -312,7 +312,7 @@ button.b_room-selection {
     font-weight: bold;
 }
 
-.label_dice_number {
+.label_dice_number, .mod_title {
     font-weight: bold;
 }
 
@@ -365,6 +365,20 @@ button.b_room-selection {
 
 .b_radio_coc {
     width: 150px;
+}
+
+.roll_form .mod_buttons {
+    text-align: center;
+}
+
+.roll_form .mod_buttons .roll_form_radio {
+    display: block;
+    margin-left: 20px;
+    margin-right: auto;
+}
+
+.roll_form .mod_buttons button {
+    float: left;
 }
 
 .roll_form_buttons button{
