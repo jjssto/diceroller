@@ -364,7 +364,12 @@ button.b_room-selection {
 }
 
 .b_radio_coc {
-    width: 150px;
+    width: 130px;
+}
+
+.b_radio_coc_0 {
+    width: 530px;
+    font-weight: bold;
 }
 
 .roll_form .mod_buttons {
