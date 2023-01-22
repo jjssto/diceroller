@@ -21,6 +21,21 @@
       <td>{{ template "0_dd_number.html" .d4 }}</td>
       <td>{{ template "0_radio_0_10.html" "s_d4" }}</td>
     </tr>
+    <tr>
+      <td>{{ template "0_dd_number.html" .d3 }}</td>
+      <td>{{ template "0_radio_0_10.html" "s_d3" }}</td>
+      <td>{{ template "0_dd_number.html" .d100 }}</td>
+      <td>{{ template "0_radio_0_10.html" "s_d100" }}</td>
+    </tr>
+    <tr>
+      <td class="mod_title">
+        Mod: <input id="mod_input" class="mod_input" type="number" min="-50" max="50">
+      </td>
+      <td class="mod_buttons" colspan="3">
+        {{ template "0_mod_m5p5.html" }} 
+      </td>
+   </tr>
+
   </tbody>
 </table>
 <p>

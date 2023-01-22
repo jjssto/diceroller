@@ -77,6 +77,8 @@ func viewCoC(c *gin.Context, room Room) {
 		"d8":          Input{Id: "s_d8", Label: "D8:", Options: s},
 		"d6":          Input{Id: "s_d6", Label: "D6:", Options: s},
 		"d4":          Input{Id: "s_d4", Label: "D4:", Options: s},
+		"d3":          Input{Id: "s_d3", Label: "D3:", Options: s},
+		"d100":        Input{Id: "s_d100", Label: "D100:", Options: s},
 		"actions":     a,
 	})
 }
@@ -102,6 +104,8 @@ func viewRezTech(c *gin.Context, room Room) {
 		"d8":          Input{Id: "s_d8", Label: "D8:", Options: s},
 		"d6":          Input{Id: "s_d6", Label: "D6:", Options: s},
 		"d4":          Input{Id: "s_d4", Label: "D4:", Options: s},
+		"d3":          Input{Id: "s_d3", Label: "D3:", Options: s},
+		"d100":        Input{Id: "s_d100", Label: "D100:", Options: s},
 		"actions":     a,
 	})
 }

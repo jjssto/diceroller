@@ -268,12 +268,14 @@ function createDie(p, die) {
         eyes = die.E
         result = die.R
     }
-    if (displayDice) {
+    let dice = ["4","6","8","10","0","12","20"];
+    if (displayDice && dice.includes(die.E)) {
         var div = document.createElement("div")
         div.classList.add("icon")
         var img = document.createElement("img")
-        img.src = "/pic/d" + eyes + ".svg"
-        img.alt = "d" + eyes 
+        let pic = "/pic/d" + eyes + ".svg"
+        img.src = pic; 
+        img.alt = "d" + eyes + ":"
         div.appendChild(img)
         var nbr = document.createElement("div")
         nbr.classList.add("centered")
@@ -327,7 +329,7 @@ function reset(event) {
     if (event != null) {
         event.preventDefault()
     }
-    var numberSelects = document.querySelectorAll(".dd_dice_nbr")
+    var numberSelects = document.querySelectorAll(".dd_dice_nbr, .mod_input")
     for (var i = 0; i < numberSelects.length; i++ ) {
         numberSelects[i].value = 0
     }
@@ -377,7 +379,7 @@ function initRadioButtons() {
          element.addEventListener("change", (event) => {
             let radio = document.getElementById("radio_" + event.target.id)
             for (var j = 0; j < radio.children.length; j++ ) {
-                if (radio.children[j].value == event.target.selectedIndex) {
+                if (radio.children[j].value == event.target.value) {
                     radio.children[j].classList.add("r_selected")
                 } else {
                     radio.children[j].classList.remove("r_selected")
@@ -492,6 +494,10 @@ function getCookie(cname) {
     const d6 = sel.options[sel.selectedIndex].value; 
     sel = document.querySelector("#s_d4");
     const d4 = sel.options[sel.selectedIndex].value; 
+    sel = document.querySelector("#s_d3");
+    const d3 = sel.options[sel.selectedIndex].value; 
+    sel = document.querySelector("#s_d100");
+    const d100 = sel.options[sel.selectedIndex].value; 
     
     var first = true
     var isEmpty = false
@@ -550,26 +556,47 @@ function getCookie(cname) {
         text += "4"
         isEmpty = false
     }
+    for (let i = 0; i < d3; i++) {
+        if (first) {
+            first = false
+        } else {
+            text += ", "
+        }
+        text += "3"
+        isEmpty = false
+    }
+    for (let i = 0; i < d100; i++) {
+        if (first) {
+            first = false
+        } else {
+            text += ", "
+        }
+        text += "100"
+        isEmpty = false
+    }
+
     text += "]"
     return text
 }
 
 function resetDice() {
-    let elements =  [
-        document.querySelector("#s_d20"),
-        document.querySelector("#s_d12"),
-        document.querySelector("#s_d10"),
-        document.querySelector("#s_d8"),
-        document.querySelector("#s_d6"),
-        document.querySelector("#s_d4"),
+  //  let elements =  [
+  //      document.querySelector("#s_d20"),
+  //      document.querySelector("#s_d12"),
+  //      document.querySelector("#s_d10"),
+  //      document.querySelector("#s_d8"),
+  //      document.querySelector("#s_d6"),
+  //      document.querySelector("#s_d4"),
 
-        document.querySelector("#s_d20"),
-        document.querySelector("#s_d12"),
-        document.querySelector("#s_d10"),
-        document.querySelector("#s_d8"),
-        document.querySelector("#s_d6"),
-        document.querySelector("#s_d4")
-    ]
+  //      document.querySelector("#s_d20"),
+  //      document.querySelector("#s_d12"),
+  //      document.querySelector("#s_d10"),
+  //      document.querySelector("#s_d8"),
+  //      document.querySelector("#s_d6"),
+  //      document.querySelector("#s_d4"),
+  //      document.querySelector("#s_d4")
+  //  ]
+    let elements = document.querySelectorAll(".dd_dice_nbr, .mod_input")
     let e = new Event("change");
     for (let i = 0; i < elements.length; i++) {
         elements[i].value = 0;
@@ -597,6 +624,7 @@ function hideAllDiceForm() {
         const player_id = "0"
         const dice = setDice(); 
         const chr = document.getElementById("f_name").value;
+        const mod = document.getElementById("mod_input").value;
         const action = document.getElementById("f_action").value;
 
         fetch(loc, {
@@ -606,6 +634,7 @@ function hideAllDiceForm() {
             },
             body: JSON.stringify({
                 "dice": dice,
+                "mod": mod,
                 "char": chr,
                 "action": action
             })

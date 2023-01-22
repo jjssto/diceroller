@@ -372,7 +372,7 @@ button.b_room-selection {
     font-weight: bold;
 }
 
-.roll_form .mod_buttons {
+.mod_buttons {
     text-align: center;
 }
 
@@ -380,6 +380,19 @@ button.b_room-selection {
     display: block;
     margin-left: 20px;
     margin-right: auto;
+}
+
+/*.all_dice_form .mod_buttons .roll_form_radio {
+    display: block;
+    margin-left: 100px;
+    margin-right: auto;
+}*/
+
+.dd_dice_nbr {
+    width: 40px;
+}
+.mod_input {
+    width: 35px;
 }
 
 .roll_form .mod_buttons button {
