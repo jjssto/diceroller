@@ -165,7 +165,7 @@ function rollDice() {
     const loc = location.href
     const player_id = "0"
     const dice = setDice(); 
-    const mod = document.getElementById("mod_input");
+    const mod = document.getElementById("mod_input").value;
     const chr = document.getElementById("f_name").value;
     const action = document.getElementById("f_action").value;
 
